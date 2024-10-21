@@ -1,0 +1,105 @@
+import {defineStore} from 'pinia'
+
+export const useModalStore = defineStore('modal', {
+    state: () => {
+        return {
+            modals: {
+                confirm: {
+                    showed: false,
+                    params: {},
+                },
+                dispute: {
+                    showed: false,
+                    params: {},
+                },
+                disputeCancel: {
+                    showed: false,
+                    params: {},
+                },
+                userSmsLogs: {
+                    showed: false,
+                    params: {},
+                },
+                deposit: {
+                    showed: false,
+                    params: {},
+                },
+                withdrawal: {
+                    showed: false,
+                    params: {},
+                },
+                order: {
+                    showed: false,
+                    params: {},
+                },
+                notification: {
+                    showed: false,
+                    params: {},
+                },
+            },
+        }
+    },
+    getters: {//TODO а нахрена я это сделал? Надо убрать. Можно напрямую следить за состоянием.
+        confirmModal: (state) => state.modals.confirm,
+        disputeModal: (state) => state.modals.dispute,
+        disputeCancelModal: (state) => state.modals.disputeCancel,
+        userSmsLogsModal: (state) => state.modals.userSmsLogs,
+        depositModal: (state) => state.modals.deposit,
+        withdrawalModal: (state) => state.modals.withdrawal,
+        orderModal: (state) => state.modals.order,
+        notificationModal: (state) => state.modals.notification,
+    },
+    actions: {
+        openModal(name, params = {}) {
+            this.modals[name].showed = true;
+            this.modals[name].params = params;
+        },
+        closeModal(name) {
+            this.modals[name].showed = false;
+            this.modals[name].params = {};
+        },
+        openConfirmModal({
+             title,
+             body = 'Действие невозможно отменить.',
+             confirm_button_name = 'Подтвердить',
+             cancel_button_name = 'Отмена',
+             confirm = null,
+             close = null
+        } = {}) {
+            this.openModal('confirm', {
+                title,
+                body,
+                confirm_button_name,
+                cancel_button_name,
+                confirm,
+                close
+            });
+        },
+        openDisputeModal(props) {
+            this.openModal('dispute', props);
+        },
+        openDisputeCancelModal(props) {
+            this.openModal('disputeCancel', props);
+        },
+        openUserSmsLogsModal(props) {
+            this.openModal('userSmsLogs', props);
+        },
+        openDepositModal(props) {
+            this.openModal('deposit', props);
+        },
+        openWithdrawalModal(props) {
+            this.openModal('withdrawal', props);
+        },
+        openOrderModal(props) {
+            this.openModal('order', props);
+        },
+        openNotificationModal(props) {
+            this.openModal('notification', props);
+        },
+        closeAll() {
+            for (const modal_name in this.modals) {
+                this.closeModal(modal_name)
+            }
+        }
+    },
+})

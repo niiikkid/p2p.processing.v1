@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Models\SmsLog;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class SmsLogResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        /**
+         * @var SmsLog $this
+         */
+        return [
+            'id' => $this->id,
+            'sender' => $this->sender,
+            'message' => $this->message,
+            'timestamp' => Carbon::createFromTimestamp($this->timestamp)->toDateTimeString(),
+            'type' => $this->type->value,
+            'user' => UserResource::make($this->user),
+            'created_at' => $this->created_at->toDateTimeString(),
+        ];
+    }
+}

@@ -1,0 +1,21 @@
+<script setup>
+import {Head} from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PrimeTimeBonus from "@/Pages/Admin/Settings/Partials/PrimeTimeBonus.vue";
+
+defineOptions({ layout: AuthenticatedLayout })
+</script>
+
+<template>
+    <Head title="Настройки системы" />
+
+    <div>
+        <div>
+            <div class="mx-auto space-y-6">
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <PrimeTimeBonus class="max-w-xl"></PrimeTimeBonus>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\Requests\Admin\PaymentGateway;
+
+use App\Enums\DetailType;
+use App\Services\Money\Currency;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class StoreRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'min:3', 'max:30'],
+            'code' => ['required', 'string', 'min:3', 'max:30', 'unique:payment_gateways,code'],
+            'currency' => ['required', Rule::in(Currency::getAllCodes())],
+            'detail_types' => ['required', 'array'],
+            'detail_types.*' => ['nullable', Rule::in(DetailType::values())],
+            'sub_payment_gateways' => ['nullable', 'array'],
+            'sub_payment_gateways.*' => ['required', 'exists:payment_gateways,id'],
+            'min_limit' => ['required', 'integer', 'min:1'],
+            'max_limit' => ['required', 'integer', 'min:1'],
+            'commission_rate' => ['required', 'numeric', 'min:0'],
+            'is_active' => ['required', 'boolean'],
+            'reservation_time' => ['required', 'integer', 'min:1'],
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'name' => __('название'),
+            'code' => __('код метода'),
+            'currency' => __('валюта'),
+            'detail_types' => __('тип реквизитов'),
+            'sub_payment_gateways' => __('вспомогательный метод'),
+            'max_limit' => __('макс лимит'),
+            'commission_rate' => __('комиссия %'),
+            'is_active' => __('активность'),
+            'reservation_time' => __('время резервирования'),
+        ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $currency = strtolower($this->currency ?? '');
+        $this->merge([
+            'code' => $this->code ? $this->code . '_' . $currency : null,
+            'currency' => $currency,
+        ]);
+    }
+}

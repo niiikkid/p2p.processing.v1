@@ -1,0 +1,66 @@
+<?php
+
+use Illuminate\Http\UploadedFile;
+
+if (! function_exists('make')) {
+    /**
+     * @template T
+     * @param T $abstract
+     * @return T
+     */
+    function make($abstract, array $parameters = [])
+    {
+        return app()->make($abstract, $parameters);
+    }
+}
+
+if (! function_exists('queries')) {
+    function queries(): \App\Contracts\QueriesBuilderContract
+    {
+        return make(\App\Contracts\QueriesBuilderContract::class);
+    }
+}
+
+if (! function_exists('services')) {
+    function services(): \App\Contracts\ServiceBuilderContract
+    {
+        return make(\App\Contracts\ServiceBuilderContract::class);
+    }
+}
+
+if (! function_exists('is_local')) {
+    function is_local(): bool
+    {
+        return app()->environment('local');
+    }
+}
+
+if (! function_exists('is_production')) {
+    function is_production(): bool
+    {
+        return app()->environment('production');
+    }
+}
+
+if (! function_exists('mask_card')) {
+    function format_card($detail, $seperator = ' ')
+    {
+        return implode($seperator, str_split($detail,4));
+    }
+}
+
+if (! function_exists('sign_request')) {
+    function sign_request(array $data, string $secret): string
+    {
+        foreach ($data as $key => $value) {//TODO подписывать запрос вместе с файлом
+            if ($value instanceof UploadedFile) {
+                unset($data[$key]);
+            }
+        }
+
+        $data['secret_key'] = $secret;
+        ksort($data, SORT_STRING);
+        $query = implode('{np}', $data);
+        return hash('sha256', $query);
+    }
+}

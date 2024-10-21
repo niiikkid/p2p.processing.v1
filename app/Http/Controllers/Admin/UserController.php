@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\User\StoreRequest;
+use App\Http\Requests\Admin\User\UpdateRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
+
+class UserController extends Controller
+{
+    public function index()
+    {
+        $users = User::query()
+            ->with('roles')
+            ->orderByDesc('id')
+            ->paginate(10);
+
+        $users = UserResource::collection($users);
+
+        return Inertia::render('Admin/User/Index', compact('users'));
+    }
+
+    public function create()
+    {
+        $roles = Role::all();
+
+        return Inertia::render('Admin/User/Create', compact('roles'));
+    }
+
+    public function store(StoreRequest $request)
+    {
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'apk_access_token' => Str::random(20),
+        ]);
+
+        $user->assignRole($request->role_id);
+
+        services()->wallet()->create($user);
+
+        return redirect()->route('admin.users.index');
+    }
+
+    public function edit(User $user)
+    {
+        $user->load('roles');
+        $roles = Role::all();
+
+        $user = UserResource::make($user)->resolve();
+
+        return Inertia::render('Admin/User/Edit', compact('user', 'roles'));
+    }
+
+    public function update(UpdateRequest $request, User $user)
+    {
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'banned_at' => $request->banned ? now() : null,
+        ]);
+        if ($user->id !== 1) {
+            $user->syncRoles($request->role_id);
+        }
+
+        if ($user->banned_at) {
+            $user->paymentDetails()->update([
+                'is_active' => false
+            ]);
+        }
+
+        return redirect()->route('admin.users.index');
+    }
+}

@@ -1,0 +1,218 @@
+<script setup>
+import ModalFooter from "@/Components/Modals/Components/ModalFooter.vue";
+import Modal from "@/Components/Modals/Modal.vue";
+import PaymentDetail from "@/Components/PaymentDetail.vue";
+import {Link, router, useForm, usePage} from "@inertiajs/vue3";
+import ModalHeader from "@/Components/Modals/Components/ModalHeader.vue";
+import ModalBody from "@/Components/Modals/Components/ModalBody.vue";
+import {useModalStore} from "@/store/modal.js";
+import {storeToRefs} from "pinia";
+
+const modalStore = useModalStore();
+const { orderModal } = storeToRefs(modalStore);
+const user = usePage().props.auth.user;
+
+const showUserSmsLogs = () => {
+    modalStore.openUserSmsLogsModal({user: user});
+};
+
+const is_admin = usePage().props.auth.is_admin;
+
+const closeModal = () => {
+    modalStore.closeModal('order');
+};
+
+const confirmAcceptOrder = (order) => {
+    modalStore.openConfirmModal({
+        title: 'Вы уверены что хотите  закрыть сделку как оплаченную?',
+        confirm_button_name: 'Платеж поступил',
+        confirm: () => {
+            useForm({}).patch(route('orders.accept', order.id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    modalStore.closeAll()
+                    router.visit(route((route().current('admin.*') ? 'admin.' : '') + 'orders.index'), {
+                        only: ['orders'],
+                    })
+                },
+            })
+        }
+    });
+}
+</script>
+
+<template>
+    <Modal :show="!! orderModal.showed" @close="closeModal" maxWidth="sm">
+        <ModalHeader
+            :title="'Данные платежа #' + orderModal.params.order.id"
+            @close="closeModal"
+        />
+        <ModalBody>
+            <form action="#" class="mx-auto max-w-screen-xl px-2 2xl:px-0">
+                <div class="mx-auto max-w-3xl">
+                    <div>
+                        <div>
+                            <div class="mb-3">
+                                <div v-if="orderModal.params.order.status === 'success'">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <svg class="w-16 h-16 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="mb-1 text-lg font-semibold text-gray-900 dark:text-gray-300 text-center">Платеж зачислен</p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-400 text-center">{{ orderModal.params.order.finished_at }}</p>
+                                </div>
+                                <div v-else-if="orderModal.params.order.status === 'fail'">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <svg class="w-16 h-16 text-green-500 dark:text-red-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-300 text-center">Платеж отменен</p>
+                                </div>
+                                <div v-else-if="orderModal.params.order.status === 'pending'">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <svg class="w-16 h-16 text-green-500 dark:text-yellow-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-300 text-center">Платеж еще не поступил</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-end space-x-1.5 mb-3">
+                                <button
+                                    @click.prevent="showUserSmsLogs(orderModal.params.order)"
+                                    type="button"
+                                    class="p-1 text-xs font-medium text-center inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                >
+                                    <svg class="w-4 h-4 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.556 8.5h8m-8 3.5H12m7.111-7H4.89a.896.896 0 0 0-.629.256.868.868 0 0 0-.26.619v9.25c0 .232.094.455.26.619A.896.896 0 0 0 4.89 16H9l3 4 3-4h4.111a.896.896 0 0 0 .629-.256.868.868 0 0 0 .26-.619v-9.25a.868.868 0 0 0-.26-.619.896.896 0 0 0-.63-.256Z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Внешний ID</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.external_id }}</dd>
+                                    </dl>
+                                    <dl class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Сумма</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.amount }} {{orderModal.params.order.currency.toUpperCase()}}</dd>
+                                    </dl>
+                                    <dl class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Сумма USDT</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.amount_usdt }} {{orderModal.params.order.profit_currency.toUpperCase()}}</dd>
+                                    </dl>
+                                    <dl class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Прибыль</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.profit }} {{orderModal.params.order.profit_currency.toUpperCase()}}</dd>
+                                    </dl>
+                                    <dl v-if="!is_admin" class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Курс</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.conversion_price_with_commission }} {{orderModal.params.order.currency.toUpperCase()}}</dd>
+                                    </dl>
+                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Курс</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.conversion_price }} {{orderModal.params.order.currency.toUpperCase()}}</dd>
+                                    </dl>
+                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Курс с комиссией</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.conversion_price_with_commission }} {{orderModal.params.order.currency.toUpperCase()}}</dd>
+                                    </dl>
+                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Комиссия %</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.commission_rate }} %</dd>
+                                    </dl>
+                                    <dl class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Метод</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.payment_gateway_name }}
+                                            <template v-if="orderModal.params.order.sub_payment_gateway_name">({{orderModal.params.order.sub_payment_gateway_name}})</template>
+                                        </dd>                                                </dl>
+                                    <dl class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Реквизиты</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">
+                                            <PaymentDetail :detail="orderModal.params.order.payment_detail" :copyable="false" :type="orderModal.params.order.payment_detail_type"></PaymentDetail>
+                                        </dd>
+                                    </dl>
+                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Коллбек URL</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.callback_url }}</dd>
+                                    </dl>
+                                    <dl class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Истекает</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.expires_at }}</dd>
+                                    </dl>
+                                    <dl class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Создан</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.created_at }}</dd>
+                                    </dl>
+                                </div>
+                                <div v-if="orderModal.params.order.sms_log" class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-700/50 dark:border-gray-700">
+                                    <footer class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center">
+                                            <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-gray-200 font-semibold">
+                                                <svg class="w-4 h-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                                </svg>
+                                                <span class="pl-1">{{ orderModal.params.order.sms_log.sender }}</span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="flex text-sm text-gray-600 dark:text-gray-200">
+                                                <svg class="h-4 w-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z" />
+                                                </svg>
+                                                <span class="pl-1">{{ orderModal.params.order.sms_log.created_at }}</span>
+                                            </p>
+                                        </div>
+                                    </footer>
+                                    <p class="text-gray-500 dark:text-gray-300">
+                                        {{ orderModal.params.order.sms_log.message }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </ModalBody>
+        <ModalFooter v-if="orderModal.params.order.status === 'pending' || orderModal.params.order.status === 'fail'">
+            <div class="flex justify-center">
+                <template v-if="! orderModal.params.order.has_dispute">
+                    <button
+                        @click.prevent="confirmAcceptOrder(orderModal.params.order)"
+                        type="button"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >
+                        <svg class="w-3.5 h-3.5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/>
+                        </svg>
+                        Оплачен
+                    </button>
+                </template>
+                <template v-else>
+                    <div>
+                        <h2 class="text-gray-300">По этой сделке был открыт спор</h2>
+                        <div class="flex justify-center">
+                            <Link
+                                @click="modalStore.closeAll()"
+                                :href="route((route().current('admin.*') ? 'admin.' : '') + 'disputes.index')"
+                                class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                            >
+                                Перейти
+                                <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                                </svg>
+                            </Link>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </ModalFooter>
+    </Modal>
+</template>
+
+<style scoped>
+
+</style>

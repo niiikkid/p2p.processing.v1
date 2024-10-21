@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Queries\Interfaces;
+
+use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
+interface DisputeQueries
+{
+    public function paginateForAdmin(): LengthAwarePaginator;
+
+    public function paginateForUser(User $user): LengthAwarePaginator;
+}
