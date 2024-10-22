@@ -121,7 +121,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         <InputError :message="form.errors.name" class="mt-2" />
                     </div>
                     <div class="mb-4">
-                        <ul class="hidden border border-gray-700 text-sm font-medium text-center text-gray-500 rounded-lg shadow sm:flex dark:divide-gray-700 dark:text-gray-400">
+                        <ul class="hidden border border-gray-200 dark:border-gray-700 text-sm font-medium text-center text-gray-500 rounded-lg sm:flex dark:divide-gray-700 dark:text-gray-400 overflow-hidden">
                             <li
                                 v-for="(detail_type, index) in currentPaymentGateway.detail_types"
                                 class="w-full focus-within:z-10"
@@ -130,8 +130,8 @@ defineOptions({ layout: AuthenticatedLayout })
                                     <a
                                         @click.prevent="selectedDetailType = detail_type;form.detail = null"
                                         href="#"
-                                        class="inline-block w-full p-2 border-r-0 border-gray-200 dark:border-gray-700 rounded-l-lg hover:text-gray-700 hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
-                                        :class="detail_type === selectedDetailType ? 'text-gray-900 bg-gray-100 border-r rounded-s-lg dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
+                                        class="inline-block w-full p-2 border-r-0 border-gray-200 dark:border-gray-700 hover:text-gray-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                                        :class="detail_type === selectedDetailType ? 'text-gray-900 bg-gray-200 border-r dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
                                     >
                                         {{ detail_type_names[detail_type] }}
                                     </a>
@@ -140,8 +140,8 @@ defineOptions({ layout: AuthenticatedLayout })
                                     <a
                                         @click.prevent="selectedDetailType = detail_type;form.detail = null"
                                         href="#"
-                                        class="inline-block w-full p-2 border-s-0 border-gray-200 dark:border-gray-700 rounded-e-lg hover:text-gray-700 hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
-                                        :class="detail_type === selectedDetailType ? 'text-gray-900 bg-gray-100 border-r rounded-r-lg dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
+                                        class="inline-block w-full p-2 border-s-0 border-gray-200 dark:border-gray-700 hover:text-gray-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                                        :class="detail_type === selectedDetailType ? 'text-gray-900 bg-gray-200 border-r dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
                                     >
                                         {{ detail_type_names[detail_type] }}
                                     </a>
