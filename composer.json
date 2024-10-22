@@ -9,6 +9,7 @@
         "ext-bcmath": "*",
         "ext-gmp": "*",
         "ext-mbstring": "*",
+        "binarytorch/larecipe": "^2.7",
         "inertiajs/inertia-laravel": "^1.0",
         "irazasyed/telegram-bot-sdk": "^3.14",
         "laravel/framework": "^11.9",
