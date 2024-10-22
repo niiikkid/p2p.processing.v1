@@ -1,12 +1,15 @@
 <script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import { Link } from '@inertiajs/vue3';
 import {onMounted} from "vue";
 import {initFlowbite} from "flowbite";
 
 onMounted(() => {
     initFlowbite();
-    document.documentElement.classList.add('dark');
+
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
 })
 </script>
 
