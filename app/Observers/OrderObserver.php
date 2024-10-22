@@ -16,12 +16,15 @@ class OrderObserver
     public function created(Order $order): void
     {
         ExpiresOrderJob::dispatch($order)->delay($order->expires_at);
-        SendTelegramNotificationJob::dispatch(
-            new NewOrder(
-                telegram: $order->paymentDetail->user->telegram,
-                order: $order
-            )
-        );
+
+        if ($order->paymentDetail->user->telegram) {
+            SendTelegramNotificationJob::dispatch(
+                new NewOrder(
+                    telegram: $order->paymentDetail->user->telegram,
+                    order: $order
+                )
+            );
+        }
     }
 
     /**

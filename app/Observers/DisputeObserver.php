@@ -13,12 +13,14 @@ class DisputeObserver
      */
     public function created(Dispute $dispute): void
     {
-        SendTelegramNotificationJob::dispatch(
-            new NewDispute(
-                telegram: $dispute->order->paymentDetail->user->telegram,
-                dispute: $dispute
-            )
-        );
+        if ($dispute->order->paymentDetail->user->telegram) {
+            SendTelegramNotificationJob::dispatch(
+                new NewDispute(
+                    telegram: $dispute->order->paymentDetail->user->telegram,
+                    dispute: $dispute
+                )
+            );
+        }
     }
 
     /**
