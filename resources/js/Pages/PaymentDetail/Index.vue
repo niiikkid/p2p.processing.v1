@@ -38,15 +38,15 @@ defineOptions({ layout: AuthenticatedLayout })
                     <HeadlessTableTr v-for="payment_detail in payment_details.data">
                         <HeadlessTableTh>#{{ payment_detail.id }}</HeadlessTableTh>
                         <HeadlessTableTd>
-                            <div class="text-nowrap dark:text-gray-200">{{ payment_detail.name }}</div>
-                            <div class="text-nowrap dark:text-gray-500">
+                            <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ payment_detail.name }}</div>
+                            <div class="text-nowrap text-gray-500 dark:text-gray-500">
                                 {{ payment_detail.payment_gateway_name }}
                             </div>
                         </HeadlessTableTd>
-                        <HeadlessTableTd>
+                        <HeadlessTableTd class="text-gray-900 dark:text-gray-200">
                             <PaymentDetail :detail="payment_detail.detail" :type="payment_detail.detail_type"></PaymentDetail>
                         </HeadlessTableTd>
-                        <HeadlessTableTd v-if="route().current('admin.*')">
+                        <HeadlessTableTd v-if="route().current('admin.*')" class="text-gray-900 dark:text-gray-200">
                             {{ payment_detail.owner_email }}
                         </HeadlessTableTd>
                         <HeadlessTableTd>
