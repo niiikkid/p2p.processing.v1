@@ -46,7 +46,7 @@ Route::group(['middleware' => ['auth', 'banned', 'role:Trader|Super Admin']], fu
 });
 
 Route::group(['middleware' => ['auth', 'banned', 'role:Merchant|Super Admin']], function () {
-    Route::resource('/merchants', \App\Http\Controllers\MerchantController::class)->only(['index']);
+    Route::resource('/merchants', \App\Http\Controllers\MerchantController::class)->only(['index', 'show', 'create', 'store', 'edit', 'update']);
 });
 
 Route::group(['prefix' => 'admin', 'as'=>'admin.', 'middleware' => ['auth', 'banned', 'role:Super Admin']], function () {

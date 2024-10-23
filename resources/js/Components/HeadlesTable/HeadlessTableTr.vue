@@ -10,7 +10,7 @@ const props = defineProps({
 <template>
     <tr
         class="bg-white dark:bg-gray-800 dark:border-gray-700"
-        :class="hoverable ? 'hover:bg-gray-50 dark:hover:bg-gray-600 hover:cursor-pointer' : ''"
+        :class="hoverable ? 'hover:bg-gray-200/50 dark:hover:bg-gray-600 hover:cursor-pointer' : ''"
     >
         <slot/>
     </tr>
