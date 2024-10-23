@@ -1,2 +1,5 @@
 - ## Начало работы
     - [Введение в проект](/{{route}}/{{version}}/overview)
+- ## Разделы меню
+    - [Валюты](/{{route}}/{{version}}/sections/currencies)
+    - [Пользователи](/{{route}}/{{version}}/sections/users)
