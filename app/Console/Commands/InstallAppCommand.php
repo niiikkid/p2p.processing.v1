@@ -66,6 +66,7 @@ class InstallAppCommand extends Command
         //create roles and permissions
         $role_admin = Role::create(['name' => 'Super Admin']);
         Role::create(['name' => 'Trader']);
+        Role::create(['name' => 'Merchant']);
 
         $permission = Permission::create(['name' => 'access admin panel']);
         $role_admin->givePermissionTo($permission);

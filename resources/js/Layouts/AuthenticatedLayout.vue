@@ -6,6 +6,7 @@ import MenuModeSwitcher from "@/Layouts/Partials/MenuModeSwitcher.vue";
 import TraderMenu from "@/Layouts/Partials/TraderMenu.vue";
 import AdminMenu from "@/Layouts/Partials/AdminMenu.vue";
 import NavBar from "@/Layouts/Partials/NavBar.vue";
+import MerchantMenu from "@/Layouts/Partials/MerchantMenu.vue";
 
 const is_admin = usePage().props.auth.is_admin;
 
@@ -19,6 +20,10 @@ const switchMenuMode = (mode) => {
 onMounted(() => {
     if (route().current('admin.*')) {
         switchMenuMode('admin')
+    }
+    //TODO костыль
+    if (route().current('merchants.*')) {
+        switchMenuMode('merchant')
     }
 
     initFlowbite();
@@ -53,6 +58,9 @@ const openDocs = () => {
                     />
                     <TraderMenu
                         v-show="menuMode === 'trader'"
+                    />
+                    <MerchantMenu
+                        v-show="menuMode === 'merchant'"
                     />
                     <AdminMenu
                         v-show="is_admin && menuMode === 'admin'"

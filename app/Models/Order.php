@@ -32,8 +32,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $callback_url
  * @property int $payment_gateway_id
  * @property int $payment_detail_id
+ * @property int $merchant_id
  * @property PaymentGateway $paymentGateway
  * @property PaymentDetail $paymentDetail
+ * @property Merchant $merchant
  * @property SmsLog $smsLog
  * @property Dispute $dispute
  * @property Carbon $finished_at
@@ -59,6 +61,7 @@ class Order extends Model
         'callback_url',
         'payment_gateway_id',
         'payment_detail_id',
+        'merchant_id',
         'expires_at',
         'finished_at',
     ];
@@ -108,5 +111,10 @@ class Order extends Model
     public function dispute(): HasOne
     {
         return $this->hasOne(Dispute::class);
+    }
+
+    public function merchant(): BelongsTo
+    {
+        return $this->belongsTo(Merchant::class);
     }
 }

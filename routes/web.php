@@ -45,6 +45,10 @@ Route::group(['middleware' => ['auth', 'banned', 'role:Trader|Super Admin']], fu
     Route::get('/modal/sms-logs/{user}', [\App\Http\Controllers\ModalController::class, 'smsLogs'])->name('modal.user.sms-logs');
 });
 
+Route::group(['middleware' => ['auth', 'banned', 'role:Merchant|Super Admin']], function () {
+    Route::resource('/merchants', \App\Http\Controllers\MerchantController::class)->only(['index']);
+});
+
 Route::group(['prefix' => 'admin', 'as'=>'admin.', 'middleware' => ['auth', 'banned', 'role:Super Admin']], function () {
     Route::resource('/users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'create', 'store', 'edit', 'update']);
     Route::resource('/payment-gateways', \App\Http\Controllers\Admin\PaymentGatewayController::class)->only(['index', 'create', 'store', 'edit', 'update']);
