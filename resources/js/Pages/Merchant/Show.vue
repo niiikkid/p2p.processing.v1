@@ -10,9 +10,18 @@ import HeadllesTable from "@/Components/HeadlesTable/HeadllesTable.vue";
 import HeadlessTableTr from "@/Components/HeadlesTable/HeadlessTableTr.vue";
 import DateTime from "@/Components/DateTime.vue";
 import {FwbPagination} from "flowbite-vue";
+import TextInput from "@/Components/TextInput.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import InputHelper from "@/Components/InputHelper.vue";
+import SaveButton from "@/Components/Form/SaveButton.vue";
 
 const merchant = usePage().props.merchant;
 const orders = usePage().props.orders;
+
+const form = useForm({
+    callback_url: '',
+});
 
 const tab = ref('statistics');
 
@@ -158,24 +167,28 @@ defineOptions({ layout: AuthenticatedLayout })
                             <div v-if="tab === 'settings'" class="grid grid-cols-2 gap-4">
                                 <div>
                                     <ul class="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                        <li class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg dark:border-gray-600 flex justify-between">
+                                        <li class="w-full px-4 py-3 border-b border-gray-200 rounded-t-lg dark:border-gray-600 flex justify-between">
                                             <span class="text-gray-900">Название</span>
                                             <span class="text-gray-500">Пам Пам</span>
                                         </li>
-                                        <li class="w-full px-4 py-2 border-b border-gray-200 dark:border-gray-600 flex justify-between">
+                                        <li class="w-full px-4 py-3 border-b border-gray-200 dark:border-gray-600 flex justify-between">
                                             <span class="text-gray-900">Описание</span>
                                             <span class="text-gray-500">УКП ЙУКП ЦУП УЦКПЦУКП </span>
                                         </li>
-                                        <li class="w-full px-4 py-2 border-b border-gray-200 dark:border-gray-600 flex justify-between">
+                                        <li class="w-full px-4 py-3 border-b border-gray-200 dark:border-gray-600 flex justify-between">
                                             <span class="text-gray-900">Домен</span>
                                             <span class="text-gray-500">laravel.com</span>
                                         </li>
-                                        <li class="w-full px-4 py-2 rounded-b-lg flex justify-between">
+                                        <li class="w-full px-4 py-3 border-b border-gray-200 rounded-t-lg dark:border-gray-600 flex justify-between">
                                             <span>Статус</span>
-                                            <span>
-                                            <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Остановлен</span>
-                                            <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Активен</span>
-                                        </span>
+                                                <span>
+                                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Остановлен</span>
+                                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Активен</span>
+                                            </span>
+                                        </li>
+                                        <li class="w-full px-4 py-3 rounded-b-lg flex justify-between">
+                                            <span class="text-gray-900">Secret Key</span>
+                                            <span class="text-gray-500">rwehwerkghjjienrglkwenrg</span>
                                         </li>
                                     </ul>
                                     <div class="p-4 my-8 bg-white border border-gray-200 rounded-lg sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700" aria-label="Subscribe to the Flowbite newsletter">
@@ -183,27 +196,31 @@ defineOptions({ layout: AuthenticatedLayout })
                                         <p class="mb-5 text-sm font-medium text-gray-500 dark:text-gray-300">
                                             Установите ссылку на Ваш обработчик для получения уведомлений. По ней мы будем отправлять POST запросы о статусах платежей.
                                         </p>
-                                        <form class="seva-form formkit-form" method="post">
-                                            <div class="flex items-end mb-3">
-                                                <ul class="formkit-alert formkit-alert-error"></ul>
-                                                <div class="flex items-center w-full max-w-md mb-3">
-                                                    <div class="relative w-full mr-3">
-                                                        <input
-                                                            id="member_email"
-                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                            name="email_address"
-                                                            placeholder="Введите ссылку"
-                                                            required=""
-                                                            type="email"
-                                                        >
-                                                    </div>
-                                                    <button data-element="submit">
-                                                        <span class="px-5 py-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg cursor-pointer hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                                            Сохранить
-                                                        </span>
-                                                    </button>
-                                                </div>
+                                        <form class="space-y-4" method="post">
+                                            <div>
+                                                <InputLabel
+                                                    for="callback_url"
+                                                    value="Укажите ссылку"
+                                                    :error="!!form.errors.callback_url"
+                                                />
+
+                                                <TextInput
+                                                    id="callback_url"
+                                                    v-model="form.callback_url"
+                                                    type="text"
+                                                    class="mt-1 block w-full"
+                                                    placeholder="https://example.com/webhook"
+                                                    :error="!!form.errors.callback_url"
+                                                    @input="form.clearErrors('callback_url')"
+                                                />
+
+                                                <InputError :message="form.errors.callback_url" class="mt-2" />
                                             </div>
+
+                                            <SaveButton
+                                                :disabled="form.processing"
+                                                :saved="form.recentlySuccessful"
+                                            ></SaveButton>
                                         </form>
                                     </div>
                                 </div>
