@@ -73,7 +73,7 @@ const {uid} = getCurrentInstance()
         </div>
 
         <div class="ml-3">
-            <span v-for="item in selectedTimes" class="inline-block bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 my-1 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500 text-nowrap">
+            <span v-for="item in selectedTimes" class="inline-block text-gray-900 text-xs font-medium me-2 px-2.5 py-0.5 my-1 rounded bg-gray-100 border-gray-300 dark:bg-gray-700 dark:text-gray-400 border dark:border-gray-500 text-nowrap">
                 {{item[name]}}
             </span>
         </div>
