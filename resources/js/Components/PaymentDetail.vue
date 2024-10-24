@@ -33,7 +33,7 @@ const phone = computed(() => {
             href="#"
             :data-tooltip-target="'tooltip-payment-detail'+$.uid"
             @click.prevent="copy(detail)"
-            class="hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded text-nowrap"
+            class="hover:bg-gray-100 dark:hover:bg-gray-700 p-1 rounded text-nowrap"
         >
             <template v-if="type === 'card'">
                 {{ detail.match(/.{1,4}/g).join(' ') }}
