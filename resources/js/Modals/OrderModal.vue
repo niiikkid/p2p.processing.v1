@@ -55,7 +55,7 @@ const confirmAcceptOrder = (order) => {
                             <div class="mb-3">
                                 <div v-if="orderModal.params.order.status === 'success'">
                                     <div class="flex items-center justify-center mb-2">
-                                        <svg class="w-16 h-16 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <svg class="w-16 h-16 text-green-400 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                         </svg>
                                     </div>
@@ -64,7 +64,7 @@ const confirmAcceptOrder = (order) => {
                                 </div>
                                 <div v-else-if="orderModal.params.order.status === 'fail'">
                                     <div class="flex items-center justify-center mb-2">
-                                        <svg class="w-16 h-16 text-green-500 dark:text-red-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <svg class="w-16 h-16 text-red-500 dark:text-red-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                         </svg>
                                     </div>
@@ -72,7 +72,7 @@ const confirmAcceptOrder = (order) => {
                                 </div>
                                 <div v-else-if="orderModal.params.order.status === 'pending'">
                                     <div class="flex items-center justify-center mb-2">
-                                        <svg class="w-16 h-16 text-green-500 dark:text-yellow-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <svg class="w-16 h-16 text-yellow-300 dark:text-yellow-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                         </svg>
                                     </div>
