@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Http\Requests\Merchant\StoreRequest;
 use App\Http\Resources\MerchantResource;
+use App\Http\Resources\OrderResource;
 use App\Models\Merchant;
+use App\Models\Order;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -24,7 +27,15 @@ class MerchantController extends Controller
 
     public function show(Merchant $merchant)
     {
-        return Inertia::render('Merchant/Show', compact('merchant'));
+        $orders = Order::query()
+            ->where('merchant_id', $merchant->id)
+            ->where('status', OrderStatus::SUCCESS)
+            ->orderByDesc('id')
+            ->paginate(1);
+
+        $orders = OrderResource::collection($orders);
+
+        return Inertia::render('Merchant/Show', compact('merchant', 'orders'));
     }
 
     public function create()

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->longText('callback_url')->nullable();
             $table->foreignId('payment_gateway_id')->nullable();
             $table->foreignId('payment_detail_id')->nullable();
+            $table->foreignId('merchant_id')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });

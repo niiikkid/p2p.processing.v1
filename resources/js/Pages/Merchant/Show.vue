@@ -1,16 +1,37 @@
 <script setup>
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
 import {Head, router, useForm, usePage} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Select from "@/Components/Select.vue";
-import SaveButton from "@/Components/Form/SaveButton.vue";
-import SecondaryPageSection from "@/Wrappers/SecondaryPageSection.vue";
-import TextInput from "@/Components/TextInput.vue";
-import InputHelper from "@/Components/InputHelper.vue";
 import GoBackButton from "@/Components/GoBackButton.vue";
+import {computed, onMounted, ref} from "vue";
+import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
+import OrderStatus from "@/Components/OrderStatus.vue";
+import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
+import HeadllesTable from "@/Components/HeadlesTable/HeadllesTable.vue";
+import HeadlessTableTr from "@/Components/HeadlesTable/HeadlessTableTr.vue";
+import DateTime from "@/Components/DateTime.vue";
+import {FwbPagination} from "flowbite-vue";
 
 const merchant = usePage().props.merchant;
+const orders = usePage().props.orders;
+
+const tab = ref('statistics');
+
+const openPage = (page = null) => {
+    let data = {
+        tab: tab.value
+    };
+    if (page) {
+        data.page = page;
+    }
+    router.visit(route(route().current(), merchant.id), { data: data})
+}
+
+onMounted(() => {
+    let urlParams = new URLSearchParams(window.location.search);
+    tab.value = urlParams.get('tab') ?? 'statistics'
+})
+
+const currentPage = ref(orders?.meta?.current_page)
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
@@ -20,7 +41,7 @@ defineOptions({ layout: AuthenticatedLayout })
         <Head :title="'Мерчант - ' + merchant.name"/>
 
         <div class="mx-auto space-y-4">
-            <div v-if="backLink" class="mb-3">
+            <div class="mb-3">
                 <GoBackButton @click="router.visit(route('merchants.index'))"/>
             </div>
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
@@ -29,26 +50,38 @@ defineOptions({ layout: AuthenticatedLayout })
                         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                             Мерчант - {{ merchant.name }}
                         </h2>
-
-                        <p v-if="description" class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            {{ description }}
-                        </p>
                     </header>
 
                     <div>
                         <div class="mt-6 space-y-6">
                             <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 dark:text-gray-400">
                                 <li class="me-2">
-                                    <a href="#" class="inline-block px-4 py-3 text-white bg-blue-600 rounded-lg active" aria-current="page">Статистика</a>
+                                    <a @click.prevent="tab = 'statistics'; openPage()" href="#" :class="tab === 'statistics' ? 'inline-flex px-4 py-2 text-white bg-blue-600 rounded-lg active' : 'inline-flex px-4 py-2 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white'" aria-current="page">
+                                        <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15v4m6-6v6m6-4v4m6-6v6M3 11l6-5 6 5 5.5-5.5"/>
+                                        </svg>
+                                        Статистика
+                                    </a>
                                 </li>
                                 <li class="me-2">
-                                    <a href="#"  class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white">Сделки</a>
+                                    <a @click.prevent="tab = 'payments'; openPage(1)" href="#" :class="tab === 'payments' ? 'inline-flex px-4 py-2 text-white bg-blue-600 rounded-lg active' : 'inline-flex px-4 py-2 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white'" aria-current="page">
+                                        <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17.345a4.76 4.76 0 0 0 2.558 1.618c2.274.589 4.512-.446 4.999-2.31.487-1.866-1.273-3.9-3.546-4.49-2.273-.59-4.034-2.623-3.547-4.488.486-1.865 2.724-2.899 4.998-2.31.982.236 1.87.793 2.538 1.592m-3.879 12.171V21m0-18v2.2"/>
+                                        </svg>
+                                        Платежи
+                                    </a>
                                 </li>
                                 <li class="me-2">
-                                    <a href="#"  class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white">Настройки</a>
+                                    <a @click.prevent="tab = 'settings'; openPage()" href="#" :class="tab === 'settings' ? 'inline-flex px-4 py-2 text-white bg-blue-600 rounded-lg active' : 'inline-flex px-4 py-2 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white'" aria-current="page">
+                                        <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"/>
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                                        </svg>
+                                        Настройки
+                                    </a>
                                 </li>
                             </ul>
-                            <div>
+                            <div v-if="tab === 'statistics'">
                                 <section>
                                     <div class="mx-auto text-center">
                                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg grid max-w-full mx-auto text-gray-900 lg:grid-cols-4 sm:grid-cols-3 dark:text-white">
@@ -95,6 +128,85 @@ defineOptions({ layout: AuthenticatedLayout })
                                         </div>
                                     </div>
                                 </section>
+                            </div>
+                            <div v-if="tab === 'payments'">
+                                <h2 class="text-gray-500 text-sm">Здесь отображаются только завершенные платежи</h2>
+                                <HeadllesTable>
+                                    <HeadlessTableTr
+                                        v-for="order in orders.data"
+                                    >
+                                        <HeadlessTableTh>#{{ order.id }}</HeadlessTableTh>
+                                        <HeadlessTableTd class="px-6 py-2">
+                                            <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.amount }} {{ order.currency.toUpperCase() }}</div>
+                                        </HeadlessTableTd>
+                                        <HeadlessTableTd class="px-6 py-2">
+                                            <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.amount_usdt }} {{ order.profit_currency.toUpperCase() }}</div>
+                                        </HeadlessTableTd>
+                                        <HeadlessTableTd>
+                                            <DateTime class="justify-center" :data="order.created_at"/>
+                                        </HeadlessTableTd>
+                                    </HeadlessTableTr>
+                                </HeadllesTable>
+                                <fwb-pagination
+                                    v-model="currentPage"
+                                    :total-items="orders.meta.total"
+                                    previous-label="Назад" next-label="Вперед"
+                                    @page-changed="openPage"
+                                    :per-page="orders.meta.per_page"
+                                ></fwb-pagination>
+                            </div>
+                            <div v-if="tab === 'settings'" class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <ul class="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <li class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg dark:border-gray-600 flex justify-between">
+                                            <span class="text-gray-900">Название</span>
+                                            <span class="text-gray-500">Пам Пам</span>
+                                        </li>
+                                        <li class="w-full px-4 py-2 border-b border-gray-200 dark:border-gray-600 flex justify-between">
+                                            <span class="text-gray-900">Описание</span>
+                                            <span class="text-gray-500">УКП ЙУКП ЦУП УЦКПЦУКП </span>
+                                        </li>
+                                        <li class="w-full px-4 py-2 border-b border-gray-200 dark:border-gray-600 flex justify-between">
+                                            <span class="text-gray-900">Домен</span>
+                                            <span class="text-gray-500">laravel.com</span>
+                                        </li>
+                                        <li class="w-full px-4 py-2 rounded-b-lg flex justify-between">
+                                            <span>Статус</span>
+                                            <span>
+                                            <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Остановлен</span>
+                                            <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Активен</span>
+                                        </span>
+                                        </li>
+                                    </ul>
+                                    <div class="p-4 my-8 bg-white border border-gray-200 rounded-lg sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700" aria-label="Subscribe to the Flowbite newsletter">
+                                        <h3 class="mb-3 text-xl font-medium text-gray-900 dark:text-white">Обработчик платежей</h3>
+                                        <p class="mb-5 text-sm font-medium text-gray-500 dark:text-gray-300">
+                                            Установите ссылку на Ваш обработчик для получения уведомлений. По ней мы будем отправлять POST запросы о статусах платежей.
+                                        </p>
+                                        <form class="seva-form formkit-form" method="post">
+                                            <div class="flex items-end mb-3">
+                                                <ul class="formkit-alert formkit-alert-error"></ul>
+                                                <div class="flex items-center w-full max-w-md mb-3">
+                                                    <div class="relative w-full mr-3">
+                                                        <input
+                                                            id="member_email"
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                            name="email_address"
+                                                            placeholder="Введите ссылку"
+                                                            required=""
+                                                            type="email"
+                                                        >
+                                                    </div>
+                                                    <button data-element="submit">
+                                                        <span class="px-5 py-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg cursor-pointer hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                                            Сохранить
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
