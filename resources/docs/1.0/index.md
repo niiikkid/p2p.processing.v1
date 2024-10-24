@@ -3,3 +3,6 @@
 - ## Разделы меню
     - [Валюты](/{{route}}/{{version}}/sections/currencies)
     - [Пользователи](/{{route}}/{{version}}/sections/users)
+    - [Платежные методы](/{{route}}/{{version}}/sections/payment-gateways)
+    - [Реквизиты](/{{route}}/{{version}}/sections/payment-details)
+    - [Уведомления](/{{route}}/{{version}}/sections/notifications)
