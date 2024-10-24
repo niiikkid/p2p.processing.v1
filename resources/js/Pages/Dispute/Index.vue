@@ -89,17 +89,17 @@ defineOptions({ layout: AuthenticatedLayout })
                                 :detail="dispute.payment_detail.detail"
                                 :type="dispute.payment_detail.type"
                                 :copyable="false"
-                                class="dark:text-gray-200"
+                                class="text-gray-900 dark:text-gray-200"
                             ></PaymentDetail>
-                            <div class="text-nowrap dark:text-gray-500">{{ dispute.payment_detail.name }}</div>
+                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.payment_detail.name }}</div>
                         </HeadlessTableTd>
                         <HeadlessTableTd>
-                            <div class="text-nowrap dark:text-gray-200">{{ dispute.order.amount }} {{dispute.order.currency.toUpperCase()}}</div>
-                            <div class="text-nowrap dark:text-gray-500">{{ dispute.order.amount_usdt }} {{dispute.order.profit_currency.toUpperCase()}}</div>
+                            <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ dispute.order.amount }} {{dispute.order.currency.toUpperCase()}}</div>
+                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.order.amount_usdt }} {{dispute.order.profit_currency.toUpperCase()}}</div>
                         </HeadlessTableTd>
                         <HeadlessTableTd v-if="is_admin">
-                            <div class="text-nowrap dark:text-gray-200">Трейдер</div>
-                            <div class="text-nowrap dark:text-gray-500">{{ dispute.user.email }}</div>
+                            <div class="text-nowrap text-gray-900 dark:text-gray-200">Трейдер</div>
+                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.user.email }}</div>
                         </HeadlessTableTd>
                         <HeadlessTableTd>
                             <DisputeStatus :status="dispute.status"></DisputeStatus>

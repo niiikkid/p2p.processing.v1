@@ -193,7 +193,7 @@ const confirmAcceptOrder = (order) => {
                 </template>
                 <template v-else>
                     <div>
-                        <h2 class="text-gray-300">По этой сделке был открыт спор</h2>
+                        <h2 class="text-gray-900 dark:text-gray-300">По этой сделке был открыт спор</h2>
                         <div class="flex justify-center">
                             <Link
                                 @click="modalStore.closeAll()"
