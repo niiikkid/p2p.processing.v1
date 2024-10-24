@@ -31,7 +31,7 @@ class MerchantController extends Controller
             ->where('merchant_id', $merchant->id)
             ->where('status', OrderStatus::SUCCESS)
             ->orderByDesc('id')
-            ->paginate(1);
+            ->paginate(10);
 
         $orders = OrderResource::collection($orders);
 
