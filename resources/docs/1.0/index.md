@@ -6,3 +6,5 @@
     - [Платежные методы](/{{route}}/{{version}}/sections/payment-gateways)
     - [Реквизиты](/{{route}}/{{version}}/sections/payment-details)
     - [Уведомления](/{{route}}/{{version}}/sections/notifications)
+    - [Сделки](/{{route}}/{{version}}/sections/orders)
+    - [Споры](/{{route}}/{{version}}/sections/disputes)

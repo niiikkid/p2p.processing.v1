@@ -44,7 +44,7 @@ const confirmAcceptOrder = (order) => {
 <template>
     <Modal :show="!! orderModal.showed" @close="closeModal" maxWidth="sm">
         <ModalHeader
-            :title="'Данные платежа #' + orderModal.params.order.id"
+            :title="'Данные сделки #' + orderModal.params.order.id"
             @close="closeModal"
         />
         <ModalBody>
