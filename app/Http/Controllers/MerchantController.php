@@ -55,8 +55,8 @@ class MerchantController extends Controller
 
     public function store(StoreRequest $request)
     {
-        Merchant::create([
-            'access_token' => Str::lower(Str::random(32)),
+        $merchant = Merchant::create([
+            'token' => Str::lower(Str::random(32)),
             'user_id' => auth()->id(),
             'active' => true,
             'name' => $request->name,
@@ -64,6 +64,6 @@ class MerchantController extends Controller
             'domain' => parse_url($request->project_link)['host'],
         ]);
 
-        return redirect()->route('merchants.index');
+        return redirect()->route('merchants.show', $merchant->id);
     }
 }

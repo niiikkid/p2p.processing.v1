@@ -13,7 +13,7 @@ const commissionSettings = ref(usePage().props.commissionSettings);
 const form = useForm({
     callback_url: merchant.callback_url,
 });
-const commissionEditMode = ref(false)
+const commissionEditMode = ref(false);
 
 const groupedGateways = ref(null);
 
@@ -50,7 +50,7 @@ onMounted(() => {
                 <li class="w-full px-4 py-3 rounded-b-lg flex justify-between">
                     <span class="text-gray-900 dark:text-gray-200">Secret Key</span>
                     <span class="text-gray-500 dark:text-gray-400">
-                        <CopyText class="blur blur-xs hover:blur-none" :text="'rwehwerkghjjienrglkwenrg'"></CopyText>
+                        <CopyText class="blur blur-xs hover:blur-none" :text="merchant.token"></CopyText>
                     </span>
                 </li>
             </ul>
