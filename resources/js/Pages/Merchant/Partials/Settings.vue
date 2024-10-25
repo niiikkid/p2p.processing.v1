@@ -3,14 +3,21 @@ import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import SaveButton from "@/Components/Form/SaveButton.vue";
-import {useForm} from "@inertiajs/vue3";
-import {ref} from "vue";
+import {useForm, usePage} from "@inertiajs/vue3";
+import {onMounted, ref} from "vue";
 
+const merchant = usePage().props.merchant;
+const paymentGateways = usePage().props.paymentGateways;
 const form = useForm({
     callback_url: '',
 });
-
 const commissionEditMode = ref(false)
+
+const groupedGateways = ref(null);
+
+onMounted(() => {
+    groupedGateways.value = Object.groupBy(paymentGateways.data, ({ currency }) => currency);
+})
 </script>
 
 <template>
@@ -103,17 +110,23 @@ const commissionEditMode = ref(false)
                         </button>
                     </div>
                 </div>
-                <div class="mb-5">
+                <div
+                    class="mb-5"
+                    v-for="(gateways, currency) in groupedGateways"
+                >
                     <div>
                         <span class="bg-white text-xs shadow font-semibold py-1 px-3 border dark:text-gray-200 border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
-                            RUB
+                            {{ currency.toUpperCase() }}
                         </span>
                     </div>
                     <div class="mt-3 grid grid-cols-2 gap-2">
-                        <div class="bg-white shadow text-sm font-semibold py-2 px-3 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
+                        <div
+                            class="bg-white shadow text-sm font-semibold py-2 px-3 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700"
+                            v-for="gateway in gateways"
+                        >
                             <div class="flex justify-between items-center">
                                 <div>
-                                    <div class="text-gray-900 dark:text-gray-200">SBP</div>
+                                    <div class="text-gray-900 dark:text-gray-200">{{ gateway.original_name }}</div>
                                     <div class="text-xs flex">
                                         <div class="flex items-center mr-1 text-gray-500 dark:text-gray-400">
                                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -130,7 +143,7 @@ const commissionEditMode = ref(false)
                                     </div>
                                 </div>
                                 <div class="text-gray-900 dark:text-gray-200 text-xl">
-                                    9%
+                                    {{gateway.service_commission_rate}}%
                                 </div>
                             </div>
                             <div v-if="commissionEditMode === true" class="flex items-center mt-2">

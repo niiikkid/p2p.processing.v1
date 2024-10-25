@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\DisputeStatus;
 use App\Observers\DisputeObserver;
-use App\Observers\OrderObserver;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

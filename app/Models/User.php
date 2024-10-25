@@ -3,7 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Observers\UserObserver;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,10 +23,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Collection<int, SmsLog> $smsLogs
  * @property Wallet $wallet
  * @property Telegram $telegram
+ * @property UserMeta $meta
  * @property Carbon $banned_at
  * @property Carbon $created_at
  * @property Carbon $updated_At
  */
+#[ObservedBy([UserObserver::class])]
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles;
@@ -84,5 +88,10 @@ class User extends Authenticatable
     public function telegram(): HasOne
     {
         return $this->hasOne(Telegram::class);
+    }
+
+    public function meta(): HasMany
+    {
+        return $this->hasMany(UserMeta::class);
     }
 }

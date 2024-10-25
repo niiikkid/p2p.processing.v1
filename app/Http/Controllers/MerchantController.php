@@ -6,8 +6,10 @@ use App\Enums\OrderStatus;
 use App\Http\Requests\Merchant\StoreRequest;
 use App\Http\Resources\MerchantResource;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\PaymentGatewayResource;
 use App\Models\Merchant;
 use App\Models\Order;
+use App\Models\PaymentGateway;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -33,9 +35,12 @@ class MerchantController extends Controller
             ->orderByDesc('id')
             ->paginate(10);
 
-        $orders = OrderResource::collection($orders);
+        $paymentGateways = queries()->paymentGateway()->getAllActive();
 
-        return Inertia::render('Merchant/Show', compact('merchant', 'orders'));
+        $orders = OrderResource::collection($orders);
+        $paymentGateways = PaymentGatewayResource::collection($paymentGateways);
+
+        return Inertia::render('Merchant/Show', compact('merchant', 'orders', 'paymentGateways'));
     }
 
     public function create()
