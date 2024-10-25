@@ -50,7 +50,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <fwb-table-cell>{{ payment_gateway.code }}</fwb-table-cell>
                             <fwb-table-cell>{{ payment_gateway.currency }}</fwb-table-cell>
                             <fwb-table-cell>{{ payment_gateway.min_limit }}/{{ payment_gateway.max_limit }}</fwb-table-cell>
-                            <fwb-table-cell>{{ payment_gateway.commission_rate }} %</fwb-table-cell>
+                            <fwb-table-cell>{{ payment_gateway.commission_rate }}% / {{ payment_gateway.service_commission_rate }}%</fwb-table-cell>
                             <fwb-table-cell>
                                 <IsActiveStatus :is_active="payment_gateway.is_active"></IsActiveStatus>
                             </fwb-table-cell>

@@ -30,6 +30,7 @@ class PaymentGatewayResource extends JsonResource
             'min_limit' => $this->min_limit,
             'max_limit' => $this->max_limit,
             'commission_rate' => $this->commission_rate,
+            'service_commission_rate' => $this->service_commission_rate,
             'is_active' => $this->is_active,
             'reservation_time' => $this->reservation_time,
         ];

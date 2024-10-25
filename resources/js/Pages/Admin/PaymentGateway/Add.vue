@@ -21,6 +21,7 @@ const form = useForm({
     min_limit: null,
     max_limit: null,
     commission_rate: null,
+    service_commission_rate: null,
     is_active: true,
     reservation_time: null,
     currency: null,
@@ -158,7 +159,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                     id="commission_rate"
                                     v-model="form.commission_rate"
                                     class="mt-1 block w-full"
-                                    step="0.01"
+                                    step="0.1"
                                     placeholder="0.0"
                                     :error="!!form.errors.commission_rate"
                                     @input="form.clearErrors('commission_rate')"
@@ -166,6 +167,27 @@ defineOptions({ layout: AuthenticatedLayout })
 
                                 <InputError :message="form.errors.commission_rate" class="mt-2" />
                                 <InputHelper v-if="! form.errors.commission_rate" model-value="Наценка на курс в %, которую забирает себе трейдер"></InputHelper>
+                            </div>
+
+                            <div>
+                                <InputLabel
+                                    for="service_commission_rate"
+                                    value="Комиссия сервиса"
+                                    :error="!!form.errors.service_commission_rate"
+                                />
+
+                                <NumberInput
+                                    id="service_commission_rate"
+                                    v-model="form.service_commission_rate"
+                                    class="mt-1 block w-full"
+                                    step="0.1"
+                                    placeholder="0.0"
+                                    :error="!!form.errors.service_commission_rate"
+                                    @input="form.clearErrors('service_commission_rate')"
+                                />
+
+                                <InputError :message="form.errors.service_commission_rate" class="mt-2" />
+                                <InputHelper v-if="! form.errors.service_commission_rate" model-value="Наценка на базовую сумму сделки, которую забирает себе сервис."></InputHelper>
                             </div>
 
                             <div>

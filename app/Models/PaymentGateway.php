@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $min_limit
  * @property string $max_limit
  * @property float $commission_rate
+ * @property float $service_commission_rate
  * @property string $is_active
  * @property int $reservation_time
  * @property array<int, DetailType> $detail_types
@@ -40,6 +41,7 @@ class PaymentGateway extends Model
         'min_limit',
         'max_limit',
         'commission_rate',
+        'service_commission_rate',
         'is_active',
         'reservation_time',
         'detail_types',

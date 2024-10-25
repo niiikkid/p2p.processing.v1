@@ -35,6 +35,7 @@ class StoreRequest extends FormRequest
             'min_limit' => ['required', 'integer', 'min:1'],
             'max_limit' => ['required', 'integer', 'min:1'],
             'commission_rate' => ['required', 'numeric', 'min:0'],
+            'service_commission_rate' => ['required', 'numeric', 'min:0'],
             'is_active' => ['required', 'boolean'],
             'reservation_time' => ['required', 'integer', 'min:1'],
         ];
@@ -49,7 +50,8 @@ class StoreRequest extends FormRequest
             'detail_types' => __('тип реквизитов'),
             'sub_payment_gateways' => __('вспомогательный метод'),
             'max_limit' => __('макс лимит'),
-            'commission_rate' => __('комиссия %'),
+            'commission_rate' => __('комиссия трейдера'),
+            'service_commission_rate' => __('комиссия сервиса'),
             'is_active' => __('активность'),
             'reservation_time' => __('время резервирования'),
         ];
