@@ -86,9 +86,9 @@ defineOptions({ layout: AuthenticatedLayout })
                                     <span class="font-medium">Внимание!</span> Мерчант заблокирован администратором.
                                 </div>
                             </div>
-                            <Statistics v-if="tab === 'statistics'"/>
-                            <Payments v-if="tab === 'payments'" @openPage="openPage"/>
-                            <Settings v-if="tab === 'settings'"/>
+                            <Statistics v-show="tab === 'statistics'"/>
+                            <Payments v-show="tab === 'payments'" @openPage="openPage"/>
+                            <Settings v-show="tab === 'settings'"/>
                         </div>
                     </div>
                 </section>
