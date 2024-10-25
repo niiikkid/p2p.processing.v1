@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property string $name
  * @property string $description
- * @property string $project_link
+ * @property string $domain
+ * @property string $callback_url
  * @property string $token
  * @property boolean $active
  * @property int $user_id
@@ -31,7 +32,8 @@ class Merchant extends Model
     protected $fillable = [
         'name',
         'description',
-        'project_link',
+        'domain',
+        'callback_url',
         'token',
         'user_id',
         'active',

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('min_limit')->nullable();
             $table->string('max_limit')->nullable();
             $table->float('commission_rate', 2)->nullable();
+            $table->float('service_commission_rate', 2)->default(9)->nullable();
             $table->boolean('is_active')->default(true);
             $table->longText('detail_types')->nullable();
             $table->longText('sub_payment_gateways')->nullable();

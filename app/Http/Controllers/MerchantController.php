@@ -59,7 +59,10 @@ class MerchantController extends Controller
             'access_token' => Str::lower(Str::random(32)),
             'user_id' => auth()->id(),
             'active' => true,
-        ] + $request->validated());
+            'name' => $request->name,
+            'description' => $request->description,
+            'domain' => parse_url($request->project_link)['host'],
+        ]);
 
         return redirect()->route('merchants.index');
     }

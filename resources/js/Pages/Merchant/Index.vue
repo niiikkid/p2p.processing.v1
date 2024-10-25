@@ -38,7 +38,7 @@ defineOptions({ layout: AuthenticatedLayout })
                     >
                         <HeadlessTableTh>#{{ merchant.id }}</HeadlessTableTh>
                         <HeadlessTableTd>{{merchant.name}}</HeadlessTableTd>
-                        <HeadlessTableTd>{{merchant.project_link}}</HeadlessTableTd>
+                        <HeadlessTableTd>{{merchant.domain}}</HeadlessTableTd>
                         <HeadlessTableTd>
                             <div class="flex items-center text-nowrap text-gray-900 dark:text-gray-200">
                                 <template v-if="merchant.active">

@@ -22,7 +22,7 @@ class MerchantResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'project_link' => $this->project_link,
+            'domain' => $this->domain,
             'token' => $this->token,
             'user_id' => $this->user_id,
             'active' => $this->active,

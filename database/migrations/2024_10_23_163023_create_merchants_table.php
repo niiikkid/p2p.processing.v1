@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->longText('description')->nullable();
-            $table->string('project_link')->nullable();
+            $table->string('domain')->nullable();
+            $table->string('callback_url')->nullable();
             $table->string('token')->nullable();
             $table->foreignId('user_id')->nullable();
             $table->boolean('active')->nullable();
