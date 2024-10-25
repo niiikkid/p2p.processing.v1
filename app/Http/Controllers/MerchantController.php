@@ -9,7 +9,6 @@ use App\Http\Resources\OrderResource;
 use App\Http\Resources\PaymentGatewayResource;
 use App\Models\Merchant;
 use App\Models\Order;
-use App\Models\PaymentGateway;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -37,10 +36,16 @@ class MerchantController extends Controller
 
         $paymentGateways = queries()->paymentGateway()->getAllActive();
 
+        $commissionSettings = auth()->user()->meta->service_commissions;
+
+        $paymentGateways->each(function ($paymentGateway) use (&$commissionSettings) {
+            $commissionSettings[$paymentGateway->id] = $paymentGateway->service_commission_rate;
+        });
+
         $orders = OrderResource::collection($orders);
         $paymentGateways = PaymentGatewayResource::collection($paymentGateways);
 
-        return Inertia::render('Merchant/Show', compact('merchant', 'orders', 'paymentGateways'));
+        return Inertia::render('Merchant/Show', compact('merchant', 'orders', 'paymentGateways', 'commissionSettings'));
     }
 
     public function create()

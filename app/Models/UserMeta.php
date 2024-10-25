@@ -23,6 +23,10 @@ class UserMeta extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'service_commissions' => 'array',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

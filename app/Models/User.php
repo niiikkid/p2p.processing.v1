@@ -90,8 +90,8 @@ class User extends Authenticatable
         return $this->hasOne(Telegram::class);
     }
 
-    public function meta(): HasMany
+    public function meta(): HasOne
     {
-        return $this->hasMany(UserMeta::class);
+        return $this->hasOne(UserMeta::class);
     }
 }
