@@ -53,6 +53,8 @@ class MerchantController extends Controller
         $orders = OrderResource::collection($orders);
         $paymentGateways = PaymentGatewayResource::collection($paymentGateways);
 
+        $merchant = MerchantResource::make($merchant)->resolve();
+
         return Inertia::render('Merchant/Show', compact('merchant', 'orders', 'paymentGateways', 'commissionSettings'));
     }
 

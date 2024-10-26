@@ -104,6 +104,10 @@ onMounted(() => {
                         <CopyText class="blur blur-xs hover:blur-none" :text="merchant.token"></CopyText>
                     </span>
                 </li>
+                <li v-if="route().current('admin.*')" class="w-full px-4 py-3 rounded-b-lg flex justify-between">
+                    <span class="text-gray-900 dark:text-gray-200">Владелец</span>
+                    <span class="text-gray-500 dark:text-gray-400">{{ merchant.owner.email }}</span>
+                </li>
             </ul>
             <div v-if="route().current('admin.*')" class="my-8">
                 <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-3">Модерация</h3>
