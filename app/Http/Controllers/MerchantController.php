@@ -104,4 +104,27 @@ class MerchantController extends Controller
             'service_commissions' => $commissionSettings
         ]);
     }
+
+    public function ban(Merchant $merchant)
+    {
+        $merchant->update([
+            'banned_at' => now(),
+            'validated_at' => now(),
+        ]);
+    }
+
+    public function unban(Merchant $merchant)
+    {
+        $merchant->update([
+            'banned_at' => null,
+            'validated_at' => now(),
+        ]);
+    }
+
+    public function validated(Merchant $merchant)
+    {
+        $merchant->update([
+            'validated_at' => now(),
+        ]);
+    }
 }

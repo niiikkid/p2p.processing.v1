@@ -7,23 +7,24 @@ import {useForm, usePage} from "@inertiajs/vue3";
 import {onMounted, ref} from "vue";
 import CopyText from "@/Components/CopyText.vue";
 
-const merchant = usePage().props.merchant;
+const merchant = ref(usePage().props.merchant);
 const paymentGateways = usePage().props.paymentGateways;
 const commissionSettings = ref(usePage().props.commissionSettings);
 
 const formCallback = useForm({
-    callback_url: merchant.callback_url,
+    callback_url: merchant.value.callback_url,
 });
 const formCommission = useForm({
     commission_settings: null,
 });
+const formStatus = useForm({});
 
 const commissionEditMode = ref(false);
 
 const groupedGateways = ref(null);
 
 const submitCallback = () => {
-    formCallback.patch(route('merchants.callback.update', merchant.id), {
+    formCallback.patch(route('merchants.callback.update', merchant.value.id), {
         preserveScroll: true,
     });
 };
@@ -35,9 +36,35 @@ const submitCommission = () => {
 
             return data;
         })
-        .patch(route('merchants.commission.update', merchant.id), {
+        .patch(route('merchants.commission.update', merchant.value.id), {
             preserveScroll: true,
         });
+};
+
+const submitBan = () => {
+    formStatus.patch(route('admin.merchants.ban', merchant.value.id), {
+        preserveScroll: true,
+        onSuccess: (result) => {
+            merchant.value = result.props.merchant;
+        },
+    });
+};
+const submitUnban = () => {
+    formStatus.patch(route('admin.merchants.unban', merchant.value.id), {
+        preserveScroll: true,
+        onSuccess: (result) => {
+            merchant.value = result.props.merchant;
+        },
+    });
+};
+
+const submitValidated = () => {
+    formStatus.patch(route('admin.merchants.validated', merchant.value.id), {
+        preserveScroll: true,
+        onSuccess: (result) => {
+            merchant.value = result.props.merchant;
+        },
+    });
 };
 
 
@@ -78,6 +105,59 @@ onMounted(() => {
                     </span>
                 </li>
             </ul>
+            <div class="my-8">
+                <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-3">Администрирование</h3>
+                <div class="p-6 bg-white shadow border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
+                    <p class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-300">
+                        Разрешите работу магазина или заблокируйте его.
+                    </p>
+                    <form @submit.prevent="submitCallback">
+                        <div class="flex items-center justify-center">
+                            <h1 class="text-gray-500 dark:text-gray-400 text-sm mr-3">Текущий статус:</h1>
+                            <div class="flex items-center text-nowrap text-gray-900 dark:text-gray-200">
+                                <template v-if="! merchant.validated_at">
+                                    <div class="h-2.5 w-2.5 rounded-full bg-yellow-400 dark:bg-yellow-500 me-2"></div> На модерации
+                                </template>
+                                <template v-else-if="merchant.banned_at">
+                                    <div class="h-2.5 w-2.5 rounded-full bg-red-500 dark:bg-red-500 me-2"></div> Заблокирован
+                                </template>
+                                <template v-else-if="merchant.active">
+                                    <div class="h-2.5 w-2.5 rounded-full bg-green-400 dark:bg-green-500 me-2"></div> Включен
+                                </template>
+                                <template v-else>
+                                    <div class="h-2.5 w-2.5 rounded-full bg-red-500 dark:bg-red-500 me-2"></div> Выключен
+                                </template>
+                            </div>
+                        </div>
+                        <div class="flex justify-center mt-3 gap-2">
+                            <button
+                                @click="submitValidated"
+                                v-if="! merchant.validated_at"
+                                type="button"
+                                class="px-3 py-2 text-sm font-medium focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                            >
+                                Разрешить
+                            </button>
+                            <button
+                                @click="submitUnban"
+                                v-if="merchant.banned_at"
+                                type="button"
+                                class="px-3 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            >
+                                Разблокировать
+                            </button>
+                            <button
+                                @click="submitBan"
+                                v-else
+                                type="button"
+                                class="px-3 py-2 text-sm font-medium focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 rounded-lg dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                            >
+                                Заблокировать
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div class="my-8">
                 <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-3">Обработчик платежей</h3>
                 <div class="p-6 bg-white shadow border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">

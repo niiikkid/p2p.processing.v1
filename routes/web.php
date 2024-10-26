@@ -83,6 +83,9 @@ Route::group(['prefix' => 'admin', 'as'=>'admin.', 'middleware' => ['auth', 'ban
 
     Route::get('/merchants', [\App\Http\Controllers\Admin\MerchantController::class, 'index'])->name('merchants.index');
     Route::get('/merchants/{merchant}', [\App\Http\Controllers\MerchantController::class, 'show'])->name('merchants.show');
+    Route::patch('/merchants/{merchant}/ban', [\App\Http\Controllers\MerchantController::class, 'ban'])->name('merchants.ban');
+    Route::patch('/merchants/{merchant}/unban', [\App\Http\Controllers\MerchantController::class, 'unban'])->name('merchants.unban');
+    Route::patch('/merchants/{merchant}/validated', [\App\Http\Controllers\MerchantController::class, 'validated'])->name('merchants.validated');
 });
 
 Route::any('/telegram-bot/{token}/webhook', [\App\Http\Controllers\TelegramBotWebhookController::class, 'store'])->name('telegram-bot.webhook');
