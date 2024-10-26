@@ -51,7 +51,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         </HeadlessTableTd>
                     </HeadlessTableTr>
                 </HeadllesTable>-->
-                <section class="bg-gray-50 antialiased dark:bg-gray-900">
+                <section class="antialiased dark:bg-gray-900">
                     <div class="mx-auto max-w-screen-xl 2xl:px-0">
                         <div class="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-3">
                             <div
@@ -68,29 +68,29 @@ defineOptions({ layout: AuthenticatedLayout })
                                         <p class="text-sm font-medium text-gray-900 dark:text-white">2400$</p>
                                     </div>
 
-                                    <p class="mt-2 text-lg font-extrabold leading-tight text-gray-900 dark:text-blue-500">{{ merchant.domain }}</p>
+                                    <p class="mt-2 text-lg font-extrabold leading-tight text-blue-500 dark:text-blue-500">{{ merchant.domain }}</p>
 
                                     <div class="mt-4 text-sm flex items-end justify-between">
                                         <ul class="flex items-center">
                                             <div class="flex items-center text-nowrap text-gray-900 dark:text-gray-200">
                                                 <template v-if="! merchant.validated_at">
-                                                    <div class="h-2.5 w-2.5 rounded-full bg-yellow-500 me-2"></div> На модерации
+                                                    <div class="h-2.5 w-2.5 rounded-full bg-yellow-400 dark:bg-yellow-500 me-2"></div> На модерации
                                                 </template>
                                                 <template v-else-if="merchant.banned_at">
-                                                    <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Заблокирован
+                                                    <div class="h-2.5 w-2.5 rounded-full bg-red-500 dark:bg-red-500 me-2"></div> Заблокирован
                                                 </template>
                                                 <template v-else-if="merchant.active">
-                                                    <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div> Включен
+                                                    <div class="h-2.5 w-2.5 rounded-full bg-green-400 dark:bg-green-500 me-2"></div> Включен
                                                 </template>
                                                 <template v-else>
-                                                    <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Выключен
+                                                    <div class="h-2.5 w-2.5 rounded-full bg-red-500 dark:bg-red-500 me-2"></div> Выключен
                                                 </template>
                                             </div>
                                         </ul>
 
                                         <button
                                             type="button"
-                                            class="inline-flex items-center rounded-lg bg-primary-700 px-0 py-0 text-sm font-medium text-white hover:text-blue-500 hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                            class="inline-flex items-center rounded-lg bg-primary-700 px-0 py-0 text-sm font-medium text-gray-500 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                                             @click.prevent="router.visit(route('merchants.show', merchant.id))"
                                         >
                                             Перейти
