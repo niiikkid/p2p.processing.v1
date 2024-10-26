@@ -272,6 +272,11 @@ return [
         'username'                 => 'никнейм',
         'value'                    => 'значение',
         'year'                     => 'год',
-        'callback_url'             => 'колбек ссылка'
+        'callback_url'             => 'колбек ссылка',
+        'merchant'                 => 'мерчант',
+        'payment_gateway'          => 'платежный метод',
+        'external_id'              => 'внешний id',
+        'order'                    => 'сделка',
+        'receipt'                  => 'чек',
     ],
 ];

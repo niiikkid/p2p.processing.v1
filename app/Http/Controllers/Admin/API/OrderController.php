@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Order\StoreRequest;
 use App\Http\Resources\PaymentGatewayResource;
+use App\Models\Merchant;
 use App\Models\Order;
 use App\Services\Money\Currency;
 use Illuminate\Http\Request;
@@ -22,22 +23,34 @@ class OrderController extends Controller
             return ['code' => strtoupper($currency->getCode())];
         })->toArray();
 
-        return Inertia::render('Admin/API/Order/Index', compact('currencies', 'paymentGateways'));
+        $merchants = Merchant::query()
+            ->where('user_id', auth()->user()->id)
+            ->orderByDesc('id')
+            ->get()
+            ->transform(function (Merchant $merchant) {
+                $data['id'] = $merchant->id;
+                $data['name'] = $merchant->name;
+
+                return $data;
+            });
+
+        return Inertia::render('Admin/API/Order/Index', compact('currencies', 'paymentGateways', 'merchants'));
     }
 
     public function store(StoreRequest $request)
-    {//TODO
+    {
+        //TODO
         $data = $request->all();
 
         $data['nonce'] = now()->getTimestampMs();
 
-        $order = Order::find($request->order);
+        $merchant = Merchant::find($request->merchant);
 
         $result = Http::asJson()
             ->withoutVerifying()
             ->withHeaders([
                 'Idempotency-Key' => Str::random(32),
-                'Token' => $order->merchant->token,
+                'Token' => $merchant->token,
                 'Accept' => 'application/json',
             ])
             ->timeout(15)

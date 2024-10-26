@@ -12,6 +12,7 @@ import {ref} from "vue";
 
 const payment_gateways = usePage().props.paymentGateways;
 const currencies = usePage().props.currencies;
+const merchants = usePage().props.merchants;
 
 const form = useForm({
     external_id: null,
@@ -19,6 +20,7 @@ const form = useForm({
     callback_url: null,
     payment_gateway: 0,
     currency: 0,
+    merchant: 0,
 });
 
 const error = ref(null);
@@ -27,7 +29,9 @@ const submit = () => {
     form
         .transform((data) => {
             if (data.payment_gateway === 0) {
-                data.currency = data.currency.toLowerCase()
+                if (data.currency) {
+                    data.currency = data.currency.toLowerCase()
+                }
                 delete data.payment_gateway;
             }
             if (data.currency === 0) {
@@ -199,6 +203,29 @@ defineOptions({ layout: AuthenticatedLayout })
                                     <InputError :message="form.errors.currency" class="mt-2" />
                                     <InputHelper v-if="! form.errors.currency" model-value="Будет использован любой платежный метод в рамках выбранной валюты."></InputHelper>
                                 </div>
+                            </div>
+
+                            <div>
+                                <InputLabel
+                                    for="merchant"
+                                    value="Мерчант"
+                                    :error="!!form.errors.merchant"
+                                    class="mb-1"
+                                />
+                                <Select
+                                    id="merchant"
+                                    v-model="form.merchant"
+                                    :error="!!form.errors.merchant"
+                                    :items="merchants"
+                                    key="id"
+                                    value="id"
+                                    name="name"
+                                    default_title="Выберите мерчант"
+                                    @change="form.clearErrors('merchant')"
+                                ></Select>
+
+                                <InputError :message="form.errors.merchant" class="mt-2" />
+                                <InputHelper v-if="! form.errors.merchant" model-value="Список содержит только ваши мерчанты."></InputHelper>
                             </div>
 
                             <div v-if="error" class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
