@@ -26,6 +26,10 @@ class MerchantResource extends JsonResource
             'token' => $this->token,
             'user_id' => $this->user_id,
             'active' => $this->active,
+            'owner' => [ //TODO hide if not exists
+                'id' => $this->user->id,
+                'email' => $this->user->email,
+            ],
             'validated_at' => $this->validated_at?->toDateTimeString(),
             'banned_at' => $this->banned_at?->toDateTimeString(),
             'created_at' => $this->created_at->toDateTimeString(),

@@ -46,7 +46,7 @@ Route::group(['middleware' => ['auth', 'banned', 'role:Trader|Super Admin']], fu
 });
 
 Route::group(['middleware' => ['auth', 'banned', 'role:Merchant|Super Admin']], function () {
-    Route::resource('/merchants', \App\Http\Controllers\MerchantController::class)->only(['index', 'show', 'create', 'store', 'edit', 'update']);
+    Route::resource('/merchants', \App\Http\Controllers\MerchantController::class)->only(['index', 'show', 'create', 'store']);
     Route::patch('/merchants/{merchant}/callback', [\App\Http\Controllers\MerchantController::class, 'updateCallbackURL'])->name('merchants.callback.update');
     Route::patch('/merchants/{merchant}/commission', [\App\Http\Controllers\MerchantController::class, 'updateCommissionSettings'])->name('merchants.commission.update');
 });
@@ -80,6 +80,8 @@ Route::group(['prefix' => 'admin', 'as'=>'admin.', 'middleware' => ['auth', 'ban
     Route::patch('/settings/update/prime-time-bonus', [\App\Http\Controllers\Admin\SettingsController::class, 'updatePrimeTimeBonus'])->name('settings.update.prime-time-bonus');
 
     Route::resource('/notifications', \App\Http\Controllers\Admin\NotificationController::class)->only('index', 'store');
+
+    Route::resource('/merchants', \App\Http\Controllers\Admin\MerchantController::class)->only(['index', 'show', 'create', 'store', 'edit', 'update']);
 });
 
 Route::any('/telegram-bot/{token}/webhook', [\App\Http\Controllers\TelegramBotWebhookController::class, 'store'])->name('telegram-bot.webhook');

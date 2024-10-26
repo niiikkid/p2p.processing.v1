@@ -29,6 +29,7 @@ class MerchantController extends Controller
 
     public function show(Merchant $merchant)
     {
+        //TODO check ownership
         $orders = Order::query()
             ->where('merchant_id', $merchant->id)
             ->where('status', OrderStatus::SUCCESS)
@@ -76,6 +77,7 @@ class MerchantController extends Controller
 
     public function updateCallbackURL(Request $request, Merchant $merchant)
     {
+        //TODO check ownership
         $request->validate(['callback_url' => 'required', 'string', 'url', 'max:256']);
 
         $merchant->update([
@@ -85,6 +87,7 @@ class MerchantController extends Controller
 
     public function updateCommissionSettings(Request $request, Merchant $merchant)
     {
+        //TODO check ownership
         $request->validate([
             'commission_settings' => 'required', 'array',
         ]);
