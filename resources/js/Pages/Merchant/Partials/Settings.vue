@@ -10,12 +10,36 @@ import CopyText from "@/Components/CopyText.vue";
 const merchant = usePage().props.merchant;
 const paymentGateways = usePage().props.paymentGateways;
 const commissionSettings = ref(usePage().props.commissionSettings);
-const form = useForm({
+
+const formCallback = useForm({
     callback_url: merchant.callback_url,
 });
+const formCommission = useForm({
+    commission_settings: null,
+});
+
 const commissionEditMode = ref(false);
 
 const groupedGateways = ref(null);
+
+const submitCallback = () => {
+    formCallback.patch(route('merchants.callback.update', merchant.id), {
+        preserveScroll: true,
+    });
+};
+
+const submitCommission = () => {
+    formCommission
+        .transform((data) => {
+            data.commission_settings = commissionSettings.value;
+
+            return data;
+        })
+        .patch(route('merchants.commission.update', merchant.id), {
+            preserveScroll: true,
+        });
+};
+
 
 onMounted(() => {
     groupedGateways.value = Object.groupBy(paymentGateways.data, ({ currency }) => currency);
@@ -60,30 +84,30 @@ onMounted(() => {
                     <p class="mb-5 text-sm font-medium text-gray-500 dark:text-gray-300">
                         Установите ссылку на Ваш обработчик для получения уведомлений. По ней мы будем отправлять POST запросы о статусах платежей.
                     </p>
-                    <form class="space-y-4" method="post">
+                    <form class="space-y-4" @submit.prevent="submitCallback">
                         <div>
                             <InputLabel
                                 for="callback_url"
                                 value="Укажите ссылку"
-                                :error="!!form.errors.callback_url"
+                                :error="!!formCallback.errors.callback_url"
                             />
 
                             <TextInput
                                 id="callback_url"
-                                v-model="form.callback_url"
+                                v-model="formCallback.callback_url"
                                 type="text"
                                 class="mt-1 block w-full"
                                 placeholder="https://example.com/webhook"
-                                :error="!!form.errors.callback_url"
-                                @input="form.clearErrors('callback_url')"
+                                :error="!!formCallback.errors.callback_url"
+                                @input="formCallback.clearErrors('callback_url')"
                             />
 
-                            <InputError :message="form.errors.callback_url" class="mt-2" />
+                            <InputError :message="formCallback.errors.callback_url" class="mt-2" />
                         </div>
 
                         <SaveButton
-                            :disabled="form.processing"
-                            :saved="form.recentlySuccessful"
+                            :disabled="formCallback.processing"
+                            :saved="formCallback.recentlySuccessful"
                         ></SaveButton>
                     </form>
                 </div>
@@ -109,7 +133,7 @@ onMounted(() => {
                         <button v-if="commissionEditMode === false" @click.prevent="commissionEditMode = true" type="button" class="px-2 py-1 text-xs shadow font-medium text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
                             Изменить
                         </button>
-                        <button v-else @click.prevent="commissionEditMode = false" type="button" class="px-2 py-1 text-xs shadow font-medium text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg text-center dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800">
+                        <button v-else @click.prevent="submitCommission(); commissionEditMode = false" type="button" class="px-2 py-1 text-xs shadow font-medium text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg text-center dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800">
                             Сохранить
                         </button>
                     </div>

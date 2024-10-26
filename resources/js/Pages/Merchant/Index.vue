@@ -73,7 +73,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                     <div class="mt-4 text-sm flex items-end justify-between">
                                         <ul class="flex items-center">
                                             <div class="flex items-center text-nowrap text-gray-900 dark:text-gray-200">
-                                                <template v-if="merchant.validated_at">
+                                                <template v-if="! merchant.validated_at">
                                                     <div class="h-2.5 w-2.5 rounded-full bg-yellow-500 me-2"></div> На модерации
                                                 </template>
                                                 <template v-else-if="merchant.banned_at">

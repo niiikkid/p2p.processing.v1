@@ -9,6 +9,7 @@ use App\Http\Resources\OrderResource;
 use App\Http\Resources\PaymentGatewayResource;
 use App\Models\Merchant;
 use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -19,7 +20,7 @@ class MerchantController extends Controller
         $merchants = Merchant::query()
             ->where('user_id', auth()->user()->id)
             ->orderByDesc('id')
-            ->paginate(10);
+            ->paginate(9);
 
         $merchants = MerchantResource::collection($merchants);
 
@@ -38,9 +39,15 @@ class MerchantController extends Controller
 
         $commissionSettings = auth()->user()->meta->service_commissions;
 
-        $paymentGateways->each(function ($paymentGateway) use (&$commissionSettings) {
-            $commissionSettings[$paymentGateway->id] = $paymentGateway->service_commission_rate;
-        });
+        if (empty($commissionSettings[$merchant->id])) {
+            $commissionSettings = [];
+
+            $paymentGateways->each(function ($paymentGateway) use (&$commissionSettings) {
+                $commissionSettings[$paymentGateway->id] = $paymentGateway->service_commission_rate;
+            });
+        } else {
+            $commissionSettings = $commissionSettings[$merchant->id];
+        }
 
         $orders = OrderResource::collection($orders);
         $paymentGateways = PaymentGatewayResource::collection($paymentGateways);
@@ -65,5 +72,33 @@ class MerchantController extends Controller
         ]);
 
         return redirect()->route('merchants.show', $merchant->id);
+    }
+
+    public function updateCallbackURL(Request $request, Merchant $merchant)
+    {
+        $request->validate(['callback_url' => 'required', 'string', 'url', 'max:256']);
+
+        $merchant->update([
+            'callback_url' => $request->callback_url
+        ]);
+    }
+
+    public function updateCommissionSettings(Request $request, Merchant $merchant)
+    {
+        $request->validate([
+            'commission_settings' => 'required', 'array',
+        ]);
+
+        $commissionSettings = auth()->user()->meta->service_commissions;
+
+        if (empty($commissionSettings[$merchant->id])) {
+            $commissionSettings = [];
+        }
+
+        $commissionSettings[$merchant->id] = $request->commission_settings;
+
+        auth()->user()->meta->update([
+            'service_commissions' => $commissionSettings
+        ]);
     }
 }
