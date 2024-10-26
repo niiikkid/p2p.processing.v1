@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Order\StoreRequest;
 use App\Http\Resources\PaymentGatewayResource;
+use App\Models\Order;
 use App\Services\Money\Currency;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -25,16 +26,18 @@ class OrderController extends Controller
     }
 
     public function store(StoreRequest $request)
-    {
+    {//TODO
         $data = $request->all();
 
         $data['nonce'] = now()->getTimestampMs();
+
+        $order = Order::find($request->order);
 
         $result = Http::asJson()
             ->withoutVerifying()
             ->withHeaders([
                 'Idempotency-Key' => Str::random(32),
-                'Signature-Token' => sign_request($data, config('app.api_secret_key')),
+                'Token' => $order->merchant->token,
                 'Accept' => 'application/json',
             ])
             ->timeout(15)

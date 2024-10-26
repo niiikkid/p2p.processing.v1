@@ -31,10 +31,10 @@ class OrderCallbackService implements OrderCallbackServiceContract
             'current_server_time' => now()->getTimestamp(),
         ];
 
-        $signature_token = sign_request($data, config('app.api_secret_key'));
+        $token = $order->merchant->token;
 
         Http::withoutVerifying()
-            ->withHeader('Signature-Token', $signature_token)
+            ->withHeader('Merchant-Token', $token)
             ->post(
                 url: $order->callback_url,
                 data: $data

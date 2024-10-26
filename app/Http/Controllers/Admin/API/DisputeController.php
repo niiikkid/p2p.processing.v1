@@ -28,17 +28,19 @@ class DisputeController extends Controller
     }
 
     public function store(StoreRequest $request)
-    {
+    {//TODO
         $receipt = $request->file('receipt');
 
         $data = $request->only('receipt');
         $data['nonce'] = now()->getTimestampMs();
 
+        $order = Order::find($request->order);
+
         $result = Http::asMultipart()
             ->withoutVerifying()
             ->withHeaders([
                 'Idempotency-Key' => Str::random(32),
-                'Signature-Token' => sign_request($data, config('app.api_secret_key')),
+                'Token' => $order->merchant->token,
                 'Accept' => 'application/json',
             ])
             ->attach('receipt', file_get_contents($receipt), 'receipt.'.$request->receipt->extension())

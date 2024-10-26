@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Merchant;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,14 +16,15 @@ class ValidateApiSignature
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! is_production() && ! $request->header('Signature-Token')) {
+        if (! is_production() && ! $request->header('Merchant-Token')) {
             return $next($request);
         }
 
-        $signature_token = sign_request($request->all(), config('app.api_secret_key'));
+        $token = $request->header('Merchant-Token');
+        $merchant = Merchant::where('token', $token)->exists();
 
-        if ($signature_token !== $request->header('Signature-Token')) {
-            return response()->failWithMessage('Invalid signature token.');
+        if (! $merchant) {
+            return response()->failWithMessage('Invalid merchant token.');
         }
 
         return $next($request);
