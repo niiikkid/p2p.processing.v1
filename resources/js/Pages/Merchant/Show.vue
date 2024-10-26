@@ -35,7 +35,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
         <div class="mx-auto space-y-4">
             <div class="mb-3">
-                <GoBackButton @click="router.visit(route('merchants.index'))"/>
+                <GoBackButton @click="router.visit(route((route().current('admin.*') ? 'admin.' : '') + 'merchants.index'))"/>
             </div>
             <div>
                 <section>

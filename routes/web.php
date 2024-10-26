@@ -81,7 +81,8 @@ Route::group(['prefix' => 'admin', 'as'=>'admin.', 'middleware' => ['auth', 'ban
 
     Route::resource('/notifications', \App\Http\Controllers\Admin\NotificationController::class)->only('index', 'store');
 
-    Route::resource('/merchants', \App\Http\Controllers\Admin\MerchantController::class)->only(['index', 'show', 'create', 'store', 'edit', 'update']);
+    Route::get('/merchants', [\App\Http\Controllers\Admin\MerchantController::class, 'index'])->name('merchants.index');
+    Route::get('/merchants/{merchant}', [\App\Http\Controllers\MerchantController::class, 'show'])->name('merchants.show');
 });
 
 Route::any('/telegram-bot/{token}/webhook', [\App\Http\Controllers\TelegramBotWebhookController::class, 'store'])->name('telegram-bot.webhook');

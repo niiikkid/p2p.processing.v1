@@ -38,7 +38,7 @@ class MerchantController extends Controller
 
         $paymentGateways = queries()->paymentGateway()->getAllActive();
 
-        $commissionSettings = auth()->user()->meta->service_commissions;
+        $commissionSettings = $merchant->user->meta->service_commissions;
 
         if (empty($commissionSettings[$merchant->id])) {
             $commissionSettings = [];
@@ -92,7 +92,7 @@ class MerchantController extends Controller
             'commission_settings' => 'required', 'array',
         ]);
 
-        $commissionSettings = auth()->user()->meta->service_commissions;
+        $commissionSettings = $merchant->user->meta->service_commissions;
 
         if (empty($commissionSettings[$merchant->id])) {
             $commissionSettings = [];
@@ -100,7 +100,7 @@ class MerchantController extends Controller
 
         $commissionSettings[$merchant->id] = $request->commission_settings;
 
-        auth()->user()->meta->update([
+        $merchant->user->meta->update([
             'service_commissions' => $commissionSettings
         ]);
     }

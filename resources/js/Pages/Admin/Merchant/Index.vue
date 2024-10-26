@@ -33,7 +33,7 @@ defineOptions({ layout: AuthenticatedLayout })
                 <HeadllesTable>
                     <HeadlessTableTr
                         v-for="merchant in merchants.data"
-                        @click="router.visit(route('merchants.show', merchant.id))"
+                        @click="router.visit(route('admin.merchants.show', merchant.id))"
                         :hoverable="true"
                     >
                         <HeadlessTableTh class="text-gray-900 dark:text-gray-200">#{{ merchant.id }}</HeadlessTableTh>
