@@ -58,7 +58,7 @@ onMounted(() => {
                 </li>
                 <li class="w-full px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between">
                     <span class="text-gray-900 dark:text-gray-200">Описание</span>
-                    <span class="text-gray-500 dark:text-gray-400">{{ merchant.description }}</span>
+                    <span class="text-gray-500 dark:text-gray-400 w-52">{{ merchant.description }}</span>
                 </li>
                 <li class="w-full px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between">
                     <span class="text-gray-900 dark:text-gray-200">Домен</span>
