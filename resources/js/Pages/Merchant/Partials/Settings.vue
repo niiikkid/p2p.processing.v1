@@ -105,8 +105,8 @@ onMounted(() => {
                     </span>
                 </li>
             </ul>
-            <div class="my-8">
-                <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-3">Администрирование</h3>
+            <div v-if="route().current('admin.*')" class="my-8">
+                <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-3">Модерация</h3>
                 <div class="p-6 bg-white shadow border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
                     <p class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-300">
                         Разрешите работу магазина или заблокируйте его.
