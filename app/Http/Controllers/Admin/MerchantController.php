@@ -21,28 +21,26 @@ class MerchantController extends Controller
         return Inertia::render('Admin/Merchant/Index', compact('merchants'));
     }
 
-    public function create()
+    public function ban(Merchant $merchant)
     {
-        //
+        $merchant->update([
+            'banned_at' => now(),
+            'validated_at' => now(),
+        ]);
     }
 
-    public function store(Request $request)
+    public function unban(Merchant $merchant)
     {
-        //
+        $merchant->update([
+            'banned_at' => null,
+            'validated_at' => now(),
+        ]);
     }
 
-    public function show(Merchant $merchant)
+    public function validated(Merchant $merchant)
     {
-        //
-    }
-
-    public function edit(Merchant $merchant)
-    {
-        //
-    }
-
-    public function update(Request $request, Merchant $merchant)
-    {
-        //
+        $merchant->update([
+            'validated_at' => now(),
+        ]);
     }
 }
