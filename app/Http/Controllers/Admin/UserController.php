@@ -40,6 +40,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'apk_access_token' => Str::random(20),
+            'api_access_token' => Str::random(20),
         ]);
 
         $user->assignRole($request->role_id);

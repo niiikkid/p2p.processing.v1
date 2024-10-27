@@ -17,6 +17,7 @@ class OrderController extends Controller
 {
     public function show(Order $order): JsonResponse
     {
+        //TODO validate that user owner of order
         return response()->success(
             OrderResource::make($order)
         );
@@ -24,13 +25,8 @@ class OrderController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        //TODO костыль для тестирования
-        if ($request->test) {
-            Order::query()->update([
-                'status' => 'fail'
-            ]);
-        }
-
+        //TODO validate that user owner of merchant
+        //TODO validate that merchant is not banned, is validated, and active
         try {
             $order = make(OrderServiceContract::class)->create(
                 OrderCreateDTO::make($request->validated())
@@ -46,6 +42,7 @@ class OrderController extends Controller
 
     public function cancel(Order $order): JsonResponse
     {
+        //TODO validate that user owner of order
         if ($order->status->notEquals(OrderStatus::PENDING)) {
             return response()->failWithMessage('It is not possible to cancel a completed order.');
         }

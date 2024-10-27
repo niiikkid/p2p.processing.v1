@@ -99,9 +99,9 @@ onMounted(() => {
                     </span>
                 </li>
                 <li class="w-full px-4 py-3 rounded-b-lg flex justify-between">
-                    <span class="text-gray-900 dark:text-gray-200">Secret Key</span>
+                    <span class="text-gray-900 dark:text-gray-200">Merchant ID</span>
                     <span class="text-gray-500 dark:text-gray-400">
-                        <CopyText class="blur blur-xs hover:blur-none" :text="merchant.token"></CopyText>
+                        <CopyText class="blur blur-xs hover:blur-none" :text="merchant.uuid"></CopyText>
                     </span>
                 </li>
                 <li v-if="route().current('admin.*')" class="w-full px-4 py-3 rounded-b-lg flex justify-between">

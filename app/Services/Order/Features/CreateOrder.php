@@ -6,6 +6,7 @@ use App\DTO\Order\OrderCreateDTO;
 use App\Enums\OrderStatus;
 use App\Enums\TransactionType;
 use App\Exceptions\OrderException;
+use App\Models\Merchant;
 use App\Models\Order;
 use App\Models\PaymentGateway;
 use App\Services\Money\Currency;
@@ -45,8 +46,11 @@ class CreateOrder extends BaseFeature
             type: TransactionType::PAYMENT_FOR_OPENED_ORDER
         );
 
+        $merchant = Merchant::where('uuid', $this->dto->merchant_uuid)->first();
+
         return Order::create([
             'external_id' => $this->dto->external_id,
+            'merchant_id' => $merchant->id,
             'amount' => $this->dto->amount,
             'profit' => $profit,
             'currency' => $paymentGateway->currency,

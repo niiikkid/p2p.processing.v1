@@ -34,7 +34,7 @@ class OrderCallbackService implements OrderCallbackServiceContract
         $token = $order->merchant->token;
 
         Http::withoutVerifying()
-            ->withHeader('Merchant-Token', $token)
+            ->withHeader('Access-Token', $token)
             ->post(
                 url: $order->callback_url,
                 data: $data

@@ -45,7 +45,7 @@ class StoreRequest extends FormRequest
             ],
             'payment_detail_type' => ['nullable', Rule::in(DetailType::values())],
             'text' => ['nullable', 'integer'],
-            'merchant' => ['required', 'exists:merchants,id'],
+            'merchant_id' => ['required', 'exists:merchants,uuid'],
         ];
     }
 }

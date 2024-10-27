@@ -68,8 +68,10 @@ Route::group(['prefix' => 'admin', 'as'=>'admin.', 'middleware' => ['auth', 'ban
     Route::get('/disputes', [\App\Http\Controllers\Admin\DisputeController::class, 'index'])->name('disputes.index');
 
     Route::group(['as'=>'api.'], function () {
-        Route::resource('/api/orders', \App\Http\Controllers\Admin\API\OrderController::class)->only('index', 'store');
-        Route::resource('/api/disputes', \App\Http\Controllers\Admin\API\DisputeController::class)->only('index', 'store');
+        Route::resource('/api/orders', \App\Http\Controllers\Admin\API\OrderController::class)
+            ->only('index', 'store');
+        Route::resource('/api/disputes', \App\Http\Controllers\Admin\API\DisputeController::class)
+            ->only('index', 'store');
     });
 
     Route::get('/users/{user}/wallet', [\App\Http\Controllers\Admin\UserWalletController::class, 'index'])->name('users.wallet.index');

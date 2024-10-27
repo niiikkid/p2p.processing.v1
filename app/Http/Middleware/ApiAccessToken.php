@@ -2,12 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Merchant;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class ValidateApiSignature
+class ApiAccessToken
 {
     /**
      * Handle an incoming request.
@@ -16,16 +17,14 @@ class ValidateApiSignature
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! is_production() && ! $request->header('Merchant-Token')) {
-            return $next($request);
+        $token = $request->header('Access-Token');
+        $user = User::where('api_access_token', $token)->first();
+
+        if (! $user) {
+            return response()->failWithMessage('Invalid Access Token.');
         }
 
-        $token = $request->header('Merchant-Token');
-        $merchant = Merchant::where('token', $token)->exists();
-
-        if (! $merchant) {
-            return response()->failWithMessage('Invalid merchant token.');
-        }
+        Auth::login($user);
 
         return $next($request);
     }

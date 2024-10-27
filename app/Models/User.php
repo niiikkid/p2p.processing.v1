@@ -19,6 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $name
  * @property string $email
  * @property string $apk_access_token
+ * @property string $api_access_token
  * @property Collection<int, PaymentDetail> $paymentDetails
  * @property Collection<int, SmsLog> $smsLogs
  * @property Wallet $wallet
@@ -43,6 +44,7 @@ class User extends Authenticatable
         'email',
         'password',
         'apk_access_token',
+        'api_access_token',
         'banned_at',
     ];
 

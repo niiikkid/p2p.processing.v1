@@ -14,6 +14,7 @@ class OrderCreateDTO extends BaseDTO
         public string $external_id,
         public Money $amount,
         public string $callback_url,
+        public string $merchant_uuid,
         public ?string $payment_gateway = null,
         public ?Currency $currency = null,
         public ?DetailType $payment_detail_type = null,
@@ -32,6 +33,7 @@ class OrderCreateDTO extends BaseDTO
         }
 
         $data['payment_detail_type'] = ! empty($data['payment_detail_type']) ? DetailType::from($data['payment_detail_type']) : null;
+        $data['merchant_uuid'] = $data['merchant_id'];
 
         return make(static::class, $data);
     }

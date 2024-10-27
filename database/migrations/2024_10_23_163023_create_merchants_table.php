@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('merchants', function (Blueprint $table) {
             $table->id();
+            $table->uuid();
             $table->string('name')->nullable();
             $table->longText('description')->nullable();
             $table->string('domain')->nullable();
             $table->string('callback_url')->nullable();
-            $table->string('token')->nullable();
             $table->foreignId('user_id')->nullable();
             $table->boolean('active')->nullable();
             $table->timestamp('validated_at')->nullable();

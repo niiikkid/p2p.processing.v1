@@ -21,7 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'idempotency' => \Square1\LaravelIdempotency\Http\Middleware\IdempotencyMiddleware::class,
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'banned' => \App\Http\Middleware\Banned::class,
-            'api-signature' => \App\Http\Middleware\ValidateApiSignature::class,
+            'api-access-token' => \App\Http\Middleware\ApiAccessToken::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

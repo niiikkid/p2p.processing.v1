@@ -20,10 +20,10 @@ class MerchantResource extends JsonResource
          */
         return [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'name' => $this->name,
             'description' => $this->description,
             'domain' => $this->domain,
-            'token' => $this->token,
             'user_id' => $this->user_id,
             'active' => $this->active,
             'owner' => [ //TODO hide if not exists

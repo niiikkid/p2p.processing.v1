@@ -66,7 +66,7 @@ class MerchantController extends Controller
     public function store(StoreRequest $request)
     {
         $merchant = Merchant::create([
-            'token' => Str::lower(Str::random(32)),
+            'uuid' => (string)Str::uuid(),
             'user_id' => auth()->id(),
             'active' => true,
             'name' => $request->name,
