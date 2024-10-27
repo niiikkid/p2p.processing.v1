@@ -90,7 +90,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
                                         <button
                                             type="button"
-                                            class="inline-flex items-center rounded-lg bg-primary-700 px-0 py-0 text-sm font-medium text-gray-500 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                            class="inline-flex items-center rounded-lg bg-primary-700 px-0 py-0 text-sm font-medium text-blue-500 dark:text-gray-200 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                                             @click.prevent="router.visit(route('merchants.show', merchant.id))"
                                         >
                                             Перейти
