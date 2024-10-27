@@ -25,6 +25,7 @@ class CreateOrder extends BaseFeature
      */
     public function handle(): Order
     {
+        //TODO callback urls logic and commissions
         /**
          * @var Merchant $merchant
          */
@@ -73,6 +74,8 @@ class CreateOrder extends BaseFeature
             'commission_rate' => $commission_rate,
             'status' => OrderStatus::PENDING,
             'callback_url' => $this->dto->callback_url,
+            'success_url' => $this->dto->success_url,
+            'fail_url' => $this->dto->fail_url,
             'payment_gateway_id' => $paymentGateway->id,
             'payment_detail_id' => $paymentDetail->id,
             'currency_id' => $paymentGateway->currency_id,

@@ -10,9 +10,16 @@ class OrderCallbackService implements OrderCallbackServiceContract
 {
     public function send(Order $order): void
     {
+        $callback_url = $order->callback_url ?? $order->merchant->callback_url;
+
+        if (! $callback_url) {
+            return;
+        }
+
         $data = [
             'id' => $order->id,
             'external_id' => $order->external_id,
+            'merchant_id' => $order->merchant->uuid,
             'amount' => $order->amount->toBeauty(),
             'profit' => $order->profit->toBeauty(),
             'currency' => $order->currency->getCode(),
@@ -31,12 +38,12 @@ class OrderCallbackService implements OrderCallbackServiceContract
             'current_server_time' => now()->getTimestamp(),
         ];
 
-        $token = $order->merchant->token;
+        $token = $order->merchant->user->api_access_token;
 
         Http::withoutVerifying()
             ->withHeader('Access-Token', $token)
             ->post(
-                url: $order->callback_url,
+                url: $callback_url,
                 data: $data
             );
     }

@@ -30,6 +30,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property OrderStatus $status
  * @property string $status_name
  * @property string $callback_url
+ * @property string $success_url
+ * @property string $fail_url
  * @property int $payment_gateway_id
  * @property int $payment_detail_id
  * @property int $merchant_id
@@ -59,6 +61,8 @@ class Order extends Model
         'commission_rate',
         'status',
         'callback_url',
+        'success_url',
+        'fail_url',
         'payment_gateway_id',
         'payment_detail_id',
         'merchant_id',

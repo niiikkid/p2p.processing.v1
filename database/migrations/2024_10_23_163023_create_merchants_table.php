@@ -18,6 +18,8 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->string('domain')->nullable();
             $table->string('callback_url')->nullable();
+            $table->string('success_url')->nullable();
+            $table->string('fail_url')->nullable();
             $table->foreignId('user_id')->nullable();
             $table->boolean('active')->nullable();
             $table->timestamp('validated_at')->nullable();

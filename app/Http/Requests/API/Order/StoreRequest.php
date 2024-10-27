@@ -36,7 +36,9 @@ class StoreRequest extends FormRequest
                 }),
             ],
             'amount' => ['required', 'integer'],
-            'callback_url' => ['required', 'string', 'min:1', 'max:1000'],
+            'callback_url' => ['nullable', 'string', 'url:https', 'max:256'],
+            'success_url' => ['nullable', 'string', 'url:https', 'max:256'],
+            'fail_url' => ['nullable', 'string', 'url:https', 'max:256'],
             'payment_gateway' => [
                 'required_without:currency',
                 'prohibits:currency',
