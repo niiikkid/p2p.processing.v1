@@ -25,6 +25,9 @@ onMounted(() => {
     if (route().current('merchants.*')) {
         switchMenuMode('merchant')
     }
+    if (route().current('integration.*')) {
+        switchMenuMode('merchant')
+    }
 
     initFlowbite();
 

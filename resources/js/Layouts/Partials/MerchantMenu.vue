@@ -13,6 +13,15 @@ import {Link} from "@inertiajs/vue3";
                 <span class="ms-3">Мерчанты</span>
             </Link>
         </li>
+        <li>
+            <Link :href="route('integration.index')" :class="{'bg-gray-100 dark:bg-gray-700': route().current('integration.*')}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
+                </svg>
+
+                <span class="ms-3">Интеграция</span>
+            </Link>
+        </li>
     </ul>
 </template>
 

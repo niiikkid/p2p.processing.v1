@@ -5,49 +5,7 @@ import {useClipboard} from "@vueuse/core";
 
 const user = usePage().props.auth.user;
 
-const { text, copy, copied, isSupported } = useClipboard()
-
-
-const clipboard = () => {
-    const clipboardExternalID = FlowbiteInstances.getInstance('CopyClipboard', 'api-key');
-    const tooltipExternalID = FlowbiteInstances.getInstance('Tooltip', 'tooltip-api-key');
-
-    const clipboards = [
-        {
-            clipboard: clipboardExternalID,
-            tooltip: tooltipExternalID,
-            defaultMessage: document.getElementById('default-tooltip-message-api-key'),
-            successMessage: document.getElementById('success-tooltip-message-api-key'),
-            defaultIcon: document.getElementById('default-icon-api-key'),
-            successIcon: document.getElementById('success-icon-api-key')
-        }
-    ]
-
-    clipboards.forEach((item) => {
-        item.clipboard.updateOnCopyCallback(() => {
-            showSuccess(item.defaultMessage, item.successMessage);
-            showSuccess(item.defaultIcon, item.successIcon);
-            item.tooltip.show();
-
-            // reset to default state
-            setTimeout(() => {
-                resetToDefault(item.defaultMessage, item.successMessage);
-                resetToDefault(item.defaultIcon, item.successIcon);
-                item.tooltip.hide();
-            }, 2000);
-        })
-    })
-
-    const showSuccess = ($defaultEl, $successEl) => {
-        $defaultEl.classList.add('hidden');
-        $successEl.classList.remove('hidden');
-    }
-
-    const resetToDefault = ($defaultEl, $successEl) => {
-        $defaultEl.classList.remove('hidden');
-        $successEl.classList.add('hidden');
-    }
-}
+const { text, copy, copied } = useClipboard()
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
