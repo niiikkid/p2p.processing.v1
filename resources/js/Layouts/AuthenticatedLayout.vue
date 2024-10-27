@@ -86,7 +86,7 @@ const openDocs = () => {
 
             <div class="p-4 sm:ml-64">
                 <!--max-w-7xl mx-auto  -->
-                <div class="p-2 mt-14">
+                <div class="p-4 mt-14">
                     <slot />
                 </div>
             </div>

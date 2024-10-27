@@ -93,6 +93,10 @@ const confirmAcceptOrder = (order) => {
                             <div class="space-y-4">
                                 <div class="space-y-2">
                                     <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Мерчант</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.merchant.name }} ({{ orderModal.params.order.merchant.id }})</dd>
+                                    </dl>
+                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Внешний ID</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.external_id }}</dd>
                                     </dl>

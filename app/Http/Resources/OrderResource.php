@@ -46,6 +46,10 @@ class OrderResource extends JsonResource
                     'message' => $this->smsLog->message,
                     'created_at' => $this->smsLog->created_at->toDateTimeString(),
                 ] : null,
+            'merchant' => [ //TODO hide if not presented
+                'id' => $this->merchant->id,
+                'name' => $this->merchant->name,
+            ],
             'has_dispute' => (bool)$this->dispute,
             'expires_at' => $this->expires_at->toDateTimeString(),
             'finished_at' => $this->finished_at?->toDateTimeString(),
