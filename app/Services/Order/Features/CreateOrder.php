@@ -25,6 +25,23 @@ class CreateOrder extends BaseFeature
      */
     public function handle(): Order
     {
+        //TODO validate that merchant is not banned, is validated, and active
+        /**
+         * @var Merchant $merchant
+         */
+        $merchant = Merchant::where('uuid', $this->dto->merchant_uuid)->first();
+
+        if (! $merchant->validated_at) {
+            throw new OrderException('The merchant is under moderation.');
+        }
+        if ($merchant->banned_at) {
+            throw new OrderException('The merchant is banned.');
+        }
+        if (! $merchant->active) {
+            throw new OrderException('The merchant is not active.');
+        }
+
+
         //TODO добавить возможность создавать множественные ордера с одной суммой для одного и тогоже юзера
         list($paymentGateway, $paymentDetail)
             = $this->getPaymentGatewayAndDetail();
@@ -45,8 +62,6 @@ class CreateOrder extends BaseFeature
             amount: $amount_usdt,
             type: TransactionType::PAYMENT_FOR_OPENED_ORDER
         );
-
-        $merchant = Merchant::where('uuid', $this->dto->merchant_uuid)->first();
 
         return Order::create([
             'external_id' => $this->dto->external_id,

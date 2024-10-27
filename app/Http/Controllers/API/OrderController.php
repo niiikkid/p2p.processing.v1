@@ -26,7 +26,6 @@ class OrderController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         //TODO validate that user owner of merchant
-        //TODO validate that merchant is not banned, is validated, and active
         try {
             $order = make(OrderServiceContract::class)->create(
                 OrderCreateDTO::make($request->validated())

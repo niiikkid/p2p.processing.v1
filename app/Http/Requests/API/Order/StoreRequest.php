@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Order;
 
 use App\Enums\DetailType;
+use App\Models\Merchant;
 use App\Services\Money\Currency;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -24,11 +25,14 @@ class StoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $merchant_id = Merchant::where('uuid', $this->merchant_id)->first()?->id;
+
         return [
             'external_id' => [
                 'required',
-                Rule::unique('orders')->where(function ($query) {
-                    return $query->where('external_id', $this->external_id);
+                Rule::unique('orders')->where(function ($query) use ($merchant_id) {
+                    return $query->where('external_id', $this->external_id)
+                        ->where('merchant_id', $merchant_id);
                 }),
             ],
             'amount' => ['required', 'integer'],
