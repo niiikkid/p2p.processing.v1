@@ -19,15 +19,12 @@ class PaymentGatewayResource extends JsonResource
          * @var PaymentGateway $this
          */
         return [
-            'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
             'currency' => $this->currency->getCode(),
-            'buy_price' => services()->market()->getBuyPrice($this->currency)->toPrecision(),
-            'sell_price' => services()->market()->getSellPrice($this->currency)->toPrecision(),
             'min_limit' => $this->min_limit,
             'max_limit' => $this->max_limit,
-            'commission_rate' => $this->commission_rate,
+            'service_commission_rate' => $this->service_commission_rate,
         ];
     }
 }

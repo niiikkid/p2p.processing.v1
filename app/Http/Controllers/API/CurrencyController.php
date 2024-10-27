@@ -13,10 +13,10 @@ class CurrencyController extends Controller
             ->transform(function ($currency) {
                 return [
                     'currency' => $currency->getCode(),
-                    'buy_price' => services()->market()->getBuyPrice($currency)->toPrecision(),
-                    'sell_price' => services()->market()->getSellPrice($currency)->toPrecision(),
+                    //'buy_price' => services()->market()->getBuyPrice($currency)->toPrecision(),
+                    //'sell_price' => services()->market()->getSellPrice($currency)->toPrecision(),
                 ];
-            });
+            })->pluck('currency');
 
         return response()->success($currencies);
     }
