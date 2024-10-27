@@ -40,7 +40,6 @@ class CreateOrder extends BaseFeature
             throw new OrderException('The merchant is not active.');
         }
 
-
         //TODO добавить возможность создавать множественные ордера с одной суммой для одного и тогоже юзера
         list($paymentGateway, $paymentDetail)
             = $this->getPaymentGatewayAndDetail();

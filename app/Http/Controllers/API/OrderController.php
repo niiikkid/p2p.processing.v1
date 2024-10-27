@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Contracts\OrderServiceContract;
 use App\DTO\Order\OrderCreateDTO;
+use App\Enums\DisputeStatus;
 use App\Enums\OrderStatus;
 use App\Enums\TransactionType;
 use App\Exceptions\OrderException;
@@ -44,6 +45,9 @@ class OrderController extends Controller
         //TODO validate that user owner of order
         if ($order->status->notEquals(OrderStatus::PENDING)) {
             return response()->failWithMessage('It is not possible to cancel a completed order.');
+        }
+        if ($order->dispute) {
+            return response()->failWithMessage('Unable to cancel an order in dispute.');
         }
 
         try {
