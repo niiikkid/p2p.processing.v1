@@ -36,7 +36,7 @@ class StoreRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $fileData = base64_decode($this->receipt_base64);
+        $fileData = base64_decode($this->receipt);
 
         $tmpFilePath = sys_get_temp_dir() . '/' . Str::uuid()->toString();
         file_put_contents($tmpFilePath, $fileData);

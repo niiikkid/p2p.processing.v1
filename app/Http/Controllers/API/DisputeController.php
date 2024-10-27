@@ -13,6 +13,7 @@ class DisputeController extends Controller
 {
     public function show(Order $order)
     {
+        //TODO validate that user is owner of order
         return response()->success(
             DisputeResource::make($order->dispute)
         );
@@ -20,6 +21,7 @@ class DisputeController extends Controller
 
     public function store(StoreRequest $request, Order $order)
     {
+        //TODO validate that user is owner of order
         try {
             services()->dispute()->create($order, $request->receipt);
         } catch (DisputeException $e) {
