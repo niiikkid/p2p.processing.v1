@@ -15,10 +15,10 @@ defineOptions({ layout: AuthenticatedLayout })
 </script>
 
 <template>
-    <Head title="Приложение для подтверждения по СМС и Push"/>
+    <Head title="Интеграция по API"/>
 
     <div>
-        <section class="bg-white antialiased dark:bg-gray-900">
+        <section class="antialiased">
             <div class="mx-auto max-w-screen-xl 2xl:px-0">
                 <div class="mx-auto">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl mb-6">Интеграция по API</h2>

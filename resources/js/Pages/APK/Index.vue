@@ -14,7 +14,7 @@ defineOptions({ layout: AuthenticatedLayout })
     <Head title="Приложение для подтверждения по СМС и Push"/>
 
     <div>
-        <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+        <section class="py-8 antialiased md:py-16">
             <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
                 <div class="mx-auto max-w-3xl space-y-6 sm:space-y-8">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Приложение для подтверждения по СМС и Push</h2>
@@ -22,7 +22,7 @@ defineOptions({ layout: AuthenticatedLayout })
                     <ol class="relative border-s border-gray-200 dark:border-gray-700">
                         <li class="mb-8 ms-6">
                                   <span
-                                      class="absolute -start-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white dark:bg-gray-800 dark:ring-gray-900">
+                                      class="absolute -start-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 dark:ring-gray-900">
                                     <svg class="h-3 w-3 text-gray-500 dark:text-gray-400" aria-hidden="true"
                                          xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                                          viewBox="0 0 24 24">
@@ -42,7 +42,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         </li>
                         <li class="mb-10 ms-6">
                                   <span
-                                      class="absolute -start-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white dark:bg-gray-800 dark:ring-gray-900">
+                                      class="absolute -start-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 dark:ring-gray-900">
                                     <svg class="h-3 w-3 text-gray-500 dark:text-gray-400" aria-hidden="true"
                                          xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                                          viewBox="0 0 24 24">
@@ -101,7 +101,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
                         <li class="ms-6">
                                   <span
-                                      class="absolute -start-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white dark:bg-gray-800 dark:ring-gray-900">
+                                      class="absolute -start-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 dark:ring-gray-900">
                                     <svg class="h-3 w-3 text-gray-500 dark:text-gray-400" aria-hidden="true"
                                          xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                                          viewBox="0 0 24 24">
