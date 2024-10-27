@@ -25,7 +25,6 @@ class CreateOrder extends BaseFeature
      */
     public function handle(): Order
     {
-        //TODO validate that merchant is not banned, is validated, and active
         /**
          * @var Merchant $merchant
          */
