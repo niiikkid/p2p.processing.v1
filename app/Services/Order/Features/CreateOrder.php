@@ -56,7 +56,7 @@ class CreateOrder extends BaseFeature
         $service_commission_rate_merchant = $paymentGateway->service_commission_rate;
         $service_commission_rate_client = 0;
 
-        if (! empty($service_commissions[$merchant->id][$paymentGateway->id])) {
+        if (isset($service_commissions[$merchant->id][$paymentGateway->id])) {
             $service_commission_rate_merchant = $service_commissions[$merchant->id][$paymentGateway->id];
             $service_commission_rate_client = $service_commission_rate_total - $service_commission_rate_merchant;
         }
@@ -83,8 +83,8 @@ class CreateOrder extends BaseFeature
             ->convert($base_conversion_price, Currency::USDT())
             ->sub($profit);
 
-        $service_profit = $amount->mul($service_commission_rate_total / 100);
-        $merchant_profit = $amount->sub($service_profit);
+        $service_profit = $profit->mul($service_commission_rate_total / 100);
+        $merchant_profit = $profit->sub($service_profit);
 
         services()->wallet()->take(
             wallet: $paymentDetail->user->wallet,
