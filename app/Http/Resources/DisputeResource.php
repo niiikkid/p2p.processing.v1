@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Dispute;
+use App\Services\Money\Currency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,10 +26,10 @@ class DisputeResource extends JsonResource
             'order' => [
                 'id' => $this->order->id,
                 'amount' => $this->order->amount->toBeauty(),
-                'amount_usdt' => $this->order->amount_usdt->toBeauty(),
+                'amount_usdt' => $this->order->profit->toBeauty(),
                 'profit' => $this->order->profit->toBeauty(),
                 'currency' => $this->order->currency->getCode(),
-                'profit_currency' => $this->order->profit_currency->getCode(),
+                'profit_currency' => Currency::USDT()->getCode(),
                 'status' => $this->order->status,
                 'status_name' => $this->order->status_name,
                 'created_at' => $this->order->created_at->toDateTimeString(),

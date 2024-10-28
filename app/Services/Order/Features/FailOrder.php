@@ -28,7 +28,7 @@ class FailOrder extends BaseFeature
 
             services()->wallet()->give(
                 wallet: $this->order->paymentDetail->user->wallet,
-                amount: $this->order->amount_usdt,
+                amount: $this->order->profit,
                 type: $this->transactionType
             );
         } else {

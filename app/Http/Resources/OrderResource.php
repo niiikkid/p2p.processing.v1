@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Enums\DisputeStatus;
 use App\Models\Order;
+use App\Services\Money\Currency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,12 +24,12 @@ class OrderResource extends JsonResource
             'id' => $this->id,
             'external_id' => $this->external_id,
             'amount' => $this->amount->toBeauty(),
-            'amount_usdt' => $this->amount_usdt->toBeauty(),
+            'amount_usdt' => $this->profit->toBeauty(),
             'profit' => $this->profit->toBeauty(),
             'currency' => $this->currency->getCode(),
-            'profit_currency' => $this->profit_currency->getCode(),
-            'conversion_price' => $this->conversion_price->toBeauty(),
-            'conversion_price_with_commission' => $this->conversion_price_with_commission->toBeauty(),
+            'profit_currency' => Currency::USDT()->getCode(),
+            'conversion_price' => $this->base_conversion_price->toBeauty(),
+            'conversion_price_with_commission' => $this->conversion_price->toBeauty(),
             'commission_rate' => $this->commission_rate,
             'status' => $this->status->value,
             'status_name' => $this->status_name,

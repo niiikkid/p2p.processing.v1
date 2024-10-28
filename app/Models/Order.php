@@ -19,14 +19,19 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 /**
  * @property int $id
  * @property string $external_id
+ * @property Money $base_amount
  * @property Money $amount
- * @property Money $amount_usdt
  * @property Money $profit
+ * @property Money $trader_profit
+ * @property Money $merchant_profit
+ * @property Money $service_profit
  * @property Currency $currency
- * @property Currency $profit_currency
+ * @property Money $base_conversion_price
  * @property Money $conversion_price
- * @property Money $conversion_price_with_commission
- * @property float $commission_rate
+ * @property float $trader_commission_rate
+ * @property float $service_commission_rate_total
+ * @property float $service_commission_rate_merchant
+ * @property float $service_commission_rate_client
  * @property OrderStatus $status
  * @property string $status_name
  * @property string $callback_url
@@ -52,13 +57,19 @@ class Order extends Model
 
     protected $fillable = [
         'external_id',
+        'base_amount',
         'amount',
         'profit',
+        'trader_profit',
+        'merchant_profit',
+        'service_profit',
         'currency',
-        'profit_currency',
+        'base_conversion_price',
         'conversion_price',
-        'conversion_price_with_commission',
-        'commission_rate',
+        'trader_commission_rate',
+        'service_commission_rate_total',
+        'service_commission_rate_merchant',
+        'service_commission_rate_client',
         'status',
         'callback_url',
         'success_url',
@@ -88,14 +99,6 @@ class Order extends Model
             get: fn (mixed $value, array $attributes) => trans("order.status.{$attributes['status']}"),
         );
     }
-
-    protected function amountUsdt(): Attribute
-    {
-        return Attribute::make(
-            get: fn (mixed $value, array $attributes) => $this->amount->convert($this->conversion_price_with_commission, Currency::USDT()),
-        );
-    }
-
 
     public function paymentGateway(): BelongsTo
     {
