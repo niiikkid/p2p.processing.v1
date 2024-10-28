@@ -95,7 +95,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         </HeadlessTableTd>
                         <HeadlessTableTd>
                             <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ dispute.order.amount }} {{dispute.order.currency.toUpperCase()}}</div>
-                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.order.amount_usdt }} {{dispute.order.profit_currency.toUpperCase()}}</div>
+                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.order.profit }} {{dispute.order.base_currency.toUpperCase()}}</div>
                         </HeadlessTableTd>
                         <HeadlessTableTd v-if="is_admin">
                             <div class="text-nowrap text-gray-900 dark:text-gray-200">Трейдер</div>

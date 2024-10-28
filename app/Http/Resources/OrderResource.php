@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\DisputeStatus;
 use App\Models\Order;
 use App\Services\Money\Currency;
 use Illuminate\Http\Request;
@@ -23,14 +22,20 @@ class OrderResource extends JsonResource
         return [
             'id' => $this->id,
             'external_id' => $this->external_id,
+            'base_amount' => $this->amount->toBeauty(),
             'amount' => $this->amount->toBeauty(),
-            'amount_usdt' => $this->profit->toBeauty(),
             'profit' => $this->profit->toBeauty(),
+            'trader_profit' => $this->trader_profit->toBeauty(),
+            'merchant_profit' => $this->merchant_profit->toBeauty(),
+            'service_profit' => $this->service_profit->toBeauty(),
+            'base_conversion_price' => $this->base_conversion_price->toBeauty(),
+            'conversion_price' => $this->conversion_price->toBeauty(),
+            'trader_commission_rate' => $this->trader_commission_rate,
+            'service_commission_rate_total' => $this->service_commission_rate_total,
+            'service_commission_rate_merchant' => $this->service_commission_rate_merchant,
+            'service_commission_rate_client' => $this->service_commission_rate_client,
             'currency' => $this->currency->getCode(),
-            'profit_currency' => Currency::USDT()->getCode(),
-            'conversion_price' => $this->base_conversion_price->toBeauty(),
-            'conversion_price_with_commission' => $this->conversion_price->toBeauty(),
-            'commission_rate' => $this->commission_rate,
+            'base_currency' => Currency::USDT()->getCode(),
             'status' => $this->status->value,
             'status_name' => $this->status_name,
             'callback_url' => $this->callback_url,

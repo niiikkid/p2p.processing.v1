@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\BaseCurrencyMoneyCast;
 use App\Casts\CurrencyCast;
 use App\Casts\MoneyCast;
 use App\Enums\OrderStatus;
@@ -86,11 +87,14 @@ class Order extends Model
         'expires_at' => 'datetime',
         'finished_at' => 'datetime',
         'currency' => CurrencyCast::class,
-        'profit_currency' => CurrencyCast::class,
+        'base_amount' => MoneyCast::class,
         'amount' => MoneyCast::class,
-        'profit' => MoneyCast::class,
+        'profit' => BaseCurrencyMoneyCast::class,
+        'trader_profit' => BaseCurrencyMoneyCast::class,
+        'merchant_profit' => BaseCurrencyMoneyCast::class,
+        'service_profit' => BaseCurrencyMoneyCast::class,
+        'base_conversion_price' => MoneyCast::class,
         'conversion_price' => MoneyCast::class,
-        'conversion_price_with_commission' => MoneyCast::class,
     ];
 
     protected function statusName(): Attribute

@@ -36,8 +36,7 @@ class CreateOrder extends BaseFeature
          * @var PaymentGateway $paymentGateway
          * @var PaymentDetail $paymentDetail
          */
-        list($paymentGateway, $paymentDetail)
-            = $this->getPaymentGatewayAndDetail();
+        list($paymentGateway, $paymentDetail) = $this->getPaymentGatewayAndDetail();
 
         //
 
@@ -82,32 +81,6 @@ class CreateOrder extends BaseFeature
             amount: $profit,
             type: TransactionType::PAYMENT_FOR_OPENED_ORDER
         );
-
-        dd([
-            'external_id' => $this->dto->external_id,
-            'merchant_id' => $merchant->id,
-            'base_amount' => $this->dto->amount,
-            'amount' => $amount,
-            'profit' => $profit,
-            'trader_profit' => $trader_profit,
-            'merchant_profit' => $merchant_profit,
-            'service_profit' => $service_profit,
-            'currency' => $paymentGateway->currency,
-            'base_conversion_price' => $base_conversion_price,
-            'conversion_price' => $conversion_price,
-            'trader_commission_rate' => $trader_commission_rate,
-            'service_commission_rate_total' => $service_commission_rate_total,
-            'service_commission_rate_merchant' => $service_commission_rate_merchant,
-            'service_commission_rate_client' => $service_commission_rate_client,
-            'status' => OrderStatus::PENDING,
-            'callback_url' => $this->dto->callback_url,
-            'success_url' => $this->dto->success_url,
-            'fail_url' => $this->dto->fail_url,
-            'payment_gateway_id' => $paymentGateway->id,
-            'payment_detail_id' => $paymentDetail->id,
-            'currency_id' => $paymentGateway->currency_id,
-            'expires_at' => $expires_at,
-        ]);
 
         return Order::create([
             'external_id' => $this->dto->external_id,

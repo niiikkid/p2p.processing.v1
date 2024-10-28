@@ -110,7 +110,7 @@ const is_admin = usePage().props.auth.is_admin;
                                         <div>
                                             <div class="text-sm text-gray-600 dark:text-gray-400">
                                                 <div class="text-nowrap text-gray-900 dark:text-gray-300">{{ disputeModal.params.dispute.order.amount }} {{disputeModal.params.dispute.order.currency.toUpperCase()}}</div>
-                                                <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ disputeModal.params.dispute.order.amount_usdt }} {{disputeModal.params.dispute.order.profit_currency.toUpperCase()}}</div>
+                                                <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ disputeModal.params.dispute.order.profit }} {{disputeModal.params.dispute.order.base_currency.toUpperCase()}}</div>
                                             </div>
                                         </div>
                                     </div>

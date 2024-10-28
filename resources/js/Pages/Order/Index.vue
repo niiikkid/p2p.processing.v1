@@ -38,7 +38,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         <HeadlessTableTh>#{{ order.id }}</HeadlessTableTh>
                         <HeadlessTableTd class="px-6 py-4">
                             <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.amount }} {{ order.currency.toUpperCase() }}</div>
-                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ order.amount_usdt }} {{ order.profit_currency.toUpperCase() }}</div>
+                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ order.profit }} {{ order.base_currency.toUpperCase() }}</div>
                         </HeadlessTableTd>
                         <HeadlessTableTd>
                             <PaymentDetail
