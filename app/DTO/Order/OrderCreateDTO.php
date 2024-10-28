@@ -5,6 +5,7 @@ namespace App\DTO\Order;
 use App\DTO\BaseDTO;
 use App\Enums\DetailType;
 use App\Models\PaymentGateway;
+use App\Models\User;
 use App\Services\Money\Currency;
 use App\Services\Money\Money;
 

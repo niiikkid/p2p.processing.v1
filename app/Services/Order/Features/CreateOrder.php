@@ -8,6 +8,7 @@ use App\Enums\TransactionType;
 use App\Exceptions\OrderException;
 use App\Models\Merchant;
 use App\Models\Order;
+use App\Models\PaymentDetail;
 use App\Models\PaymentGateway;
 use App\Services\Money\Currency;
 use App\Services\Money\Money;
@@ -25,9 +26,11 @@ class CreateOrder extends BaseFeature
      */
     public function handle(): Order
     {
-        //TODO callback urls logic and commissions
+        //TODO commissions
         /**
          * @var Merchant $merchant
+         * @var PaymentGateway $paymentGateway
+         * @var PaymentDetail $paymentDetail
          */
         $merchant = Merchant::where('uuid', $this->dto->merchant_uuid)->first();
 
@@ -45,33 +48,66 @@ class CreateOrder extends BaseFeature
         list($paymentGateway, $paymentDetail)
             = $this->getPaymentGatewayAndDetail();
 
+        //
+
+        $service_commissions = $merchant->user->meta->service_commissions;
+
+        $service_commission_rate_total = $paymentGateway->service_commission_rate;
+        $service_commission_rate_merchant = $paymentGateway->service_commission_rate;
+        $service_commission_rate_client = 0;
+
+        if (! empty($service_commissions[$merchant->id][$paymentGateway->id])) {
+            $service_commission_rate_merchant = $service_commissions[$merchant->id][$paymentGateway->id];
+            $service_commission_rate_client = $service_commission_rate_total - $service_commission_rate_merchant;
+        }
+
+        $client_commission_amount = 0;
+        if ($service_commission_rate_client > 0) {
+            $client_commission_amount = $this->dto
+                ->amount
+                ->mul($service_commission_rate_client / 100);
+        }
+        $amount = $this->dto->amount->add($client_commission_amount);
+
+        //
+
         $expires_at = $this->getExpirationTime($paymentGateway);
 
-        $commission_rate = $this->commissionRateBonus($paymentGateway->commission_rate);
+        $trader_commission_rate = $this->commissionRateBonus($paymentGateway->commission_rate);
 
-        list($conversion_price, $conversion_price_with_commission)
-            = $this->calcConversionPrices($paymentGateway->currency, $commission_rate);
+        list($base_conversion_price, $conversion_price)
+            = $this->calcConversionPrices($paymentGateway->currency, $trader_commission_rate);
 
-        $profit = $this->calcProfit($conversion_price, $conversion_price_with_commission);
+        $profit = $amount->convert($conversion_price, Currency::USDT());
+        $trader_profit = $amount
+            ->convert($base_conversion_price, Currency::USDT())
+            ->sub($profit);
 
-        $amount_usdt = $this->dto->amount->convert($conversion_price_with_commission, Currency::USDT());
+        $service_profit = $amount->mul($service_commission_rate_total / 100);
+        $merchant_profit = $amount->sub($service_profit);
 
         services()->wallet()->take(
             wallet: $paymentDetail->user->wallet,
-            amount: $amount_usdt,
+            amount: $profit,
             type: TransactionType::PAYMENT_FOR_OPENED_ORDER
         );
 
         return Order::create([
             'external_id' => $this->dto->external_id,
             'merchant_id' => $merchant->id,
-            'amount' => $this->dto->amount,
+            'base_amount' => $this->dto->amount,
+            'amount' => $amount,
             'profit' => $profit,
+            'trader_profit' => $trader_profit,
+            'merchant_profit' => $merchant_profit,
+            'service_profit' => $service_profit,
             'currency' => $paymentGateway->currency,
-            'profit_currency' => $profit->getCurrency(),
+            'base_conversion_price' => $base_conversion_price,
             'conversion_price' => $conversion_price,
-            'conversion_price_with_commission' => $conversion_price_with_commission,
-            'commission_rate' => $commission_rate,
+            'trader_commission_rate' => $trader_commission_rate,
+            'service_commission_rate_total' => $service_commission_rate_total,
+            'service_commission_rate_merchant' => $service_commission_rate_merchant,
+            'service_commission_rate_client' => $service_commission_rate_client,
             'status' => OrderStatus::PENDING,
             'callback_url' => $this->dto->callback_url,
             'success_url' => $this->dto->success_url,
@@ -106,10 +142,10 @@ class CreateOrder extends BaseFeature
 
         $commission_rate = $this->commissionRateBonus($paymentGateways->max('commission_rate'));
 
-        list($conversion_price, $conversion_price_with_commission)
+        list($base_conversion_price, $conversion_price)
             = $this->calcConversionPrices($this->dto->amount->getCurrency(), $commission_rate);
 
-        $amount_usdt = $this->dto->amount->convert($conversion_price_with_commission, Currency::USDT());
+        $amount_usdt = $this->dto->amount->convert($conversion_price, Currency::USDT());
 
         $paymentDetail = queries()
             ->paymentDetail()
@@ -129,26 +165,17 @@ class CreateOrder extends BaseFeature
 
     protected function calcConversionPrices(Currency $currency, float $commission_rate): array
     {
-        $conversion_price = services()->market()->getBuyPrice($currency);
+        $base_conversion_price = services()->market()->getBuyPrice($currency);
         $commission_multiplier = $commission_rate / 100;
-        $commission_part = $conversion_price->mul($commission_multiplier);
-        $conversion_price_with_commission = $conversion_price->add($commission_part);
+        $commission_part = $base_conversion_price->mul($commission_multiplier);
+        $conversion_price = $base_conversion_price->add($commission_part);
 
-        return [$conversion_price, $conversion_price_with_commission];
+        return [$base_conversion_price, $conversion_price];
     }
 
     protected function getExpirationTime(PaymentGateway $paymentGateway): Carbon
     {
         return now()->addMinutes($paymentGateway->reservation_time);
-    }
-
-    protected function calcProfit(Money $conversion_price, Money $conversion_price_with_commission): Money
-    {
-        return $this->dto->amount
-            ->convert($conversion_price, Currency::USDT())
-            ->sub(
-                $this->dto->amount->convert($conversion_price_with_commission, Currency::USDT())
-            );
     }
 
     //TODO refactoring
