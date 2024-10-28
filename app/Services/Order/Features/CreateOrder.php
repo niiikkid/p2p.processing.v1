@@ -11,9 +11,9 @@ use App\Models\Order;
 use App\Models\PaymentDetail;
 use App\Models\PaymentGateway;
 use App\Services\Money\Currency;
-use App\Services\Money\Money;
 use Illuminate\Support\Carbon;
 
+//TODO добавить возможность создавать множественные ордера с одной суммой для одного и тогоже юзера
 class CreateOrder extends BaseFeature
 {
     public function __construct(
@@ -26,25 +26,16 @@ class CreateOrder extends BaseFeature
      */
     public function handle(): Order
     {
-        //TODO commissions
+        $merchant = queries()->merchant()->findByUUID($this->dto->merchant_uuid);
+
+        $this->validateMerchant($merchant);
+
+
+
         /**
-         * @var Merchant $merchant
          * @var PaymentGateway $paymentGateway
          * @var PaymentDetail $paymentDetail
          */
-        $merchant = Merchant::where('uuid', $this->dto->merchant_uuid)->first();
-
-        if (! $merchant->validated_at) {
-            throw new OrderException('The merchant is under moderation.');
-        }
-        if ($merchant->banned_at) {
-            throw new OrderException('The merchant is banned.');
-        }
-        if (! $merchant->active) {
-            throw new OrderException('The merchant is not active.');
-        }
-
-        //TODO добавить возможность создавать множественные ордера с одной суммой для одного и тогоже юзера
         list($paymentGateway, $paymentDetail)
             = $this->getPaymentGatewayAndDetail();
 
@@ -91,6 +82,32 @@ class CreateOrder extends BaseFeature
             amount: $profit,
             type: TransactionType::PAYMENT_FOR_OPENED_ORDER
         );
+
+        dd([
+            'external_id' => $this->dto->external_id,
+            'merchant_id' => $merchant->id,
+            'base_amount' => $this->dto->amount,
+            'amount' => $amount,
+            'profit' => $profit,
+            'trader_profit' => $trader_profit,
+            'merchant_profit' => $merchant_profit,
+            'service_profit' => $service_profit,
+            'currency' => $paymentGateway->currency,
+            'base_conversion_price' => $base_conversion_price,
+            'conversion_price' => $conversion_price,
+            'trader_commission_rate' => $trader_commission_rate,
+            'service_commission_rate_total' => $service_commission_rate_total,
+            'service_commission_rate_merchant' => $service_commission_rate_merchant,
+            'service_commission_rate_client' => $service_commission_rate_client,
+            'status' => OrderStatus::PENDING,
+            'callback_url' => $this->dto->callback_url,
+            'success_url' => $this->dto->success_url,
+            'fail_url' => $this->dto->fail_url,
+            'payment_gateway_id' => $paymentGateway->id,
+            'payment_detail_id' => $paymentDetail->id,
+            'currency_id' => $paymentGateway->currency_id,
+            'expires_at' => $expires_at,
+        ]);
 
         return Order::create([
             'external_id' => $this->dto->external_id,
@@ -140,12 +157,10 @@ class CreateOrder extends BaseFeature
             throw OrderException::make('Payment Gateway is not found');
         }
 
-        $commission_rate = $this->commissionRateBonus($paymentGateways->max('commission_rate'));
-
-        list($base_conversion_price, $conversion_price)
-            = $this->calcConversionPrices($this->dto->amount->getCurrency(), $commission_rate);
-
-        $amount_usdt = $this->dto->amount->convert($conversion_price, Currency::USDT());
+        $base_conversion_price = services()->market()->getBuyPrice(
+            $this->dto->amount->getCurrency()
+        );
+        $amount_usdt = $this->dto->amount->convert($base_conversion_price, Currency::USDT());
 
         $paymentDetail = queries()
             ->paymentDetail()
@@ -190,5 +205,18 @@ class CreateOrder extends BaseFeature
         }
 
         return $commission_rate;
+    }
+
+    protected function validateMerchant(Merchant $merchant): void
+    {
+        if (!$merchant->validated_at) {
+            throw new OrderException('The merchant is under moderation.');
+        }
+        if ($merchant->banned_at) {
+            throw new OrderException('The merchant is banned.');
+        }
+        if (!$merchant->active) {
+            throw new OrderException('The merchant is not active.');
+        }
     }
 }

@@ -19,10 +19,12 @@ use App\Models\Order;
 use App\Models\PaymentDetail;
 use App\Models\User;
 use App\Queries\Eloquent\DisputeQueriesEloquent;
+use App\Queries\Eloquent\MerchantQueriesEloquent;
 use App\Queries\Eloquent\OrderQueriesEloquent;
 use App\Queries\Eloquent\PaymentDetailQueriesEloquent;
 use App\Queries\Eloquent\PaymentGatewayQueriesEloquent;
 use App\Queries\Interfaces\DisputeQueries;
+use App\Queries\Interfaces\MerchantQueries;
 use App\Queries\Interfaces\OrderQueries;
 use App\Queries\Interfaces\PaymentDetailQueries;
 use App\Queries\Interfaces\PaymentGatewayQueries;
@@ -98,6 +100,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(DisputeQueries::class, function () {
             return new DisputeQueriesEloquent();
+        });
+        $this->app->bind(MerchantQueries::class, function () {
+            return new MerchantQueriesEloquent();
         });
     }
 
