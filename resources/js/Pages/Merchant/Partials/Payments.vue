@@ -37,6 +37,9 @@ const currentPage = ref(orders?.meta?.current_page)
                     <th scope="col" class="px-6 py-3">
                         Сумма в USDT
                     </th>
+                    <th scope="col" class="px-6 py-3">
+                        Прибыль
+                    </th>
                     <th scope="col" class="px-6 py-3 flex justify-center">
                         Создан
                     </th>
@@ -49,7 +52,10 @@ const currentPage = ref(orders?.meta?.current_page)
                         <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.amount }} {{ order.currency.toUpperCase() }}</div>
                     </td>
                     <td class="px-6 py-3">
-                        <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.amount_usdt }} {{ order.profit_currency.toUpperCase() }}</div>
+                        <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.profit }} {{ order.base_currency.toUpperCase() }}</div>
+                    </td>
+                    <td class="px-6 py-3">
+                        <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.merchant_profit }} {{ order.base_currency.toUpperCase() }}</div>
                     </td>
                     <td class="px-6 py-3">
                         <DateTime class="justify-center" :data="order.created_at"/>
