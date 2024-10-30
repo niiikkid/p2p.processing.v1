@@ -34,6 +34,9 @@ class OrderResource extends JsonResource
             'service_commission_rate_total' => $this->service_commission_rate_total,
             'service_commission_rate_merchant' => $this->service_commission_rate_merchant,
             'service_commission_rate_client' => $this->service_commission_rate_client,
+            'service_commission_amount_total' => $this->profit
+                ->mul($this->service_commission_rate_total / 100)
+                ->toBeauty(),
             'currency' => $this->currency->getCode(),
             'base_currency' => Currency::USDT()->getCode(),
             'status' => $this->status->value,
