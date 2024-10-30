@@ -65,7 +65,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
                                     <div class="mt-2 flex items-center gap-2">
                                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400">доход за сегодня</p>
-                                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ merchant.today_profit }} {{ merchant.profit_currency.toUpperCase() }}</p>
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ merchant.today_profit }} {{ merchant.profit_currency?.toUpperCase() }}</p>
                                     </div>
 
                                     <p class="mt-2 text-lg font-extrabold leading-tight text-blue-500 dark:text-blue-500">{{ merchant.domain }}</p>
