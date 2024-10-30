@@ -50,7 +50,6 @@ class StoreRequest extends FormRequest
                 Rule::in(Currency::getAllCodes())
             ],
             'payment_detail_type' => ['nullable', Rule::in(DetailType::values())],
-            'text' => ['nullable', 'integer'],
             'merchant_id' => ['required', 'exists:merchants,uuid'],
         ];
     }

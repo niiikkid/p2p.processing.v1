@@ -57,7 +57,7 @@ class UpdateRequest extends FormRequest
             'name' => ['required', 'string', 'min:3', 'max:30'],
             'detail' => $detail,
             'detail_type' => ['required', Rule::in(DetailType::values())],
-            'initials' => ['required', 'string', 'min:3', 'max:20'],
+            'initials' => ['required', 'string', 'min:3', 'max:40'],
             'is_active' => ['required', 'boolean'],
             'daily_limit' => ['required', 'integer', 'min:1', 'max:100000000'],
             'payment_gateway_id' => ['required', 'integer', 'exists:payment_gateways,id'],

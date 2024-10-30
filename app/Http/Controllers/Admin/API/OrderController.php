@@ -28,7 +28,7 @@ class OrderController extends Controller
             ->orderByDesc('id')
             ->get()
             ->transform(function (Merchant $merchant) {
-                $data['id'] = $merchant->id;
+                $data['id'] = $merchant->uuid;
                 $data['name'] = $merchant->name;
 
                 return $data;
@@ -42,15 +42,14 @@ class OrderController extends Controller
         //TODO
         $data = $request->all();
 
-        $data['nonce'] = now()->getTimestampMs();
-
         $merchant = Merchant::find($request->merchant);
+
+        $data['merchant_id'] = $merchant->uuid;
 
         $result = Http::asJson()
             ->withoutVerifying()
             ->withHeaders([
-                'Idempotency-Key' => Str::random(32),
-                'Token' => $merchant->token,
+                'Access-Token' => $merchant->user->api_access_token,
                 'Accept' => 'application/json',
             ])
             ->timeout(15)

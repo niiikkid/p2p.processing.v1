@@ -278,5 +278,6 @@ return [
         'external_id'              => 'внешний id',
         'order'                    => 'сделка',
         'receipt'                  => 'чек',
+        'merchant_id'              => 'мерчант',
     ],
 ];

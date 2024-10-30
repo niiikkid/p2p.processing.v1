@@ -20,7 +20,7 @@ const form = useForm({
     callback_url: null,
     payment_gateway: 0,
     currency: 0,
-    merchant: 0,
+    merchant_id: 0,
 });
 
 const error = ref(null);
@@ -207,25 +207,25 @@ defineOptions({ layout: AuthenticatedLayout })
 
                             <div>
                                 <InputLabel
-                                    for="merchant"
+                                    for="merchant_id"
                                     value="Мерчант"
-                                    :error="!!form.errors.merchant"
+                                    :error="!!form.errors.merchant_id"
                                     class="mb-1"
                                 />
                                 <Select
-                                    id="merchant"
-                                    v-model="form.merchant"
-                                    :error="!!form.errors.merchant"
+                                    id="merchant_id"
+                                    v-model="form.merchant_id"
+                                    :error="!!form.errors.merchant_id"
                                     :items="merchants"
                                     key="id"
                                     value="id"
                                     name="name"
                                     default_title="Выберите мерчант"
-                                    @change="form.clearErrors('merchant')"
+                                    @change="form.clearErrors('merchant_id')"
                                 ></Select>
 
-                                <InputError :message="form.errors.merchant" class="mt-2" />
-                                <InputHelper v-if="! form.errors.merchant" model-value="Список содержит только ваши мерчанты."></InputHelper>
+                                <InputError :message="form.errors.merchant_id" class="mt-2" />
+                                <InputHelper v-if="! form.errors.merchant_id" model-value="Список содержит только ваши мерчанты."></InputHelper>
                             </div>
 
                             <div v-if="error" class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">

@@ -34,18 +34,16 @@ class DisputeController extends Controller
         $receipt = $request->file('receipt');
 
         $data = $request->only('receipt');
-        $data['nonce'] = now()->getTimestampMs();
+        $data['receipt'] = base64_encode(file_get_contents($receipt->getRealPath()));
 
         $order = Order::find($request->order);
 
         $result = Http::asMultipart()
             ->withoutVerifying()
             ->withHeaders([
-                'Idempotency-Key' => Str::random(32),
-                'Token' => $order->merchant->token,
+                'Access-Token' => $order->merchant->user->api_access_token,
                 'Accept' => 'application/json',
             ])
-            ->attach('receipt', file_get_contents($receipt), 'receipt.'.$request->receipt->extension())
             ->timeout(15)
             ->post(
                 url: /*'https://p2p.payment.local:8891'.*/route('api.dispute', $request->order, absolute: true), //TODO
