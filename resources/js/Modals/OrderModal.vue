@@ -16,7 +16,7 @@ const showUserSmsLogs = () => {
     modalStore.openUserSmsLogsModal({user: user});
 };
 
-const is_admin = usePage().props.auth.is_admin;
+const isAdminView = route().current('admin.*');
 
 const closeModal = () => {
     modalStore.closeModal('order');
@@ -92,11 +92,11 @@ const confirmAcceptOrder = (order) => {
                             </div>
                             <div class="space-y-4">
                                 <div class="space-y-2">
-                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Мерчант</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.merchant.name }} (id:{{ orderModal.params.order.merchant.id }})</dd>
                                     </dl>
-                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Внешний ID</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.external_id }}</dd>
                                     </dl>
@@ -108,31 +108,39 @@ const confirmAcceptOrder = (order) => {
                                         <dt class="text-gray-500 dark:text-gray-400">Сумма USDT</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
                                     </dl>
-                                    <dl class="flex items-center justify-between gap-4">
-                                        <dt class="text-gray-500 dark:text-gray-400">Прибыль трейдера</dt>
-                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.trader_profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
-                                    </dl>
-                                    <dl class="flex items-center justify-between gap-4">
-                                        <dt class="text-gray-500 dark:text-gray-400">Прибыль мерчанта</dt>
-                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.merchant_profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
-                                    </dl>
-                                    <dl class="flex items-center justify-between gap-4">
-                                        <dt class="text-gray-500 dark:text-gray-400">Прибыль сервиса</dt>
-                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.service_profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
-                                    </dl>
+                                    <template v-if="isAdminView">
+                                        <dl class="flex items-center justify-between gap-4">
+                                            <dt class="text-gray-500 dark:text-gray-400">Прибыль трейдера</dt>
+                                            <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.trader_profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
+                                        </dl>
+                                        <dl class="flex items-center justify-between gap-4">
+                                            <dt class="text-gray-500 dark:text-gray-400">Прибыль мерчанта</dt>
+                                            <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.merchant_profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
+                                        </dl>
+                                        <dl class="flex items-center justify-between gap-4">
+                                            <dt class="text-gray-500 dark:text-gray-400">Прибыль сервиса</dt>
+                                            <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.service_profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
+                                        </dl>
+                                    </template>
+                                    <template v-else>
+                                        <dl class="flex items-center justify-between gap-4">
+                                            <dt class="text-gray-500 dark:text-gray-400">Прибыль</dt>
+                                            <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.trader_profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
+                                        </dl>
+                                    </template>
                                     <dl class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Курс</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.conversion_price }} {{orderModal.params.order.currency.toUpperCase()}}</dd>
                                     </dl>
-                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Курс без комиссии</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.base_conversion_price }} {{orderModal.params.order.currency.toUpperCase()}}</dd>
                                     </dl>
-                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Комиссия трейдера</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.trader_commission_rate }} %</dd>
                                     </dl>
-                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Комиссия сервиса</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300 flex items-center">
                                             {{ orderModal.params.order.service_commission_rate_total }}%
@@ -161,17 +169,21 @@ const confirmAcceptOrder = (order) => {
                                             <PaymentDetail :detail="orderModal.params.order.payment_detail" :copyable="false" :type="orderModal.params.order.payment_detail_type"></PaymentDetail>
                                         </dd>
                                     </dl>
-                                    <dl v-if="is_admin" class="flex items-center justify-between gap-4">
+                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Коллбек URL</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.callback_url }}</dd>
+                                    </dl>
+                                    <dl class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Создан</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.created_at }}</dd>
                                     </dl>
                                     <dl class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Истекает</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.expires_at }}</dd>
                                     </dl>
-                                    <dl class="flex items-center justify-between gap-4">
-                                        <dt class="text-gray-500 dark:text-gray-400">Создан</dt>
-                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.created_at }}</dd>
+                                    <dl v-if="orderModal.params.order.finished_at" class="flex items-center justify-between gap-4">
+                                        <dt class="text-gray-500 dark:text-gray-400">Завершен</dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.finished_at }}</dd>
                                     </dl>
                                 </div>
                                 <div v-if="orderModal.params.order.sms_log" class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-700/50 dark:border-gray-700">
