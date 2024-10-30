@@ -9,6 +9,8 @@ use App\Http\Resources\OrderResource;
 use App\Http\Resources\PaymentGatewayResource;
 use App\Models\Merchant;
 use App\Models\Order;
+use App\Services\Money\Currency;
+use App\Services\Money\Money;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -18,9 +20,18 @@ class MerchantController extends Controller
     public function index()
     {
         $merchants = Merchant::query()
+            ->withSum(['orders' => function ($query) {
+                $query->where('status', OrderStatus::SUCCESS);
+                $query->whereDate('created_at', now()->today());
+            }], 'profit')
             ->where('user_id', auth()->user()->id)
             ->orderByDesc('id')
             ->paginate(9);
+
+        $merchants->transform(function (Merchant $merchant) {
+            $merchant->orders_sum_profit = $merchant->orders_sum_profit ?? 0;
+            return $merchant;
+        });
 
         $merchants = MerchantResource::collection($merchants);
 
@@ -55,7 +66,34 @@ class MerchantController extends Controller
 
         $merchant = MerchantResource::make($merchant)->resolve();
 
-        return Inertia::render('Merchant/Show', compact('merchant', 'orders', 'paymentGateways', 'commissionSettings'));
+        $today = Order::query()
+                ->where('status', OrderStatus::SUCCESS)
+                ->whereDate('created_at', now()->today());
+
+        $yesterday = Order::query()
+                ->where('status', OrderStatus::SUCCESS)
+                ->whereDate('created_at', now()->yesterday());
+
+        $month = Order::query()
+                ->where('status', OrderStatus::SUCCESS)
+                ->whereDate('created_at', '>', now()->startOfMonth());
+
+        $total = Order::query()
+                ->where('status', OrderStatus::SUCCESS);
+
+        $statistics = [
+            'today_profit' => Money::fromUnits($today->sum('profit') ?? 0, Currency::USDT())->toBeauty(),
+            'yesterday_profit' => Money::fromUnits($yesterday->sum('profit') ?? 0, Currency::USDT())->toBeauty(),
+            'month_profit' => Money::fromUnits($month->sum('profit') ?? 0, Currency::USDT())->toBeauty(),
+            'total_profit' => Money::fromUnits($total->sum('profit') ?? 0, Currency::USDT())->toBeauty(),
+            'today_orders_count' => $today->count('id'),
+            'yesterday_orders_count' => $yesterday->count('id'),
+            'month_orders_count' => $month->count('id'),
+            'total_orders_count' => $total->count('id'),
+            'currency' => Currency::USDT()->getCode(),
+        ];
+
+        return Inertia::render('Merchant/Show', compact('merchant', 'orders', 'paymentGateways', 'commissionSettings', 'statistics'));
     }
 
     public function create()
