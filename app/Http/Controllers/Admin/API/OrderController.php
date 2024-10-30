@@ -42,7 +42,7 @@ class OrderController extends Controller
         //TODO
         $data = $request->all();
 
-        $merchant = Merchant::find($request->merchant);
+        $merchant = Merchant::where('uuid', $request->merchant_id)->first();
 
         $data['merchant_id'] = $merchant->uuid;
 
