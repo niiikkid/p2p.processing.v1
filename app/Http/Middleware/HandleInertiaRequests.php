@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Money\Currency;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -42,8 +43,18 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
             'flash' => [
-                'message' => fn () => $request->session()->get('message')
+                'message' => fn () => $request->session()->get('message'),
             ],
+            'data' => [
+                'rates' => fn () => Currency::getAll()
+                    ->transform(function ($currency) {
+                        return [
+                            'code' => $currency->getCode(),
+                            'buy_price' => services()->market()->getBuyPrice($currency)->toPrecision(),
+                            'sell_price' => services()->market()->getSellPrice($currency)->toPrecision(),
+                        ];
+                    })->toArray()
+            ]
         ];
     }
 }

@@ -9,6 +9,7 @@ import NavBar from "@/Layouts/Partials/NavBar.vue";
 import MerchantMenu from "@/Layouts/Partials/MerchantMenu.vue";
 
 const is_admin = usePage().props.auth.is_admin;
+const rates = usePage().props.data.rates;
 
 const menuMode = ref('trader');
 
@@ -68,7 +69,7 @@ const openDocs = () => {
                     <AdminMenu
                         v-show="is_admin && menuMode === 'admin'"
                     />
-                    <div>
+<!--                    <div>
                         <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
                             <li>
                                 <Link @click.prevent="openDocs" href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
@@ -79,6 +80,23 @@ const openDocs = () => {
                                 </Link>
                             </li>
                         </ul>
+                    </div>-->
+                    <div
+                        v-show="menuMode !== 'admin'"
+                        class="p-4 mt-6 rounded-lg border border-orange-400/25 bg-orange-200/10 dark:border-blue-400/25 dark:bg-blue-300/10"
+                    >
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold me-2 px-2.5 py-0.5 rounded dark:bg-orange-200 dark:text-orange-900">Курс</span>
+                            <span class="text-sm text-gray-700 font-semibold dark:text-white">Tether TRC-20</span>
+                        </div>
+                        <div class="text-sm text-blue-800 dark:text-blue-400">
+                            <ul>
+                                <li v-for="rate in rates">
+                                    <span class="text-base text-gray-700 dark:text-gray-200 font-semibold mr-2">{{ rate.buy_price }}</span>
+                                    <span class="text-xs font-semibold text-orange-400 dark:text-blue-400">{{ rate.code.toUpperCase() }}</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </aside>
