@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
-            $table->string('trast_balance')->nullable();
+            $table->string('merchant_balance')->nullable();
+            $table->string('trust_balance')->nullable();
             $table->string('reserve_balance')->nullable();
             $table->string('currency')->nullable();
             $table->foreignId('user_id')->nullable();

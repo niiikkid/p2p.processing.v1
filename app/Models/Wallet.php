@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
- * @property Money $trast_balance
+ * @property Money $merchant_balance
+ * @property Money $trust_balance
  * @property Money $reserve_balance
  * @property Currency $currency
  * @property int $user_id
@@ -30,14 +31,16 @@ class Wallet extends Model
     use HasFactory;
 
     protected $fillable = [
-        'trast_balance',
+        'merchant_balance',
+        'trust_balance',
         'reserve_balance',
         'currency',
         'user_id',
     ];
 
     protected $casts = [
-        'trast_balance' => MoneyCast::class,
+        'merchant_balance' => MoneyCast::class,
+        'trust_balance' => MoneyCast::class,
         'reserve_balance' => MoneyCast::class,
         'currency' => CurrencyCast::class,
     ];

@@ -22,7 +22,7 @@ class RollbackOrder extends BaseFeature
     {
         if ($this->order->status->notEquals(OrderStatus::PENDING)) {
             if ($this->order->status->equals(OrderStatus::FAIL)) {
-                services()->wallet()->take(
+                services()->wallet()->takeTrust(
                     wallet: $this->order->paymentDetail->user->wallet,
                     amount: $this->order->profit,
                     type: $this->transactionType

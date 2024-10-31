@@ -76,7 +76,7 @@ class CreateOrder extends BaseFeature
         $service_profit = $profit->mul($service_commission_rate_total / 100);
         $merchant_profit = $profit->sub($service_profit);
 
-        services()->wallet()->take(
+        services()->wallet()->takeTrust(
             wallet: $paymentDetail->user->wallet,
             amount: $profit,
             type: TransactionType::PAYMENT_FOR_OPENED_ORDER

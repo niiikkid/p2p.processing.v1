@@ -47,7 +47,7 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
                 $query->where('status', OrderStatus::PENDING);
             })
             ->whereHas('user.wallet', function (Builder $query) use ($amount_usdt) {
-                $query->where('trast_balance', '>=', (int)$amount_usdt->toUnits());
+                $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
             })
             ->when($payment_detail_type, function (Builder $query) use ($payment_detail_type) {
                 $query->where('detail_type', $payment_detail_type);

@@ -15,13 +15,13 @@ class LowBalance extends Notification
 
     public function getMessage(): string
     {
-        $trast_balance = $this->wallet->trast_balance->toBeauty() . ' ' . strtoupper($this->wallet->currency->getCode());
+        $trust_balance = $this->wallet->trust_balance->toBeauty() . ' ' . strtoupper($this->wallet->currency->getCode());
         $reserve_balance = $this->wallet->reserve_balance->toBeauty() . ' ' . strtoupper($this->wallet->currency->getCode());
 
         return "На балансе осталось мало средств для совершения сделок!\r\n"
             ."\r\n"
             ."Текущий баланс\r\n"
-            . "Траст: $trast_balance\r\n"
+            . "Траст: $trust_balance\r\n"
             . "Резерв: $reserve_balance\r\n";
     }
 

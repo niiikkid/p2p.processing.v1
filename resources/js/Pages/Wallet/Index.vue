@@ -106,7 +106,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         </div>
 
                         <div class="pt-5 inline-block align-middle">
-                            <span class="text-xl font-bold text-gray-900 dark:text-gray-200">{{ wallet.trast_balance }} USDT</span>
+                            <span class="text-xl font-bold text-gray-900 dark:text-gray-200">{{ wallet.trust_balance }} USDT</span>
                             <span class="ml-3 inline-flex bg-gray-200/75 text-gray-900 text-sm font-medium me-2 px-3 py-1.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
                                 <svg class="w-4 h-4 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>

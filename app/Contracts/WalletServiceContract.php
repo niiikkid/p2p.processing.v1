@@ -11,9 +11,13 @@ interface WalletServiceContract
 {
     public function create(User $user): Wallet;
 
-    public function take(Wallet $wallet, Money $amount, TransactionType $type): void;
+    public function takeMerchant(Wallet $wallet, Money $amount): void;
 
-    public function give(Wallet $wallet, Money $amount, TransactionType $type): void;
+    public function giveMerchant(Wallet $wallet, Money $amount): void;
+
+    public function takeTrust(Wallet $wallet, Money $amount, TransactionType $type): void;
+
+    public function giveTrust(Wallet $wallet, Money $amount, TransactionType $type): void;
 
     public function getMaxReserveBalance(): int;
 }

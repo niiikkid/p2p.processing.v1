@@ -23,7 +23,7 @@ class InvoiceService implements InvoiceServiceContract
             'wallet_id' => $wallet->id,
         ]);
 
-        services()->wallet()->give($wallet, $amount, TransactionType::DEPOSIT_BY_ADMIN);
+        services()->wallet()->giveTrust($wallet, $amount, TransactionType::DEPOSIT_BY_ADMIN);
     }
 
     public function withdraw(Wallet $wallet, Money $amount): void
@@ -36,6 +36,6 @@ class InvoiceService implements InvoiceServiceContract
             'wallet_id' => $wallet->id,
         ]);
 
-        services()->wallet()->take($wallet, $amount, TransactionType::WITHDRAWAL_BY_ADMIN);
+        services()->wallet()->takeTrust($wallet, $amount, TransactionType::WITHDRAWAL_BY_ADMIN);
     }
 }

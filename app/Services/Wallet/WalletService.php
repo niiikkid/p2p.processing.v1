@@ -26,34 +26,53 @@ class WalletService implements WalletServiceContract
     public function create(User $user): Wallet
     {
         return Wallet::create([
-            'trast_balance' => Money::fromPrecision(0, Currency::USDT()),
+            'merchant_balance' => Money::fromPrecision(0, Currency::USDT()),
+            'trust_balance' => Money::fromPrecision(0, Currency::USDT()),
             'reserve_balance' => Money::fromPrecision(0, Currency::USDT()),
             'currency' => Currency::USDT(),
             'user_id' => $user->id,
         ]);
     }
 
-    public function take(Wallet $wallet, Money $amount, TransactionType $type): void
+    public function takeMerchant(Wallet $wallet, Money $amount): void
+    {
+        $balance = $wallet->merchant_balance->sub($amount);
+
+        $wallet->update([
+            'merchant_balance' => $balance,
+        ]);
+    }
+
+    public function giveMerchant(Wallet $wallet, Money $amount): void
+    {
+        $balance = $wallet->merchant_balance->add($amount);
+
+        $wallet->update([
+            'merchant_balance' => $balance,
+        ]);
+    }
+
+    public function takeTrust(Wallet $wallet, Money $amount, TransactionType $type): void
     {
         if ($type->direction()->notEquals(TransactionDirection::OUT)) {
             throw WalletException::make('Invalid transaction type.');
         }
 
-        $trast = $wallet->trast_balance->sub($amount);
+        $trust = $wallet->trust_balance->sub($amount);
 
-        if ($trast->toPrecision() < 0) {
-            $reserve = $wallet->reserve_balance->sub(abs($trast->toBeauty()));
+        if ($trust->toPrecision() < 0) {
+            $reserve = $wallet->reserve_balance->sub(abs($trust->toBeauty()));
             $wallet->update([
-                'trast_balance' => Money::fromPrecision(0, Currency::USDT()),
+                'trust_balance' => Money::fromPrecision(0, Currency::USDT()),
                 'reserve_balance' => $reserve,
             ]);
         } else {
             $wallet->update([
-                'trast_balance' => $trast,
+                'trust_balance' => $trust,
             ]);
         }
 
-        if (self::RESERVE_BALANCE / 10 > intval($wallet->trast_balance->toBeauty())) {
+        if (self::RESERVE_BALANCE / 10 > intval($wallet->trust_balance->toBeauty())) {
             SendTelegramNotificationJob::dispatch(
                 new LowBalance(
                     telegram: $wallet->user->telegram,
@@ -71,7 +90,7 @@ class WalletService implements WalletServiceContract
         ]);
     }
 
-    public function give(Wallet $wallet, Money $amount, TransactionType $type): void
+    public function giveTrust(Wallet $wallet, Money $amount, TransactionType $type): void
     {
         if ($type->direction()->notEquals(TransactionDirection::IN)) {
             throw WalletException::make('Invalid transaction type.');
@@ -83,11 +102,11 @@ class WalletService implements WalletServiceContract
             $reserve = abs($reserve->toBeauty());
         }
 
-        $trast = $amount->sub($reserve);
+        $trust = $amount->sub($reserve);
 
-        if ($trast->toPrecision() > 0) {
+        if ($trust->toPrecision() > 0) {
             $wallet->update([
-                'trast_balance' => $wallet->trast_balance->add($trast),
+                'trust_balance' => $wallet->trust_balance->add($trust),
                 'reserve_balance' => $wallet->reserve_balance->add($reserve),
             ]);
         } else {

@@ -27,7 +27,7 @@ class WithdrawRequest extends FormRequest
          */
         $wallet = $this->route('user')->wallet;
 
-        $max = intval($wallet->trast_balance->add($wallet->reserve_balance)->toBeauty());
+        $max = intval($wallet->trust_balance->add($wallet->reserve_balance)->toBeauty());
 
         return [
             'amount' => ['required', 'integer', 'min:1', 'max:' . $max],
