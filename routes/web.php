@@ -12,8 +12,10 @@ Route::group(['middleware' => ['auth', 'banned']], function () {
 
 Route::group(['middleware' => ['auth', 'banned', 'role:Trader|Super Admin']], function () {
     Route::get('/', function () {
-        return Inertia::render('Dashboard');
+        return redirect()->route('wallet.index');
+        //return Inertia::render('Dashboard');
     })->name('dashboard');
+
     Route::resource('/payment-details', \App\Http\Controllers\PaymentDetailController::class)->only(['index', 'create', 'store', 'edit', 'update']);
 
     //orders
@@ -31,7 +33,7 @@ Route::group(['middleware' => ['auth', 'banned', 'role:Trader|Super Admin']], fu
     Route::get('/apk', [\App\Http\Controllers\ApkController::class, 'index'])->name('apk.index');
     Route::get('/sms.apk', [\App\Http\Controllers\ApkController::class, 'download'])->name('app.download');
 
-    Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
+    Route::get('/finances', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
 
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
 
