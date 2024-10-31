@@ -28,7 +28,7 @@ const color = computed(() => {
 
 <template>
     <div class="flex justify-end mb-1">
-        <span class="text-xs font-semibold text-blue-700 dark:text-white text-nowrap">
+        <span class="text-xs font-semibold text-gray-900 dark:text-gray-200 text-nowrap">
             {{ current }} / {{ total }}
         </span>
     </div>

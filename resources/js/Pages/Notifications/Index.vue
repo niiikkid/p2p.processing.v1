@@ -49,7 +49,7 @@ defineOptions({ layout: AuthenticatedLayout })
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2 mb-6">
             <div class="grow sm:mt-8 lg:mt-0">
 
-                <div class="rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
+                <div class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                     <div>
                         <div class="flex justify-between">
                             <div class="text-xl text-gray-900 dark:text-gray-200">Телеграм</div>
@@ -71,7 +71,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         <template v-else>
                             <div class="inline-flex py-3">
                                 <div class="text-sm text-gray-900 dark:text-gray-400">
-                                    Для получения уведомлений, и управления аккаунтом через телеграм - <a  :href="tgBot.openTelegramBot" target="_blank" class="text-blue-500">запустите телеграм бот</a>.
+                                    Для получения уведомлений, и управления аккаунтом через телеграм - <a  :href="tgBot.openTelegramBot" target="_blank" class="text-blue-500 hover:text-blue-600">запустите телеграм бот</a>.
                                 </div>
                             </div>
                         </template>
@@ -96,7 +96,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         <ProgressNumber :current="notification.delivered_count" :total="notification.recipients_count"></ProgressNumber>
                     </HeadlessTableTd>
                     <HeadlessTableTd>
-                        <DateTime class="justify-center text-nowrap" :data="notification.created_at"/>
+                        <DateTime class="justify-end text-nowrap" :data="notification.created_at"/>
                     </HeadlessTableTd>
                 </HeadlessTableTr>
             </HeadllesTable>
