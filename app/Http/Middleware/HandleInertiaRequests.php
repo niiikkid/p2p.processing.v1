@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\WalletResource;
 use App\Services\Money\Currency;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -53,7 +54,8 @@ class HandleInertiaRequests extends Middleware
                             'buy_price' => services()->market()->getBuyPrice($currency)->toPrecision(),
                             'sell_price' => services()->market()->getSellPrice($currency)->toPrecision(),
                         ];
-                    })->toArray()
+                    })->toArray(),
+                'wallet' => fn () => $request->user() ? WalletResource::make($request->user()->wallet)->resolve() : null
             ]
         ];
     }

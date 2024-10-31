@@ -20,6 +20,7 @@ class WalletResource extends JsonResource
          */
         return [
             'id' => $this->id,
+            'merchant_balance' => $this->merchant_balance->toBeauty(),
             'trust_balance' => $this->trust_balance->toBeauty(),
             'reserve_balance' => $this->reserve_balance->toBeauty(),
             'currency' => $this->currency->getCode(),

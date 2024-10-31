@@ -9,7 +9,7 @@ import NavBar from "@/Layouts/Partials/NavBar.vue";
 import MerchantMenu from "@/Layouts/Partials/MerchantMenu.vue";
 
 const is_admin = usePage().props.auth.is_admin;
-const rates = usePage().props.data.rates;
+const rates = ref(usePage().props.data.rates);
 
 const menuMode = ref('trader');
 
@@ -40,7 +40,8 @@ onMounted(() => {
 })
 
 router.on('success', (event) => {
-    initFlowbite()
+    initFlowbite();
+    rates.value = usePage().props.data.rates;
 })
 
 const openDocs = () => {
@@ -51,7 +52,7 @@ const openDocs = () => {
 <template>
     <div>
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <NavBar/>
+            <NavBar :menuMode="menuMode"/>
 
             <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
                 <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
