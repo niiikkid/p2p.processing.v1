@@ -283,6 +283,7 @@ defineOptions({ layout: AuthenticatedLayout })
                     </div>
                 </template>
                 <SaveButton
+                    v-if="form.payment_gateway_id"
                     :disabled="form.processing"
                     :saved="form.recentlySuccessful"
                 ></SaveButton>

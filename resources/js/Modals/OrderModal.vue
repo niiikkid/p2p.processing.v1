@@ -186,7 +186,7 @@ const confirmAcceptOrder = (order) => {
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.finished_at }}</dd>
                                     </dl>
                                 </div>
-                                <div v-if="orderModal.params.order.sms_log" class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-700/50 dark:border-gray-700">
+                                <div v-if="orderModal.params.order.sms_log" class="p-6 bg-white border border-gray-200 rounded-lg dark:bg-gray-700/50 dark:border-gray-700">
                                     <footer class="flex justify-between items-center mb-2">
                                         <div class="flex items-center">
                                             <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-gray-200 font-semibold">

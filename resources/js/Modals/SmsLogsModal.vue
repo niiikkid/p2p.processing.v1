@@ -64,7 +64,7 @@ const loadSmsLogs = (page) => {
                     <tbody>
                     <tr
                         v-for="smsLog in smsLogs.data"
-                        class="bg-white dark:bg-gray-700/50 rounded-lg shadow"
+                        class="bg-gray-50/50 dark:bg-gray-700/50 rounded-lg"
                     >
                         <th
                             scope="row"
