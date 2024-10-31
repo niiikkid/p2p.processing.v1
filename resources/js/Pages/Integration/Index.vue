@@ -27,7 +27,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         Изучите инструкцию по интеграции вашего сервиса
                     </h3>
                     <p class="text-base font-normal text-gray-500 dark:text-gray-400">
-                        <a @click.prevent="openDocs" href="#" class="text-blue-500">Открыть документацию</a>
+                        <a @click.prevent="openDocs" href="#" class="text-blue-500 hover:text-blue-600">Открыть документацию</a>
                     </p>
 
 

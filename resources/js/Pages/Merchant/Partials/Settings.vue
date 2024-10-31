@@ -74,8 +74,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="grid grid-cols-5 gap-8">
-        <div class="col-span-2">
+    <div class="gap-8 grid 2xl:grid-cols-7 xl:grid-cols-5">
+        <div class="2xl:col-span-3 xl:col-span-2">
             <h3 class="mb-3 text-xl font-medium text-gray-900 dark:text-white">Магазин</h3>
 
             <ul class="text-sm font-medium shadow text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white">
@@ -83,9 +83,9 @@ onMounted(() => {
                     <span class="text-gray-900 dark:text-gray-200">Название</span>
                     <span class="text-gray-500 dark:text-gray-400">{{ merchant.name }}</span>
                 </li>
-                <li class="w-full px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between">
-                    <span class="text-gray-900 dark:text-gray-200">Описание</span>
-                    <span class="text-gray-500 dark:text-gray-400 w-52">{{ merchant.description }}</span>
+                <li class="w-full px-4 py-3 border-b border-gray-200 dark:border-gray-700 justify-between grid grid-cols-5">
+                    <span class="text-gray-900 dark:text-gray-200 col-span-2">Описание</span>
+                    <span class="text-gray-500 dark:text-gray-400 col-span-3 text-right">{{ merchant.description }}</span>
                 </li>
                 <li class="w-full px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between">
                     <span class="text-gray-900 dark:text-gray-200">Домен</span>
@@ -197,7 +197,7 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <div class="col-span-3">
+        <div class="2xl:col-span-4 xl:col-span-3">
             <div>
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-xl font-medium text-gray-900 dark:text-white">Комиссии</h3>
@@ -231,7 +231,7 @@ onMounted(() => {
                             {{ currency.toUpperCase() }}
                         </span>
                     </div>
-                    <div class="mt-3 grid grid-cols-2 gap-2">
+                    <div class="mt-3 gap-2 grid 2xl:grid-cols-3 xl:grid-cols-2">
                         <div
                             class="bg-white shadow text-sm font-semibold py-2 px-3 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700"
                             v-for="gateway in gateways"
