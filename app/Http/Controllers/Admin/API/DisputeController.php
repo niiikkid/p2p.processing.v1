@@ -33,7 +33,6 @@ class DisputeController extends Controller
         //TODO
         $receipt = $request->file('receipt');
 
-        $data = $request->only('receipt');
         $data['receipt'] = base64_encode(file_get_contents($receipt->getRealPath()));
 
         $order = Order::find($request->order);
