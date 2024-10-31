@@ -60,7 +60,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2 mb-6">
             <div class="grow sm:mt-8 lg:mt-0">
-                <div class="rounded-lg border border-gray-300 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
+                <div class="rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                     <div>
                         <div class="flex justify-between">
                             <div class="text-xl text-gray-900 dark:text-gray-200">Траст</div>
