@@ -83,17 +83,16 @@ const openDocs = () => {
                     </div>-->
                     <div
                         v-show="menuMode !== 'admin'"
-                        class="p-4 mt-6 rounded-lg border border-orange-400/25 bg-orange-200/10 dark:border-blue-400/25 dark:bg-blue-300/10"
+                        class="p-4 mt-6 rounded-lg border border-gray-500/25 bg-gray-200/10 dark:border-gray-400/25 dark:bg-gray-400/10"
                     >
-                        <div class="flex items-center mb-3">
-                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold me-2 px-2.5 py-0.5 rounded dark:bg-orange-200 dark:text-orange-900">Курс</span>
-                            <span class="text-sm text-gray-700 font-semibold dark:text-white">Tether TRC-20</span>
+                        <div class="flex items-center mb-1">
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Курс Tether TRC-20</span>
                         </div>
                         <div class="text-sm text-blue-800 dark:text-blue-400">
                             <ul>
                                 <li v-for="rate in rates">
-                                    <span class="text-base text-gray-700 dark:text-gray-200 font-semibold mr-2">{{ rate.buy_price }}</span>
-                                    <span class="text-xs font-semibold text-orange-400 dark:text-blue-400">{{ rate.code.toUpperCase() }}</span>
+                                    <span class="text-base text-gray-700 dark:text-gray-200 font-semibold mr-1.5">{{ rate.buy_price }}</span>
+                                    <span class="text-xs font-semibold text-blue-500 dark:text-blue-500">{{ rate.code.toUpperCase() }}</span>
                                 </li>
                             </ul>
                         </div>
