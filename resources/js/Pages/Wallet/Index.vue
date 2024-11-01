@@ -238,6 +238,7 @@ defineOptions({ layout: AuthenticatedLayout })
                 </template>
             </div>
         </div>
+        
         <DepositModal/>
         <WithdrawalModal/>
     </div>
