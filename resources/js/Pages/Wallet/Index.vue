@@ -69,7 +69,7 @@ defineOptions({ layout: AuthenticatedLayout })
         </h2>
 
         <TraderBalance :isAdmin="isAdmin"/>
-        <MerchantBalance/>
+<!--        <MerchantBalance/>-->
 
         <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl mb-3">История операций</h2>
 
@@ -238,7 +238,7 @@ defineOptions({ layout: AuthenticatedLayout })
                 </template>
             </div>
         </div>
-        
+
         <DepositModal/>
         <WithdrawalModal/>
     </div>
