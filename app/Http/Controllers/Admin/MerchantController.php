@@ -18,7 +18,7 @@ class MerchantController extends Controller
 
         $merchants = MerchantResource::collection($merchants);
 
-        return Inertia::render('Admin/Merchant/Index', compact('merchants'));
+        return Inertia::render('Merchant/Index', compact('merchants'));
     }
 
     public function ban(Merchant $merchant)
