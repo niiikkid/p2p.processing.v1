@@ -10,6 +10,7 @@ export const useViewStore = defineStore('view', {
         isAdminViewMode: (state) => state.viewMode === 'admin',
         isTraderViewMode: (state) => state.viewMode === 'trader',
         isMerchantViewMode: (state) => state.viewMode === 'merchant',
+        adminPrefix: (state) => state.viewMode === 'admin' ? 'admin.' : '',
     },
     actions: {
         setAdminViewMode() {

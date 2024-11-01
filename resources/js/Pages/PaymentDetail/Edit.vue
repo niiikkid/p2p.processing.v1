@@ -9,6 +9,8 @@ import SecondaryPageSection from "@/Wrappers/SecondaryPageSection.vue";
 import TextInputBlock from "@/Components/Form/TextInputBlock.vue";
 import NumberInputBlock from "@/Components/Form/NumberInputBlock.vue";
 import InputBlock from "@/Components/Form/InputBlock.vue";
+import {useViewStore} from "@/store/view.js";
+const viewStore = useViewStore();
 
 const payment_detail = usePage().props.paymentDetail;
 const payment_gateways = usePage().props.paymentGateways;
@@ -74,7 +76,7 @@ defineOptions({ layout: AuthenticatedLayout })
         <Head :title="'Редактирование реквизита - ' + form.name" />
 
         <SecondaryPageSection
-            :back-link="route((route().current('admin.*') ? 'admin.' : '') + 'payment-details.index')"
+            :back-link="route(viewStore.adminPrefix + 'payment-details.index')"
             :title="'Редактирование реквизита - ' + form.name"
             description="Здесь вы можете редактировать платежные реквизиты."
         >
@@ -217,7 +219,7 @@ defineOptions({ layout: AuthenticatedLayout })
                     </div>
                 </template>
 
-                <div v-if="route().current('admin.*')" class="pb-2">
+                <div v-if="viewStore.isAdminViewMode" class="pb-2">
                     <label for="owner_email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Владелец</label>
                     <div
                         class="dark:text-gray-300 mt-1 block w-full"

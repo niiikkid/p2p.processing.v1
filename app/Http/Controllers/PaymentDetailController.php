@@ -41,8 +41,6 @@ class PaymentDetailController extends Controller
             'user_id' => auth()->id(),
             'currency' => $currency,
         ] + $request->validated());
-
-        return redirect()->route('payment-details.index');
     }
 
     public function edit(PaymentDetail $paymentDetail)
@@ -62,7 +60,5 @@ class PaymentDetailController extends Controller
         $paymentDetail->update([
             'daily_limit' => Money::fromPrecision($request->daily_limit, $paymentDetail->currency),
         ] + $request->validated());
-
-        return redirect()->route('payment-details.index');
     }
 }

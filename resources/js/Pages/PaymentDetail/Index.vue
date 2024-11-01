@@ -14,7 +14,9 @@ import HeadllesTable from "@/Components/HeadlesTable/HeadllesTable.vue";
 import HeadlessTableTr from "@/Components/HeadlesTable/HeadlessTableTr.vue";
 import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
+import {useViewStore} from "@/store/view.js";
 
+const viewStore = useViewStore();
 const payment_details = usePage().props.paymentDetails;
 
 defineOptions({ layout: AuthenticatedLayout })
@@ -29,9 +31,7 @@ defineOptions({ layout: AuthenticatedLayout })
             :data="payment_details"
         >
             <template v-slot:button>
-                <div v-if="!route().current('admin.*')">
-                    <fwb-button @click="router.visit(route('payment-details.create'))" color="default">Создать реквизиты</fwb-button>
-                </div>
+                <fwb-button @click="router.visit(route(viewStore.adminPrefix + 'payment-details.create'))" color="default">Создать реквизиты</fwb-button>
             </template>
             <template v-slot:body>
                 <HeadllesTable>
@@ -46,7 +46,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         <HeadlessTableTd class="text-gray-900 dark:text-gray-200">
                             <PaymentDetail :detail="payment_detail.detail" :type="payment_detail.detail_type"></PaymentDetail>
                         </HeadlessTableTd>
-                        <HeadlessTableTd v-if="route().current('admin.*')" class="text-gray-900 dark:text-gray-200">
+                        <HeadlessTableTd v-if="viewStore.isMerchantViewMode" class="text-gray-900 dark:text-gray-200">
                             {{ payment_detail.owner_email }}
                         </HeadlessTableTd>
                         <HeadlessTableTd>
@@ -57,7 +57,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         </HeadlessTableTd>
                         <HeadlessTableTd>
                             <div class="flex justify-center gap-2">
-                                <EditAction :link="route((route().current('admin.*') ? 'admin.' : '') + 'payment-details.edit', payment_detail.id)"></EditAction>
+                                <EditAction :link="route(viewStore.adminPrefix + 'payment-details.edit', payment_detail.id)"></EditAction>
                             </div>
                         </HeadlessTableTd>
                     </HeadlessTableTr>
