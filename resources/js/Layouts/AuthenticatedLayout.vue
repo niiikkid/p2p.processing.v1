@@ -7,27 +7,28 @@ import TraderMenu from "@/Layouts/Partials/TraderMenu.vue";
 import AdminMenu from "@/Layouts/Partials/AdminMenu.vue";
 import NavBar from "@/Layouts/Partials/NavBar.vue";
 import MerchantMenu from "@/Layouts/Partials/MerchantMenu.vue";
+import {useViewStore} from "@/store/view.js";
+import {useUserStore} from "@/store/user.js";
 
-const is_admin = usePage().props.auth.is_admin;
+const viewStore = useViewStore();
+const userStore = useUserStore();
+
 const rates = ref(usePage().props.data.rates);
-
-const menuMode = ref('trader');
-
-const switchMenuMode = (mode) => {
-    menuMode.value = mode;
-}
 
 // initialize components based on data attribute selectors
 onMounted(() => {
+    viewStore.setTraderViewMode()
+
     if (route().current('admin.*')) {
-        switchMenuMode('admin')
+        viewStore.setAdminViewMode()
     }
-    //TODO костыль
+
+    //TODO это костыль для мерчантов
     if (route().current('merchants.*')) {
-        switchMenuMode('merchant')
+        viewStore.setMerchantViewMode()
     }
     if (route().current('integration.*')) {
-        switchMenuMode('merchant')
+        viewStore.setMerchantViewMode()
     }
 
     initFlowbite();
@@ -52,23 +53,21 @@ const openDocs = () => {
 <template>
     <div>
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <NavBar :menuMode="menuMode"/>
+            <NavBar/>
 
             <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
                 <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
                     <MenuModeSwitcher
-                        v-if="is_admin"
-                        v-model="menuMode"
-                        @changed="switchMenuMode"
+                        v-if="userStore.isAdmin"
                     />
                     <TraderMenu
-                        v-show="menuMode === 'trader'"
+                        v-show="viewStore.isTraderViewMode"
                     />
                     <MerchantMenu
-                        v-show="menuMode === 'merchant'"
+                        v-show="viewStore.isMerchantViewMode"
                     />
                     <AdminMenu
-                        v-show="is_admin && menuMode === 'admin'"
+                        v-show="viewStore.isAdminViewMode"
                     />
 <!--                    <div>
                         <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
@@ -83,7 +82,7 @@ const openDocs = () => {
                         </ul>
                     </div>-->
                     <div
-                        v-show="menuMode !== 'admin'"
+                        v-show="! viewStore.isAdminViewMode"
                         class="p-4 mt-6 rounded-lg border border-gray-500/25 bg-gray-200/10 dark:border-gray-400/25 dark:bg-gray-400/10"
                     >
                         <div class="flex items-center mb-1">

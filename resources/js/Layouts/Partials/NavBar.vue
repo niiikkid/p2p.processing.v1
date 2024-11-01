@@ -1,13 +1,10 @@
 <script setup>
 import {Link, router, usePage} from "@inertiajs/vue3";
-import {Dropdown, initFlowbite} from "flowbite";
+import {Dropdown} from "flowbite";
 import {ref} from "vue";
+import {useViewStore} from "@/store/view.js";
 
-const props = defineProps({
-    menuMode: {
-        type: String,
-    },
-});
+const viewStore = useViewStore();
 
 let dropdown = null;
 
@@ -69,13 +66,13 @@ router.on('success', (event) => {
                     </Link>
                 </div>
                 <div class="flex items-center">
-                    <div v-show="menuMode === 'merchant'" class="flex items-center">
+                    <div v-show="viewStore.isMerchantViewMode" class="flex items-center">
                         <div class="font-semibold">
                             <span class="text-base text-gray-900 dark:text-gray-200 mx-1">{{ wallet.merchant_balance }}</span>
                             <span class="text-blue-500 text-sm">USDT</span>
                         </div>
                     </div>
-                    <div v-show="menuMode === 'trader'" class="flex items-center ml-2">
+                    <div v-show="viewStore.isTraderViewMode" class="flex items-center ml-2">
                         <div class="font-semibold">
                             <span class="text-base text-gray-900 dark:text-gray-200 mx-1">{{ wallet.trust_balance }}</span>
                             <span class="text-blue-500 text-sm">USDT</span>
