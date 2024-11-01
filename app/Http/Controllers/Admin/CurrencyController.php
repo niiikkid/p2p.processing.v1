@@ -19,6 +19,6 @@ class CurrencyController extends Controller
                 ];
             })->toArray();
 
-        return Inertia::render('Admin/Currency/Index', compact('currencies'));
+        return Inertia::render('Currency/Index', compact('currencies'));
     }
 }

@@ -19,7 +19,7 @@ class PaymentGatewayController extends Controller
 
         $paymentGateways = PaymentGatewayResource::collection($paymentGateways);
 
-        return Inertia::render('Admin/PaymentGateway/Index', compact('paymentGateways'));
+        return Inertia::render('PaymentGateway/Index', compact('paymentGateways'));
     }
 
     public function create()
@@ -38,7 +38,7 @@ class PaymentGatewayController extends Controller
 
         $paymentGateways = PaymentGatewayResource::collection(queries()->paymentGateway()->getAllActive())->resolve();
 
-        return Inertia::render('Admin/PaymentGateway/Add', compact('currencies', 'detailTypes', 'paymentGateways'));
+        return Inertia::render('PaymentGateway/Add', compact('currencies', 'detailTypes', 'paymentGateways'));
     }
 
     public function store(StoreRequest $request)
@@ -68,7 +68,7 @@ class PaymentGatewayController extends Controller
 
         $paymentGateway = PaymentGatewayResource::make($paymentGateway)->resolve();
 
-        return Inertia::render('Admin/PaymentGateway/Edit', compact('paymentGateway', 'currencies', 'detailTypes', 'paymentGateways'));
+        return Inertia::render('PaymentGateway/Edit', compact('paymentGateway', 'currencies', 'detailTypes', 'paymentGateways'));
     }
 
     public function update(UpdateRequest $request, PaymentGateway $paymentGateway)

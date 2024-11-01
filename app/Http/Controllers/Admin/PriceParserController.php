@@ -21,7 +21,7 @@ class PriceParserController extends Controller
             ->getCurrencyPriceParser($currency)
             ->toArray();
 
-        return Inertia::render('Admin/Currency/PriceParser/Edit', [
+        return Inertia::render('Currency/PriceParser/Edit', [
             'currency' => $currency->getCode(),
             'methods' => $methods,
             'settings' => $settings,
