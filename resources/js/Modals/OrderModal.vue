@@ -7,7 +7,9 @@ import ModalHeader from "@/Components/Modals/Components/ModalHeader.vue";
 import ModalBody from "@/Components/Modals/Components/ModalBody.vue";
 import {useModalStore} from "@/store/modal.js";
 import {storeToRefs} from "pinia";
+import {useViewStore} from "@/store/view.js";
 
+const viewStore = useViewStore();
 const modalStore = useModalStore();
 const { orderModal } = storeToRefs(modalStore);
 const user = usePage().props.auth.user;
@@ -15,8 +17,6 @@ const user = usePage().props.auth.user;
 const showUserSmsLogs = () => {
     modalStore.openUserSmsLogsModal({user: user});
 };
-
-const isAdminView = route().current('admin.*');
 
 const closeModal = () => {
     modalStore.closeModal('order');
@@ -31,7 +31,7 @@ const confirmAcceptOrder = (order) => {
                 preserveScroll: true,
                 onSuccess: () => {
                     modalStore.closeAll()
-                    router.visit(route((route().current('admin.*') ? 'admin.' : '') + 'orders.index'), {
+                    router.visit(route(viewStore.adminPrefix + 'orders.index'), {
                         only: ['orders'],
                     })
                 },
@@ -92,11 +92,11 @@ const confirmAcceptOrder = (order) => {
                             </div>
                             <div class="space-y-4">
                                 <div class="space-y-2">
-                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
+                                    <dl v-if="viewStore.isAdminViewMode" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Мерчант</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.merchant.name }} (id:{{ orderModal.params.order.merchant.id }})</dd>
                                     </dl>
-                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
+                                    <dl v-if="viewStore.isAdminViewMode" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Внешний ID</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.external_id }}</dd>
                                     </dl>
@@ -108,7 +108,7 @@ const confirmAcceptOrder = (order) => {
                                         <dt class="text-gray-500 dark:text-gray-400">Сумма USDT</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
                                     </dl>
-                                    <template v-if="isAdminView">
+                                    <template v-if="viewStore.isAdminViewMode">
                                         <dl class="flex items-center justify-between gap-4">
                                             <dt class="text-gray-500 dark:text-gray-400">Прибыль трейдера</dt>
                                             <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.trader_profit }} {{orderModal.params.order.base_currency.toUpperCase()}}</dd>
@@ -132,15 +132,15 @@ const confirmAcceptOrder = (order) => {
                                         <dt class="text-gray-500 dark:text-gray-400">Курс</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.conversion_price }} {{orderModal.params.order.currency.toUpperCase()}}</dd>
                                     </dl>
-                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
+                                    <dl v-if="viewStore.isAdminViewMode" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Курс без комиссии</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.base_conversion_price }} {{orderModal.params.order.currency.toUpperCase()}}</dd>
                                     </dl>
-                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
+                                    <dl v-if="viewStore.isAdminViewMode" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Комиссия трейдера</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.trader_commission_rate }} %</dd>
                                     </dl>
-                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
+                                    <dl v-if="viewStore.isAdminViewMode" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Комиссия сервиса</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300 flex items-center">
                                             {{ orderModal.params.order.service_commission_rate_total }}%
@@ -169,7 +169,7 @@ const confirmAcceptOrder = (order) => {
                                             <PaymentDetail :detail="orderModal.params.order.payment_detail" :copyable="false" :type="orderModal.params.order.payment_detail_type"></PaymentDetail>
                                         </dd>
                                     </dl>
-                                    <dl v-if="isAdminView" class="flex items-center justify-between gap-4">
+                                    <dl v-if="viewStore.isAdminViewMode" class="flex items-center justify-between gap-4">
                                         <dt class="text-gray-500 dark:text-gray-400">Коллбек URL</dt>
                                         <dd class="text-base font-medium text-gray-900 dark:text-gray-300">{{ orderModal.params.order.callback_url }}</dd>
                                     </dl>
@@ -235,7 +235,7 @@ const confirmAcceptOrder = (order) => {
                         <div class="flex justify-center">
                             <Link
                                 @click="modalStore.closeAll()"
-                                :href="route((route().current('admin.*') ? 'admin.' : '') + 'disputes.index')"
+                                :href="route(viewStore.adminPrefix + 'disputes.index')"
                                 class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
                             >
                                 Перейти

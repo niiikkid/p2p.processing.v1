@@ -13,8 +13,10 @@ import HeadlessTableTr from "@/Components/HeadlesTable/HeadlessTableTr.vue";
 import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import DateTime from "@/Components/DateTime.vue";
-const orders = usePage().props.orders;
+import {useViewStore} from "@/store/view.js";
 
+const viewStore = useViewStore();
+const orders = usePage().props.orders;
 const modalStore = useModalStore();
 
 defineOptions({ layout: AuthenticatedLayout })
@@ -49,7 +51,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             ></PaymentDetail>
                             <div class="text-gray-500 dark:text-gray-500">{{ order.payment_detail_name }}</div>
                         </HeadlessTableTd>
-                        <HeadlessTableTd v-if="route().current('admin.*')">
+                        <HeadlessTableTd v-if="viewStore.isAdminViewMode">
                             <div class="text-nowrap text-gray-900 dark:text-gray-200">Трейдер</div>
                             <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ order.user.email }}</div>
                         </HeadlessTableTd>

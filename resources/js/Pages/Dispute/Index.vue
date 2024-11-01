@@ -15,15 +15,12 @@ import HeadlessTableTr from "@/Components/HeadlesTable/HeadlessTableTr.vue";
 import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import DateTime from "@/Components/DateTime.vue";
+import {useViewStore} from "@/store/view.js";
 
-const disputes = usePage().props.disputes;
+const viewStore = useViewStore();
 const modalStore = useModalStore();
 
-const openPage = (page) => {
-    router.visit(route((route().current('admin.*') ? 'admin.' : '') + 'disputes.index'), { data: {
-            page
-        } })
-}
+const disputes = usePage().props.disputes;
 
 const confirmAcceptDispute = (dispute) => {
     modalStore.openConfirmModal({
@@ -35,7 +32,7 @@ const confirmAcceptDispute = (dispute) => {
                 preserveScroll: true,
                 onFinish: () => {
                     modalStore.closeAll()
-                    router.visit(route((route().current('admin.*') ? 'admin.' : '') + 'disputes.index'), {
+                    router.visit(route(viewStore.adminPrefix + 'disputes.index'), {
                         only: ['disputes'],
                     })
                 },
@@ -54,7 +51,7 @@ const confirmRollbackDispute = (dispute) => {
                 preserveScroll: true,
                 onFinish: () => {
                     modalStore.closeAll()
-                    router.visit(route((route().current('admin.*') ? 'admin.' : '') + 'disputes.index'), {
+                    router.visit(route(viewStore.adminPrefix + 'disputes.index'), {
                         only: ['disputes'],
                     })
                 },
@@ -62,8 +59,6 @@ const confirmRollbackDispute = (dispute) => {
         }
     });
 };
-
-const is_admin = usePage().props.auth.is_admin;
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
@@ -97,7 +92,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ dispute.order.amount }} {{dispute.order.currency.toUpperCase()}}</div>
                             <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.order.profit }} {{dispute.order.base_currency.toUpperCase()}}</div>
                         </HeadlessTableTd>
-                        <HeadlessTableTd v-if="is_admin">
+                        <HeadlessTableTd v-if="viewStore.isAdminViewMode">
                             <div class="text-nowrap text-gray-900 dark:text-gray-200">Трейдер</div>
                             <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.user.email }}</div>
                         </HeadlessTableTd>

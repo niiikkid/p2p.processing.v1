@@ -7,8 +7,9 @@ import Modal from "@/Components/Modals/Modal.vue";
 import ModalHeader from "@/Components/Modals/Components/ModalHeader.vue";
 import { storeToRefs } from 'pinia'
 import { useModalStore } from "@/store/modal.js";
-import {usePage} from "@inertiajs/vue3";
+import {useViewStore} from "@/store/view.js";
 
+const viewStore = useViewStore();
 const modalStore = useModalStore();
 const { disputeModal } = storeToRefs(modalStore);
 
@@ -37,8 +38,6 @@ const showReceipt = () => {
 const showUserSmsLogs = (dispute) => {
     modalStore.openUserSmsLogsModal({user: dispute.user});
 };
-
-const is_admin = usePage().props.auth.is_admin;
 </script>
 
 <template>
@@ -135,7 +134,7 @@ const is_admin = usePage().props.auth.is_admin;
                                         </div>
                                     </div>
                                 </div>
-                                <div v-if="is_admin" class="p-3 bg-white border border-gray-200 dark:bg-gray-700/50 dark:border-gray-700 rounded-lg dark:shadow">
+                                <div v-if="viewStore.isAdminViewMode" class="p-3 bg-white border border-gray-200 dark:bg-gray-700/50 dark:border-gray-700 rounded-lg dark:shadow">
                                     <div class="flex justify-between items-center">
                                         <div class="items-center">
                                             <div class="mr-3 text-sm text-nowrap text-gray-900 dark:text-gray-300">
@@ -189,7 +188,7 @@ const is_admin = usePage().props.auth.is_admin;
                 </div>
             </form>
         </ModalBody>
-        <ModalFooter v-show="is_admin || disputeModal.params.dispute.status === 'pending'">
+        <ModalFooter v-show="viewStore.isAdminViewMode || disputeModal.params.dispute.status === 'pending'">
             <div class="flex justify-center">
                 <template v-if="disputeModal.params.dispute.status === 'pending'">
                     <button
@@ -213,7 +212,7 @@ const is_admin = usePage().props.auth.is_admin;
                         Принять
                     </button>
                 </template>
-                <template v-if="is_admin && disputeModal.params.dispute.status !== 'pending'">
+                <template v-if="viewStore.isAdminViewMode && disputeModal.params.dispute.status !== 'pending'">
                     <button
                         @click.prevent="rollback(disputeModal.params.dispute)"
                         type="button"
