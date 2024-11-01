@@ -41,14 +41,14 @@ const withdraw = () => {
             @close="close"
         />
         <ModalBody>
-            <h1 class="text-gray-900 dark:text-gray-200 text-center">Введите сумму которую хотите снять с баланса в USDT и нажмите «Продолжить»</h1>
+            <h1 class="text-gray-900 dark:text-gray-200 text-center">Введите сумму которую хотите вывести с баланса в USDT и нажмите «Продолжить»</h1>
             <form action="#" class="mx-auto max-w-screen-xl px-6 2xl:px-0 mt-8 mb-5">
                 <div class="mx-auto max-w-3xl">
                     <div>
                         <div>
                             <InputLabel
                                 for="amount"
-                                value="Сумма снятия в USDT"
+                                value="Сумма вывода в USDT"
                                 :error="!!form.errors.amount"
                             />
 
@@ -63,7 +63,7 @@ const withdraw = () => {
                             />
 
                             <InputError class="mt-2" :message="form.errors.amount" />
-                            <InputHelper v-if="! form.errors.amount" model-value="Сначала средства снимаются с траст баланса, а потом с резерва."></InputHelper>
+                            <InputHelper v-if="! form.errors.amount" model-value="Сначала средства выводятся с траст баланса, а потом с резерва."></InputHelper>
                         </div>
                     </div>
                 </div>
