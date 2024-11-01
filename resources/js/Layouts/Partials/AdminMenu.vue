@@ -95,37 +95,6 @@ import {Link} from "@inertiajs/vue3";
                 </Link>
             </li>
         </ul>
-        <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
-            <li>
-                <button
-                    type="button"
-                    class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                    aria-controls="dropdown-api-testing"
-                    data-collapse-toggle="dropdown-api-testing"
-                    :aria-expanded="route().current('admin.api.*')"
-                >
-                    <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 4v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2m6-16v2m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v10m6-16v10m0 0a2 2 0 1 0 0 4m0-4a2 2 0 1 1 0 4m0 0v2"/>
-                    </svg>
-                    <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Тестирование API</span>
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                    </svg>
-                </button>
-                <ul id="dropdown-api-testing" class="py-2 space-y-2" :class="{hidden: ! route().current('admin.api.*')}">
-                    <li>
-                        <Link :href="route('admin.api.orders.index')" :class="{'bg-gray-100 dark:bg-gray-700': route().current('admin.api.orders.*')}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                            <span class="ms-3">Создать сделку</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link :href="route('admin.api.disputes.index')" :class="{'bg-gray-100 dark:bg-gray-700': route().current('admin.api.disputes.*')}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                            <span class="ms-3">Открыть спор</span>
-                        </Link>
-                    </li>
-                </ul>
-            </li>
-        </ul>
     </div>
 </template>
 

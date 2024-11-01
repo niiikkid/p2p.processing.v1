@@ -1,7 +1,7 @@
 <script setup>
 import {Head} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import PrimeTimeBonus from "@/Pages/Admin/Settings/Partials/PrimeTimeBonus.vue";
+import PrimeTimeBonus from "@/Pages/Settings/Partials/PrimeTimeBonus.vue";
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>

@@ -13,7 +13,7 @@ class SettingsController extends Controller
     {
         $primeTimeBonus = services()->settings()->getPrimeTimeBonus()->toArray();
 
-        return Inertia::render('Admin/Settings/Index', compact('primeTimeBonus'));
+        return Inertia::render('Settings/Index', compact('primeTimeBonus'));
     }
 
     public function updatePrimeTimeBonus(UpdatePrimeTimeBonusRequest $request)

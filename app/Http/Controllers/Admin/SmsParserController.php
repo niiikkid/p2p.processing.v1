@@ -23,7 +23,7 @@ class SmsParserController extends Controller
 
         $smsParsers = SmsParserResource::collection($smsParsers);
 
-        return Inertia::render('Admin/SmsParser/Index', compact('smsParsers'));
+        return Inertia::render('SmsParser/Index', compact('smsParsers'));
     }
 
     /**
@@ -38,7 +38,7 @@ class SmsParserController extends Controller
                 return ['code' => $currency->getCode()];
             });
 
-        return Inertia::render('Admin/SmsParser/Add', compact('paymentGateways', 'currencies'));
+        return Inertia::render('SmsParser/Add', compact('paymentGateways', 'currencies'));
     }
 
     /**
@@ -64,7 +64,7 @@ class SmsParserController extends Controller
                 return ['code' => $currency->getCode()];
             });
 
-        return Inertia::render('Admin/SmsParser/Edit', compact('smsParser', 'paymentGateways', 'currencies'));
+        return Inertia::render('SmsParser/Edit', compact('smsParser', 'paymentGateways', 'currencies'));
     }
 
     /**
