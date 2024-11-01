@@ -2,8 +2,25 @@
 import Select from "@/Components/Select.vue";
 
 import {useViewStore} from "@/store/view.js";
+import {watch} from "vue";
+import {router} from "@inertiajs/vue3";
 
 const viewStore = useViewStore();
+
+watch(
+    () => viewStore.viewMode,
+    () => {
+        if (viewStore.viewMode === 'admin') {
+            router.visit(route('admin.users.index'))
+        }
+        if (viewStore.viewMode === 'trader') {
+            router.visit(route('payment-details.index'))
+        }
+        if (viewStore.viewMode === 'merchant') {
+            router.visit(route('merchants.index'))
+        }
+    }
+);
 </script>
 
 <template>
