@@ -1,17 +1,13 @@
 <script setup>
 import {useModalStore} from "@/store/modal.js";
 import {usePage} from "@inertiajs/vue3";
+import {useViewStore} from "@/store/view.js";
 
+const viewStore = useViewStore();
 const modalStore = useModalStore();
 const wallet = usePage().props.wallet;
 const reserve_balance = usePage().props.reserve_balance;
 const user = usePage().props.user;
-
-defineProps({
-    isAdmin: {
-        type: Boolean,
-    },
-});
 </script>
 
 <template>
@@ -21,7 +17,7 @@ defineProps({
                 <div>
                     <div class="flex justify-between">
                         <div class="text-xl text-gray-900 dark:text-gray-200">Траст баланс</div>
-                        <template v-if="isAdmin">
+                        <template v-if="viewStore.isAdminViewMode">
                             <div>
                                 <button
                                     @click.prevent="modalStore.openWithdrawalModal({user})"

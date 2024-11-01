@@ -6,6 +6,9 @@ import SaveButton from "@/Components/Form/SaveButton.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
 import {onMounted, ref} from "vue";
 import CopyText from "@/Components/CopyText.vue";
+import {useViewStore} from "@/store/view.js";
+
+const viewStore = useViewStore();
 
 const merchant = ref(usePage().props.merchant);
 const paymentGateways = usePage().props.paymentGateways;
@@ -104,12 +107,12 @@ onMounted(() => {
                         <CopyText class="blur blur-xs hover:blur-none" :text="merchant.uuid"></CopyText>
                     </span>
                 </li>
-                <li v-if="route().current('admin.*')" class="w-full px-4 py-3 rounded-b-lg flex justify-between">
+                <li v-if="viewStore.isAdminViewMode" class="w-full px-4 py-3 rounded-b-lg flex justify-between">
                     <span class="text-gray-900 dark:text-gray-200">Владелец</span>
                     <span class="text-gray-500 dark:text-gray-400">{{ merchant.owner.email }}</span>
                 </li>
             </ul>
-            <div v-if="route().current('admin.*')" class="my-8">
+            <div v-if="viewStore.isAdminViewMode" class="my-8">
                 <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-3">Модерация</h3>
                 <div class="p-6 bg-white shadow border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
                     <p class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-300">

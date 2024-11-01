@@ -11,7 +11,9 @@ import {
 } from 'flowbite-vue'
 import { usePage } from '@inertiajs/vue3';
 import MainTableSection from "@/Wrappers/MainTableSection.vue";
+import {useViewStore} from "@/store/view.js";
 
+const viewStore = useViewStore();
 const sms_logs = usePage().props.sms_logs;
 
 defineOptions({ layout: AuthenticatedLayout })
@@ -32,7 +34,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         <fwb-table-head-cell>Отправитель</fwb-table-head-cell>
                         <fwb-table-head-cell>Сообщение</fwb-table-head-cell>
                         <fwb-table-head-cell>Тип</fwb-table-head-cell>
-                        <fwb-table-head-cell v-if="route().current('admin.*')">Владелец</fwb-table-head-cell>
+                        <fwb-table-head-cell v-if="viewStore.isAdminViewMode">Владелец</fwb-table-head-cell>
                         <fwb-table-head-cell>Время</fwb-table-head-cell>
                         <fwb-table-head-cell>
                             <span class="sr-only">Действия</span>
@@ -44,7 +46,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <fwb-table-cell>{{ sms_log.sender }}</fwb-table-cell>
                             <fwb-table-cell>{{ sms_log.message }}</fwb-table-cell>
                             <fwb-table-cell>{{ sms_log.type }}</fwb-table-cell>
-                            <fwb-table-cell v-if="route().current('admin.*')">{{ sms_log.user.email }}</fwb-table-cell>
+                            <fwb-table-cell v-if="viewStore.isAdminViewMode">{{ sms_log.user.email }}</fwb-table-cell>
                             <fwb-table-cell>{{ sms_log.timestamp }}</fwb-table-cell>
                             <fwb-table-cell></fwb-table-cell>
                         </fwb-table-row>

@@ -12,8 +12,11 @@ import {useModalStore} from "@/store/modal.js";
 import NotificationModal from "@/Modals/NotificationModal.vue";
 import ProgressNumber from "@/Components/ProgressNumber.vue";
 import {computed, ref} from "vue";
+import {useViewStore} from "@/store/view.js";
 
 const modalStore = useModalStore();
+const viewStore = useViewStore();
+
 const tgBot = usePage().props.tgBot;
 const notifications = usePage().props.notifications;
 
@@ -79,7 +82,7 @@ defineOptions({ layout: AuthenticatedLayout })
                 </div>
             </div>
         </div>
-        <div v-if="route().current('admin.*')">
+        <div v-if="viewStore.isAdminViewMode">
             <div class="flex justify-between">
                 <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl">Отправленные уведомления</h2>
                 <div>

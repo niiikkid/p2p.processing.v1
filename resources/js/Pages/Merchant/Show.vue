@@ -6,9 +6,10 @@ import {onMounted, ref} from "vue";
 import Statistics from "@/Pages/Merchant/Partials/Statistics.vue";
 import Payments from "@/Pages/Merchant/Partials/Payments.vue";
 import Settings from "@/Pages/Merchant/Partials/Settings.vue";
+import {useViewStore} from "@/store/view.js";
 
 const tab = ref('statistics');
-
+const viewStore = useViewStore();
 const merchant = usePage().props.merchant;
 
 const openPage = (page = null) => {
@@ -35,7 +36,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
         <div class="mx-auto space-y-4">
             <div class="mb-3">
-                <GoBackButton @click="router.visit(route((route().current('admin.*') ? 'admin.' : '') + 'merchants.index'))"/>
+                <GoBackButton @click="router.visit(route(viewStore.adminPrefix + 'merchants.index'))"/>
             </div>
             <div>
                 <section>

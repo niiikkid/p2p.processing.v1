@@ -10,6 +10,7 @@ import WithdrawalModal from "@/Modals/Wallet/WithdrawalModal.vue";
 import EmptyTable from "@/Components/EmptyTable.vue";
 import TraderBalance from "@/Pages/Wallet/Partials/TraderBalance.vue";
 import MerchantBalance from "@/Pages/Wallet/Partials/MerchantBalance.vue";
+import {useViewStore} from "@/store/view.js";
 
 const wallet = usePage().props.wallet;
 const reserve_balance = usePage().props.reserve_balance;
@@ -19,10 +20,10 @@ const user = usePage().props.user;
 const modalStore = useModalStore();
 const currentPage = ref(invoices.meta.current_page)
 const activeTab = ref(null);
-
+const viewStore = useViewStore();
 
 const openPage = (page) => {
-    if (route().current('admin.*')) {
+    if (viewStore.isAdminViewMode) {
         router.visit(route('admin.users.wallet.index', user.id), {
             data: {
                 page,
@@ -44,8 +45,6 @@ onMounted(() => {
     activeTab.value = urlParams.get('tab') ?? 'invoices'
 })
 
-const isAdmin = route().current('admin.*');
-
 defineOptions({ layout: AuthenticatedLayout })
 </script>
 
@@ -53,14 +52,14 @@ defineOptions({ layout: AuthenticatedLayout })
     <Head title="Финансы"/>
 
     <div>
-        <div v-if="isAdmin" class="mb-3">
+        <div v-if="viewStore.isAdminViewMode" class="mb-3">
             <GoBackButton
                 @click="router.visit(route('admin.users.index'))"
             ></GoBackButton>
         </div>
 
         <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl mb-4">
-            <template v-if="isAdmin">
+            <template v-if="viewStore.isAdminViewMode">
                 Финансы пользователя: <span class="text-blue-500">{{user.email}}</span>
             </template>
             <template v-else>
@@ -68,7 +67,7 @@ defineOptions({ layout: AuthenticatedLayout })
             </template>
         </h2>
 
-        <TraderBalance :isAdmin="isAdmin"/>
+        <TraderBalance/>
 <!--        <MerchantBalance/>-->
 
         <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl mb-3">История операций</h2>
