@@ -24,6 +24,10 @@ class InvoiceResource extends JsonResource
             'currency' => $this->currency->getCode(),
             'type' => $this->type->value,
             'status' => $this->status->value,
+            'user' => [//TODO hide if not presented in query
+               'id' => $this->wallet->user->id,
+               'email' => $this->wallet->user->email,
+            ],
             'wallet_id' => $this->wallet_id,
             'created_at' => $this->created_at->toDateTimeString(),
         ];
