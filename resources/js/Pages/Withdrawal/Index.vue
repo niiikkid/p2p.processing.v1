@@ -1,8 +1,7 @@
 <script setup>
-import {Head, router} from '@inertiajs/vue3';
+import {Head, router, useForm} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {
-    FwbButton,
     FwbTable,
     FwbTableBody,
     FwbTableCell,
@@ -11,12 +10,46 @@ import {
     FwbTableRow,
 } from 'flowbite-vue'
 import { usePage } from '@inertiajs/vue3';
-import IsActiveStatus from "@/Components/IsActiveStatus.vue";
-import EditAction from "@/Components/Table/EditAction.vue";
 import MainTableSection from "@/Wrappers/MainTableSection.vue";
 import InvoiceStatus from "@/Components/InvoiceStatus.vue";
+import SuccessAction from "@/Components/Table/SuccessAction.vue";
+import FailAction from "@/Components/Table/FailAction.vue";
+import {useModalStore} from "@/store/modal.js";
+import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
+
+const modalStore = useModalStore();
 
 const invoices = usePage().props.invoices;
+
+const confirmSuccessWithdrawal = (invoice) => {
+    modalStore.openConfirmModal({
+        title: 'Вы уверены что хотите завершить заявку как успешную?',
+        confirm_button_name: 'Подтвердить',
+        confirm: () => {
+            useForm({}).delete(route('admin.withdrawals.success', invoice.id), {
+                preserveScroll: true,
+                onFinish: () => {
+                    router.visit(route('admin.withdrawals.index'))
+                },
+            });
+        }
+    });
+};
+
+const confirmFailParser = (invoice) => {
+    modalStore.openConfirmModal({
+        title: 'Вы уверены что хотите отклонить заявку?',
+        confirm_button_name: 'Отклонить',
+        confirm: () => {
+            useForm({}).delete(route('admin.withdrawals.fail', invoice.id), {
+                preserveScroll: true,
+                onFinish: () => {
+                    router.visit(route('admin.withdrawals.index'))
+                },
+            });
+        }
+    });
+};
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
@@ -51,14 +84,15 @@ defineOptions({ layout: AuthenticatedLayout })
                             </fwb-table-cell>
                             <fwb-table-cell>{{ invoice.created_at }}</fwb-table-cell>
                             <fwb-table-cell>
-<!--
-                                <EditAction :link="route('admin.payment-gateways.edit', invoice.id)"></EditAction>
--->
+                                <SuccessAction @click.prevent="confirmSuccessWithdrawal(invoice)"/>
+                                <FailAction class="ml-3" @click.prevent="confirmFailParser(invoice)"/>
                             </fwb-table-cell>
                         </fwb-table-row>
                     </fwb-table-body>
                 </fwb-table>
             </template>
         </MainTableSection>
+
+        <ConfirmModal/>
     </div>
 </template>

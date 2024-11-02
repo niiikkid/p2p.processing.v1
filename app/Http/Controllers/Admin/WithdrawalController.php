@@ -21,4 +21,14 @@ class WithdrawalController extends Controller
 
         return Inertia::render('Withdrawal/Index', compact('invoices'));
     }
+
+    public function success(Invoice $invoice)
+    {
+
+    }
+
+    public function fail(Invoice $invoice)
+    {
+
+    }
 }
