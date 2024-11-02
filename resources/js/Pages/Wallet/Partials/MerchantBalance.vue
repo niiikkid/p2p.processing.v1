@@ -10,12 +10,12 @@ const user = usePage().props.user;
 </script>
 
 <template>
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2 mb-6">
+    <div>
         <div class="grow sm:mt-8 lg:mt-0">
             <div class="rounded-lg border border-gray-300 bg-white shadow p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div>
                     <div class="flex justify-between">
-                        <div class="text-xl text-gray-900 dark:text-gray-200">Баланс</div>
+                        <div class="text-xl text-gray-900 dark:text-gray-200">Баланс мерчанта</div>
                         <div>
                             <button
                                 @click.prevent="modalStore.openWithdrawalModal({user})"
@@ -30,10 +30,21 @@ const user = usePage().props.user;
                         </div>
                     </div>
 
-                    <div class="pt-3 inline-block align-middle">
+                    <div class="pt-5 inline-block align-middle">
                         <span class="text-xl font-bold text-gray-900 dark:text-gray-200">
                             {{ wallet.trust_balance }} USDT
                         </span>
+                    </div>
+
+                    <div class="mt-2">
+                        <div class="inline-flex">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                Ожидает вывода
+                            </div>
+                            <div class="text-sm text-gray-900 dark:text-gray-200 ml-1.5">
+                                {{ wallet.reserve_balance }} USDT
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

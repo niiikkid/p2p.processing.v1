@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property Money $amount
  * @property Currency $currency
+ * @property string $address
  * @property InvoiceType $type
  * @property InvoiceStatus $status
  * @property int $wallet_id
@@ -31,6 +32,7 @@ class Invoice extends Model
     protected $fillable = [
         'amount',
         'currency',
+        'address',
         'type',
         'status',
         'wallet_id',

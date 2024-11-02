@@ -10,10 +10,14 @@ import InputHelper from "@/Components/InputHelper.vue";
 import NumberInput from "@/Components/NumberInput.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
-import {router, useForm} from "@inertiajs/vue3";
+import {router, useForm, usePage} from "@inertiajs/vue3";
+import {useViewStore} from "@/store/view.js";
+import TextInput from "@/Components/TextInput.vue";
 
+const total_withdrawable_amount = usePage().props.total_withdrawable_amount;
 const modalStore = useModalStore();
 const { withdrawalModal } = storeToRefs(modalStore);
+const viewStore = useViewStore();
 
 const close = () => {
     modalStore.closeModal('withdrawal')
@@ -21,16 +25,28 @@ const close = () => {
 
 const form = useForm({
     amount: null,
+    address: null,
 });
 
 const withdraw = () => {
-    form.post(route('admin.users.wallet.withdraw', withdrawalModal.value.params.user.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            router.visit(route('admin.users.wallet.index', withdrawalModal.value.params.user.id));
-            modalStore.closeAll()
-        },
-    });
+    if (viewStore.isAdminViewMode) {
+        form.post(route('admin.users.wallet.withdraw', withdrawalModal.value.params.user.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                router.visit(route('admin.users.wallet.index', withdrawalModal.value.params.user.id));
+                modalStore.closeAll()
+            },
+        });
+    }
+    if (viewStore.isTraderViewMode) {
+        form.post(route('invoice.store'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                router.visit(route(route().current()));
+                modalStore.closeAll()
+            },
+        });
+    }
 }
 </script>
 
@@ -48,7 +64,7 @@ const withdraw = () => {
                         <div>
                             <InputLabel
                                 for="amount"
-                                value="Сумма вывода в USDT"
+                                value="Сумма"
                                 :error="!!form.errors.amount"
                             />
 
@@ -56,6 +72,7 @@ const withdraw = () => {
                                 id="amount"
                                 class="mt-1 block w-full"
                                 v-model="form.amount"
+                                placeholder="Сумма в USDT"
                                 required
                                 autofocus
                                 :error="!!form.errors.amount"
@@ -63,7 +80,27 @@ const withdraw = () => {
                             />
 
                             <InputError class="mt-2" :message="form.errors.amount" />
-                            <InputHelper v-if="! form.errors.amount" model-value="Сначала средства выводятся с траст баланса, а потом с резерва."></InputHelper>
+                            <InputHelper v-if="! form.errors.amount" :model-value="'Максимум: ' + total_withdrawable_amount + ' USDT'"></InputHelper>
+                        </div>
+                        <div class="mt-3" v-if="viewStore.isTraderViewMode">
+                            <InputLabel
+                                for="address"
+                                value="Адрес"
+                                :error="!!form.errors.address"
+                            />
+
+                            <TextInput
+                                id="address"
+                                class="mt-1 block w-full"
+                                v-model="form.address"
+                                placeholder="Ваш USDT TRC-20 Адрес"
+                                required
+                                autofocus
+                                :error="!!form.errors.address"
+                                @input="form.clearErrors('address')"
+                            />
+
+                            <InputError class="mt-2" :message="form.errors.address" />
                         </div>
                     </div>
                 </div>
@@ -76,7 +113,7 @@ const withdraw = () => {
                     type="button"
                     class="inline-flex items-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                 >
-                    Снять
+                    Вывести
                 </button>
             </div>
         </ModalFooter>

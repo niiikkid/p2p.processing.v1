@@ -6,6 +6,7 @@ use App\Contracts\InvoiceServiceContract;
 use App\Enums\InvoiceStatus;
 use App\Enums\InvoiceType;
 use App\Enums\TransactionType;
+use App\Exceptions\InvoiceException;
 use App\Models\Invoice;
 use App\Models\Wallet;
 use App\Services\Money\Currency;
@@ -13,11 +14,35 @@ use App\Services\Money\Money;
 
 class InvoiceService implements InvoiceServiceContract
 {
+    public function createWithdrawal(Wallet $wallet, Money $amount, string $address): Invoice
+    {
+        /**
+         * @var Wallet $wallet
+         */
+        $wallet = auth()->user()->wallet;
+
+        $max = intval($wallet->trust_balance->add($wallet->reserve_balance)->toBeauty());
+
+        if (intval($amount->toBeauty()) > $max) {
+            throw new InvoiceException('Insufficient balance');
+        }
+
+        return Invoice::create([
+            'amount' => $amount,
+            'currency' => $amount->getCurrency(),
+            'address' => $address,
+            'type' => InvoiceType::WITHDRAWAL,
+            'status' => InvoiceStatus::PENDING,
+            'wallet_id' => $wallet->id,
+        ]);
+    }
+
     public function deposit(Wallet $wallet, Money $amount): void
     {
         Invoice::create([
             'amount' => $amount,
             'currency' => Currency::USDT(),
+            'address' => null,
             'type' => InvoiceType::DEPOSIT,
             'status' => InvoiceStatus::SUCCESS,
             'wallet_id' => $wallet->id,
@@ -31,6 +56,7 @@ class InvoiceService implements InvoiceServiceContract
         Invoice::create([
             'amount' => $amount,
             'currency' => Currency::USDT(),
+            'address' => null,
             'type' => InvoiceType::WITHDRAWAL,
             'status' => InvoiceStatus::SUCCESS,
             'wallet_id' => $wallet->id,

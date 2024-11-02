@@ -24,6 +24,9 @@ onMounted(() => {
     }
 
     //TODO это костыль для мерчантов
+    if (route().current('merchant.*')) {
+        viewStore.setMerchantViewMode()
+    }
     if (route().current('merchants.*')) {
         viewStore.setMerchantViewMode()
     }

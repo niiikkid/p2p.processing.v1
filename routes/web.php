@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::group(['middleware' => ['auth', 'banned']], function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -34,6 +33,7 @@ Route::group(['middleware' => ['auth', 'banned', 'role:Trader|Super Admin']], fu
     Route::get('/sms.apk', [\App\Http\Controllers\ApkController::class, 'download'])->name('app.download');
 
     Route::get('/finances', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
+    Route::post('/invoice', [\App\Http\Controllers\InvoiceController::class, 'store'])->name('invoice.store');
 
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
 
@@ -53,6 +53,8 @@ Route::group(['middleware' => ['auth', 'banned', 'role:Merchant|Super Admin']], 
     Route::patch('/merchants/{merchant}/commission', [\App\Http\Controllers\MerchantController::class, 'updateCommissionSettings'])->name('merchants.commission.update');
 
     Route::get('/integration', [\App\Http\Controllers\ApiIntegrationController::class, 'index'])->name('integration.index');
+
+    Route::get('/merchant/finances', [\App\Http\Controllers\WalletController::class, 'index'])->name('merchant.finances.index');
 });
 
 Route::group(['prefix' => 'admin', 'as'=>'admin.', 'middleware' => ['auth', 'banned', 'role:Super Admin']], function () {

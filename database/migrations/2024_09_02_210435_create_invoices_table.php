@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('amount')->nullable();
             $table->string('currency')->nullable();
+            $table->string('address')->nullable();
             $table->string('type')->nullable();
             $table->string('status')->nullable();
             $table->foreignId('wallet_id')->nullable();

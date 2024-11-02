@@ -67,8 +67,10 @@ defineOptions({ layout: AuthenticatedLayout })
             </template>
         </h2>
 
-        <TraderBalance/>
-<!--        <MerchantBalance/>-->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <TraderBalance v-show="viewStore.isTraderViewMode || viewStore.isAdminViewMode"/>
+            <MerchantBalance v-show="viewStore.isMerchantViewMode || viewStore.isAdminViewMode"/>
+        </div>
 
         <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl mb-3">История операций</h2>
 
