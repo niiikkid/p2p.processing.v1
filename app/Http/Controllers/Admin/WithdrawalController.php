@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\InvoiceStatus;
 use App\Enums\InvoiceType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InvoiceResource;
@@ -24,11 +25,20 @@ class WithdrawalController extends Controller
 
     public function success(Invoice $invoice)
     {
+        if ($invoice->type->notEquals(InvoiceType::WITHDRAWAL) || $invoice->status->notEquals(InvoiceStatus::PENDING)) {
+            return;
+        }
 
+        $invoice->update(['status' => InvoiceStatus::SUCCESS]);
+        //TODO withdraw balance
     }
 
     public function fail(Invoice $invoice)
     {
+        if ($invoice->type->notEquals(InvoiceType::WITHDRAWAL) || $invoice->status->notEquals(InvoiceStatus::PENDING)) {
+            return;
+        }
 
+        $invoice->update(['status' => InvoiceStatus::FAIL]);
     }
 }

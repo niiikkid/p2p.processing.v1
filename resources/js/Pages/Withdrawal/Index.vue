@@ -26,7 +26,7 @@ const confirmSuccessWithdrawal = (invoice) => {
         title: 'Вы уверены что хотите завершить заявку как успешную?',
         confirm_button_name: 'Подтвердить',
         confirm: () => {
-            useForm({}).delete(route('admin.withdrawals.success', invoice.id), {
+            useForm({}).patch(route('admin.withdrawals.success', invoice.id), {
                 preserveScroll: true,
                 onFinish: () => {
                     router.visit(route('admin.withdrawals.index'))
@@ -41,7 +41,7 @@ const confirmFailParser = (invoice) => {
         title: 'Вы уверены что хотите отклонить заявку?',
         confirm_button_name: 'Отклонить',
         confirm: () => {
-            useForm({}).delete(route('admin.withdrawals.fail', invoice.id), {
+            useForm({}).patch(route('admin.withdrawals.fail', invoice.id), {
                 preserveScroll: true,
                 onFinish: () => {
                     router.visit(route('admin.withdrawals.index'))
@@ -84,8 +84,10 @@ defineOptions({ layout: AuthenticatedLayout })
                             </fwb-table-cell>
                             <fwb-table-cell>{{ invoice.created_at }}</fwb-table-cell>
                             <fwb-table-cell>
-                                <SuccessAction @click.prevent="confirmSuccessWithdrawal(invoice)"/>
-                                <FailAction class="ml-3" @click.prevent="confirmFailParser(invoice)"/>
+                                <template v-if="invoice.status === 'pending'">
+                                    <SuccessAction @click.prevent="confirmSuccessWithdrawal(invoice)"/>
+                                    <FailAction class="ml-3" @click.prevent="confirmFailParser(invoice)"/>
+                                </template>
                             </fwb-table-cell>
                         </fwb-table-row>
                     </fwb-table-body>
