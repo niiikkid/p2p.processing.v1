@@ -77,12 +77,17 @@ onMounted(() => {
                         >
                             <div class="flex items-center">
                                 <div class="mr-3">
-                                    <span v-if="invoice.type === 'deposit'" class="inline-flex px-2.5 py-2.5 rounded-2xl bg-green-500 text-green-100 dark:bg-green-800/50 dark:text-green-300">
+                                    <span v-if="invoice.status === 'success'" class="inline-flex px-2.5 py-2.5 rounded-2xl bg-green-500 text-green-100 dark:bg-green-800/50 dark:text-green-300">
                                         <svg class="w-5 h-5 dark:text-green-200/80" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M3 21h18M4 18h16M6 10v8m4-8v8m4-8v8m4-8v8M4 9.5v-.955a1 1 0 0 1 .458-.84l7-4.52a1 1 0 0 1 1.084 0l7 4.52a1 1 0 0 1 .458.84V9.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5Z"/>
                                         </svg>
                                     </span>
-                                    <span v-if="invoice.type === 'withdrawal'" class="inline-flex px-2.5 py-2.5 rounded-2xl bg-red-500 text-red-100 dark:bg-red-800/50 dark:text-red-300">
+                                    <span v-if="invoice.status === 'pending'" class="inline-flex px-2.5 py-2.5 rounded-2xl bg-yellow-500 text-white dark:bg-yellow-700/50 dark:text-yellow-300/80">
+                                        <svg class="w-5 h-5 dark:text-red-200/80" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M3 21h18M4 18h16M6 10v8m4-8v8m4-8v8m4-8v8M4 9.5v-.955a1 1 0 0 1 .458-.84l7-4.52a1 1 0 0 1 1.084 0l7 4.52a1 1 0 0 1 .458.84V9.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5Z"/>
+                                        </svg>
+                                    </span>
+                                    <span v-if="invoice.status === 'fail'" class="inline-flex px-2.5 py-2.5 rounded-2xl bg-red-500 text-red-100 dark:bg-red-800/50 dark:text-red-300">
                                         <svg class="w-5 h-5 dark:text-red-200/80" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M3 21h18M4 18h16M6 10v8m4-8v8m4-8v8m4-8v8M4 9.5v-.955a1 1 0 0 1 .458-.84l7-4.52a1 1 0 0 1 1.084 0l7 4.52a1 1 0 0 1 .458.84V9.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5Z"/>
                                         </svg>
@@ -91,6 +96,12 @@ onMounted(() => {
                                 <div class="text-gray-900 dark:text-gray-400">#{{ invoice.id }}</div>
                             </div>
                         </th>
+                        <td class="p-3 border border-x-0 text-gray-900 border-gray-300 dark:border-gray-700">
+                            <div class="text-nowrap dark:text-gray-400 text-center">
+                                <template v-if="invoice.type === 'deposit'">Пополнение</template>
+                                <template v-if="invoice.type === 'withdrawal'">Вывод</template>
+                            </div>
+                        </td>
                         <td class="p-3 border border-x-0 text-gray-900 border-gray-300 dark:border-gray-700">
                             <div class="text-nowrap dark:text-gray-400 text-center">
                                 <template v-if="invoice.type === 'deposit'">+</template>
@@ -108,11 +119,14 @@ onMounted(() => {
                         </td>
                         <td class="p-3 rounded-r-xl border border-l-0 border-gray-300 dark:border-gray-700">
                             <div class="flex justify-end">
-                                <span v-if="invoice.type === 'deposit'" class="inline-flex mr-2 px-4 py-2.5 rounded-lg bg-green-500 text-green-100 dark:bg-green-800/50 dark:text-green-200/80">
-                                    Зачисление
+                                <span v-if="invoice.status === 'success'" class="inline-flex mr-2 px-4 py-2.5 rounded-lg bg-green-500 text-green-100 dark:bg-green-800/50 dark:text-green-200/80">
+                                    Успешно
                                 </span>
-                                <span v-if="invoice.type === 'withdrawal'" class="inline-flex mr-2 px-4 py-2.5 rounded-lg bg-red-500 text-red-100 dark:bg-red-800/50 dark:text-red-200/80">
-                                    Снятие
+                                <span v-if="invoice.status === 'pending'" class="inline-flex mr-2 px-4 py-2.5 rounded-lg bg-yellow-500 text-white dark:bg-yellow-700/50 dark:text-yellow-300/80">
+                                    Ожидание
+                                </span>
+                                <span v-if="invoice.status === 'fail'" class="inline-flex mr-2 px-4 py-2.5 rounded-lg bg-red-500 text-red-100 dark:bg-red-800/50 dark:text-red-200/80">
+                                    Ошибка
                                 </span>
                             </div>
                         </td>
