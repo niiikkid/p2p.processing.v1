@@ -14,7 +14,14 @@ import {router, useForm, usePage} from "@inertiajs/vue3";
 import {useViewStore} from "@/store/view.js";
 import TextInput from "@/Components/TextInput.vue";
 
-const total_withdrawable_amount = usePage().props.total_withdrawable_amount;
+const props = defineProps({
+    sourceType: {
+        type: String,
+    },
+});
+
+const total_trust_withdrawable_amount = usePage().props.total_trust_withdrawable_amount;
+const total_merchant_withdrawable_amount = usePage().props.total_merchant_withdrawable_amount;
 const modalStore = useModalStore();
 const { withdrawalModal } = storeToRefs(modalStore);
 const viewStore = useViewStore();
@@ -26,36 +33,57 @@ const close = () => {
 const form = useForm({
     amount: null,
     address: null,
+    source_type: props.sourceType,
 });
 
 const withdraw = () => {
     if (viewStore.isAdminViewMode) {
-        form.post(route('admin.users.wallet.withdraw', withdrawalModal.value.params.user.id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                router.visit(route('admin.users.wallet.index', withdrawalModal.value.params.user.id));
-                modalStore.closeAll()
-            },
-        });
+        form
+            .transform((data) => {
+                data.source_type = props.sourceType;
+
+                return data;
+            })
+            .post(route('admin.users.wallet.withdraw', withdrawalModal.value.params.user.id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    router.visit(route('admin.users.wallet.index', withdrawalModal.value.params.user.id));
+                    modalStore.closeAll()
+                },
+            });
     }
     if (viewStore.isTraderViewMode) {
-        form.post(route('invoice.store'), {
-            preserveScroll: true,
-            onSuccess: () => {
-                router.visit(route(route().current()));
-                modalStore.closeAll()
-            },
-        });
+        form
+            .transform((data) => {
+                data.source_type = props.sourceType;
+
+                return data;
+            })
+            .post(route('invoice.store'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    router.visit(route(route().current()));
+                    modalStore.closeAll()
+                },
+            });
     }
 }
 </script>
 
 <template>
     <Modal :show="withdrawalModal.showed" @close="close" maxWidth="md">
-        <ModalHeader
-            title="Вывод с баланса"
-            @close="close"
-        />
+        <template v-if="sourceType === 'trust'">
+            <ModalHeader
+                title="Вывод с траст баланса"
+                @close="close"
+            />
+        </template>
+        <template v-if="sourceType === 'merchant'">
+            <ModalHeader
+                title="Вывод с мерчант баланса"
+                @close="close"
+            />
+        </template>
         <ModalBody>
             <h1 class="text-gray-900 dark:text-gray-200 text-center">Введите сумму которую хотите вывести с баланса в USDT и нажмите «Продолжить»</h1>
             <form action="#" class="mx-auto max-w-screen-xl px-6 2xl:px-0 mt-8 mb-5">
@@ -80,7 +108,12 @@ const withdraw = () => {
                             />
 
                             <InputError class="mt-2" :message="form.errors.amount" />
-                            <InputHelper v-if="! form.errors.amount" :model-value="'Максимум: ' + total_withdrawable_amount + ' USDT'"></InputHelper>
+                            <template v-show="sourceType === 'trust'">
+                                <InputHelper v-if="! form.errors.amount" :model-value="'Максимум: ' + total_trust_withdrawable_amount + ' USDT'"></InputHelper>
+                            </template>
+                            <template v-show="sourceType === 'merchant'">
+                                <InputHelper v-if="! form.errors.amount" :model-value="'Максимум: ' + total_merchant_withdrawable_amount + ' USDT'"></InputHelper>
+                            </template>
                         </div>
                         <div class="mt-3" v-if="viewStore.isTraderViewMode">
                             <InputLabel

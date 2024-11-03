@@ -38,7 +38,7 @@ onMounted(() => {
 <template>
     <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl mb-3">История операций</h2>
 
-    <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 dark:text-gray-400">
+    <ul v-if="! viewStore.isMerchantViewMode" class="flex flex-wrap text-sm font-medium text-center text-gray-500 dark:text-gray-400">
         <li class="me-2">
             <a
                 @click.prevent="activeTab = 'invoices'; openPage(1)"
@@ -100,6 +100,12 @@ onMounted(() => {
                             <div class="text-nowrap dark:text-gray-400 text-center">
                                 <template v-if="invoice.type === 'deposit'">Пополнение</template>
                                 <template v-if="invoice.type === 'withdrawal'">Вывод</template>
+                            </div>
+                        </td>
+                        <td v-show="viewStore.isAdminViewMode" class="p-3 border border-x-0 text-gray-900 border-gray-300 dark:border-gray-700">
+                            <div class="text-nowrap dark:text-gray-400 text-center">
+                                <template v-if="invoice.source_type === 'trust'">Траст</template>
+                                <template v-if="invoice.source_type === 'merchant'">Мерчант</template>
                             </div>
                         </td>
                         <td class="p-3 border border-x-0 text-gray-900 border-gray-300 dark:border-gray-700">

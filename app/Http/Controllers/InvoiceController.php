@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\InvoiceWithdrawalSourceType;
 use App\Http\Requests\Invoice\StoreRequest;
 use App\Services\Money\Currency;
 use App\Services\Money\Money;
@@ -14,7 +15,7 @@ class InvoiceController extends Controller
             wallet: auth()->user()->wallet,
             amount: Money::fromPrecision($request->amount, Currency::USDT()),
             address: $request->address,
-            sourceType: $request->source_type,
+            sourceType: InvoiceWithdrawalSourceType::from($request->source_type),
         );
     }
 }

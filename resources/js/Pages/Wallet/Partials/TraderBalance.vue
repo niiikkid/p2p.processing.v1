@@ -7,8 +7,14 @@ const viewStore = useViewStore();
 const modalStore = useModalStore();
 const wallet = usePage().props.wallet;
 const reserve_balance = usePage().props.reserve_balance;
-const locked_for_withdrawal = usePage().props.locked_for_withdrawal;
+const trust_locked_for_withdrawal = usePage().props.trust_locked_for_withdrawal;
 const user = usePage().props.user;
+
+const emit = defineEmits(['setSourceType']);
+
+const setSourceType = (type) => {
+    emit('setSourceType', type);
+};
 </script>
 
 <template>
@@ -21,7 +27,7 @@ const user = usePage().props.user;
                         <template v-if="viewStore.isAdminViewMode">
                             <div>
                                 <button
-                                    @click.prevent="modalStore.openWithdrawalModal({user})"
+                                    @click.prevent="modalStore.openWithdrawalModal({user}); setSourceType('trust')"
                                     type="button"
                                     class="px-2 py-1 text-xs font-medium text-center inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                 >
@@ -31,7 +37,7 @@ const user = usePage().props.user;
                                     Вывести
                                 </button>
                                 <button
-                                    @click.prevent="modalStore.openDepositModal({user})"
+                                    @click.prevent="modalStore.openDepositModal({user}); setSourceType('trust')"
                                     type="button"
                                     class="ml-1.5 px-2 py-1 text-xs font-medium text-center inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                 >
@@ -45,7 +51,7 @@ const user = usePage().props.user;
                         <template v-else>
                             <div>
                                 <button
-                                    @click.prevent="modalStore.openWithdrawalModal({user})"
+                                    @click.prevent="modalStore.openWithdrawalModal({user}); setSourceType('trust')"
                                     type="button"
                                     class="px-2 py-1 text-xs font-medium text-center inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                 >
@@ -96,7 +102,7 @@ const user = usePage().props.user;
                                 Ожидает вывода
                             </div>
                             <div class="text-sm text-gray-900 dark:text-gray-200 ml-1.5">
-                                {{ locked_for_withdrawal }} USDT
+                                {{ trust_locked_for_withdrawal }} USDT
                             </div>
                         </div>
                     </div>

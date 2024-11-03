@@ -8,9 +8,16 @@ import TraderBalance from "@/Pages/Wallet/Partials/TraderBalance.vue";
 import MerchantBalance from "@/Pages/Wallet/Partials/MerchantBalance.vue";
 import {useViewStore} from "@/store/view.js";
 import OperationsHistory from "@/Pages/Wallet/Partials/OperationsHistory.vue";
+import {ref} from "vue";
 
 const user = usePage().props.user;
 const viewStore = useViewStore();
+
+const sourceType = ref('trust');
+
+const setSourceType = (type) => {
+    sourceType.value = type;
+}
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
@@ -35,14 +42,14 @@ defineOptions({ layout: AuthenticatedLayout })
         </h2>
 
         <div class="grid grid-cols-2 gap-4 mb-6">
-            <TraderBalance v-show="viewStore.isTraderViewMode || viewStore.isAdminViewMode"/>
-            <MerchantBalance v-show="viewStore.isMerchantViewMode || viewStore.isAdminViewMode"/>
+            <TraderBalance v-show="viewStore.isTraderViewMode || viewStore.isAdminViewMode" @setSourceType="setSourceType"/>
+            <MerchantBalance v-show="viewStore.isMerchantViewMode || viewStore.isAdminViewMode" @setSourceType="setSourceType"/>
         </div>
 
         <OperationsHistory/>
 
-        <DepositModal/>
-        <WithdrawalModal/>
+        <DepositModal :sourceType="sourceType"/>
+        <WithdrawalModal :sourceType="sourceType"/>
     </div>
 </template>
 

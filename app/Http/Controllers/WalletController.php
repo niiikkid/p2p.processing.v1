@@ -19,12 +19,19 @@ class WalletController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->route()->action['as'] === 'wallet.index') {
+            $sourceType = InvoiceWithdrawalSourceType::TRUST;
+        } else if ($request->route()->action['as'] === 'merchant.finances.index') {
+            $sourceType = InvoiceWithdrawalSourceType::MERCHANT;
+        }
+
         /**
          * @var Wallet $wallet
          */
         $wallet = $request->user()->wallet;
         $invoices = Invoice::query()
             ->where('wallet_id', $wallet->id)
+            ->where('source_type', $sourceType)
             ->orderByDesc('id')
             ->paginate(10);
         $transactions = Transaction::query()

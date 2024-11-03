@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\InvoiceStatus;
 use App\Enums\InvoiceType;
+use App\Enums\InvoiceWithdrawalSourceType;
+use App\Enums\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
@@ -30,7 +32,12 @@ class WithdrawalController extends Controller
         }
 
         $invoice->update(['status' => InvoiceStatus::SUCCESS]);
-        //TODO withdraw balance
+
+        if ($invoice->source_type->equals(InvoiceWithdrawalSourceType::TRUST)) {
+            services()->wallet()->takeTrust($invoice->wallet, $invoice->amount, TransactionType::WITHDRAWAL_BY_USER);
+        } else if ($invoice->source_type->equals(InvoiceWithdrawalSourceType::MERCHANT)) {
+            services()->wallet()->takeMerchant($invoice->wallet, $invoice->amount);
+        }
     }
 
     public function fail(Invoice $invoice)

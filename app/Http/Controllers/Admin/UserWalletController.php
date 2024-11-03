@@ -64,7 +64,7 @@ class UserWalletController extends Controller
         services()->invoice()->deposit(
             wallet: $user->wallet,
             amount: Money::fromPrecision($request->amount, Currency::USDT()),
-            sourceType: $request->source_type
+            sourceType: InvoiceWithdrawalSourceType::from($request->source_type)
         );
     }
 
@@ -73,7 +73,7 @@ class UserWalletController extends Controller
         services()->invoice()->withdraw(
             wallet: $user->wallet,
             amount: Money::fromPrecision($request->amount, Currency::USDT()),
-            sourceType: $request->source_type
+            sourceType: InvoiceWithdrawalSourceType::from($request->source_type)
         );
     }
 }

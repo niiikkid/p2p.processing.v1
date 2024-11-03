@@ -12,6 +12,12 @@ import {router, useForm} from "@inertiajs/vue3";
 import InputHelper from "@/Components/InputHelper.vue";
 import NumberInput from "@/Components/NumberInput.vue";
 
+const props = defineProps({
+    sourceType: {
+        type: String,
+    },
+});
+
 const modalStore = useModalStore();
 const { depositModal } = storeToRefs(modalStore);
 
@@ -21,25 +27,40 @@ const close = () => {
 
 const form = useForm({
     amount: null,
+    source_type: null,
 });
 
 const deposit = () => {
-    form.post(route('admin.users.wallet.deposit', depositModal.value.params.user.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            router.visit(route('admin.users.wallet.index', depositModal.value.params.user.id));
-            modalStore.closeAll()
-        },
-    });
+    form
+        .transform((data) => {
+            data.source_type = props.sourceType;
+
+            return data;
+        })
+        .post(route('admin.users.wallet.deposit', depositModal.value.params.user.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                router.visit(route('admin.users.wallet.index', depositModal.value.params.user.id));
+                modalStore.closeAll()
+            },
+        });
 }
 </script>
 
 <template>
     <Modal :show="depositModal.showed" @close="close" maxWidth="md">
-        <ModalHeader
-            title="Пополнение баланса"
-            @close="close"
-        />
+        <template v-if="sourceType === 'trust'">
+            <ModalHeader
+                title="Пополнение траст баланса"
+                @close="close"
+            />
+        </template>
+        <template v-if="sourceType === 'merchant'">
+            <ModalHeader
+                title="Пополнение мерчант баланса"
+                @close="close"
+            />
+        </template>
         <ModalBody>
             <h1 class="text-gray-900 dark:text-gray-200 text-center">Введите сумму пополнения в USDT и нажмите «Продолжить»</h1>
             <form action="#" class="mx-auto max-w-screen-xl px-6 2xl:px-0 mt-8 mb-5">
@@ -63,7 +84,9 @@ const deposit = () => {
                             />
 
                             <InputError class="mt-2" :message="form.errors.amount" />
-                            <InputHelper v-if="! form.errors.amount" model-value="Если резерв меньше 1000 USDT, то часть депозита зачислится в резерв."></InputHelper>
+                            <template v-if="sourceType === 'trust'">
+                                <InputHelper v-if="! form.errors.amount" model-value="Если резерв меньше 1000 USDT, то часть депозита зачислится в резерв."></InputHelper>
+                            </template>
                         </div>
                     </div>
                 </div>
