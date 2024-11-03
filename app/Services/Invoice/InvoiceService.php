@@ -28,7 +28,7 @@ class InvoiceService implements InvoiceServiceContract
             throw new InvoiceException('Insufficient balance');
         }
 
-        return Invoice::create([
+        $invoice = Invoice::create([
             'amount' => $amount,
             'currency' => $amount->getCurrency(),
             'address' => $address,
@@ -37,6 +37,14 @@ class InvoiceService implements InvoiceServiceContract
             'status' => InvoiceStatus::PENDING,
             'wallet_id' => $wallet->id,
         ]);
+
+        if ($invoice->source_type->equals(InvoiceWithdrawalSourceType::TRUST)) {
+            services()->wallet()->takeTrust($wallet, $amount, TransactionType::WITHDRAWAL_BY_USER);
+        } else if ($invoice->source_type->equals(InvoiceWithdrawalSourceType::MERCHANT)) {
+            services()->wallet()->takeMerchant($wallet, $amount);
+        }
+
+        return $invoice;
     }
 
     public function deposit(Wallet $wallet, Money $amount, InvoiceWithdrawalSourceType $sourceType): void

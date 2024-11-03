@@ -32,12 +32,6 @@ class WithdrawalController extends Controller
         }
 
         $invoice->update(['status' => InvoiceStatus::SUCCESS]);
-
-        if ($invoice->source_type->equals(InvoiceWithdrawalSourceType::TRUST)) {
-            services()->wallet()->takeTrust($invoice->wallet, $invoice->amount, TransactionType::WITHDRAWAL_BY_USER);
-        } else if ($invoice->source_type->equals(InvoiceWithdrawalSourceType::MERCHANT)) {
-            services()->wallet()->takeMerchant($invoice->wallet, $invoice->amount);
-        }
     }
 
     public function fail(Invoice $invoice)
@@ -47,5 +41,11 @@ class WithdrawalController extends Controller
         }
 
         $invoice->update(['status' => InvoiceStatus::FAIL]);
+
+        if ($invoice->source_type->equals(InvoiceWithdrawalSourceType::TRUST)) {
+            services()->wallet()->giveTrust($invoice->wallet, $invoice->amount, TransactionType::ROLLBACK_FOR_USER_WITHDRAWAL);
+        } else if ($invoice->source_type->equals(InvoiceWithdrawalSourceType::MERCHANT)) {
+            services()->wallet()->giveMerchant($invoice->wallet, $invoice->amount);
+        }
     }
 }

@@ -9,4 +9,5 @@ return [
     'refund_for_canceled_dispute' => 'Отклоненный спор',
     'deposit_by_admin' => 'Депозит администратором',
     'deposit_by_user' => 'Депозит пользователем',
+    'rollback_for_user_withdrawal' => 'Отмена вывода',
 ];

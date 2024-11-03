@@ -19,6 +19,7 @@ enum TransactionType: string
     case REFUND_FOR_CANCELED_DISPUTE = 'refund_for_canceled_dispute';
     case DEPOSIT_BY_ADMIN = 'deposit_by_admin';
     case DEPOSIT_BY_USER = 'deposit_by_user';
+    case ROLLBACK_FOR_USER_WITHDRAWAL = 'rollback_for_user_withdrawal';
 
     public function direction(): TransactionDirection
     {
@@ -31,7 +32,8 @@ enum TransactionType: string
             static::REFUND_FOR_CANCELED_ORDER,
             static::REFUND_FOR_CANCELED_DISPUTE,
             static::DEPOSIT_BY_ADMIN,
-            static::DEPOSIT_BY_USER => TransactionDirection::IN,
+            static::DEPOSIT_BY_USER,
+            static::ROLLBACK_FOR_USER_WITHDRAWAL => TransactionDirection::IN,
         };
     }
 }

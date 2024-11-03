@@ -52,7 +52,7 @@ const withdraw = () => {
                 },
             });
     }
-    if (viewStore.isTraderViewMode) {
+    if (viewStore.isTraderViewMode || viewStore.isMerchantViewMode) {
         form
             .transform((data) => {
                 data.source_type = props.sourceType;
@@ -115,7 +115,7 @@ const withdraw = () => {
                                 <InputHelper v-if="! form.errors.amount" :model-value="'Максимум: ' + total_merchant_withdrawable_amount + ' USDT'"></InputHelper>
                             </template>
                         </div>
-                        <div class="mt-3" v-if="viewStore.isTraderViewMode">
+                        <div class="mt-3" v-if="viewStore.isTraderViewMode || viewStore.isMerchantViewMode">
                             <InputLabel
                                 for="address"
                                 value="Адрес"
