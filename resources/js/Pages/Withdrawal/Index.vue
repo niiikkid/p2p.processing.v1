@@ -68,6 +68,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         <fwb-table-head-cell>ID</fwb-table-head-cell>
                         <fwb-table-head-cell>Сумма</fwb-table-head-cell>
                         <fwb-table-head-cell>Пользователь</fwb-table-head-cell>
+                        <fwb-table-head-cell>Баланс</fwb-table-head-cell>
                         <fwb-table-head-cell>Статус</fwb-table-head-cell>
                         <fwb-table-head-cell>Дата создания</fwb-table-head-cell>
                         <fwb-table-head-cell>
@@ -79,6 +80,14 @@ defineOptions({ layout: AuthenticatedLayout })
                             <fwb-table-cell>{{ invoice.id }}</fwb-table-cell>
                             <fwb-table-cell>{{ invoice.amount }} {{invoice.currency.toUpperCase()}}</fwb-table-cell>
                             <fwb-table-cell>{{ invoice.user.email }}</fwb-table-cell>
+                            <fwb-table-cell>
+                                <template v-show="invoice.source_type === 'trust'">
+                                    Траст
+                                </template>
+                                <template v-show="invoice.source_type === 'merchant'">
+                                    Мерчант
+                                </template>
+                            </fwb-table-cell>
                             <fwb-table-cell>
                                <InvoiceStatus :status="invoice.status"></InvoiceStatus>
                             </fwb-table-cell>

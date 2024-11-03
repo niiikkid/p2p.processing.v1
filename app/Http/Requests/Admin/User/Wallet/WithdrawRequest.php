@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin\User\Wallet;
 
+use App\Enums\InvoiceWithdrawalSourceType;
 use App\Models\Wallet;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class WithdrawRequest extends FormRequest
 {
@@ -31,6 +33,7 @@ class WithdrawRequest extends FormRequest
 
         return [
             'amount' => ['required', 'integer', 'min:1', 'max:' . $max],
+            'source_type' => ['required', Rule::enum(InvoiceWithdrawalSourceType::class)],
         ];
     }
 }

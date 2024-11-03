@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('currency')->nullable();
             $table->string('address')->nullable();
             $table->string('type')->nullable();
+            $table->string('source_type')->nullable();
             $table->string('status')->nullable();
             $table->foreignId('wallet_id')->nullable();
             $table->timestamps();

@@ -5,6 +5,7 @@ namespace App\Services\Invoice;
 use App\Contracts\InvoiceServiceContract;
 use App\Enums\InvoiceStatus;
 use App\Enums\InvoiceType;
+use App\Enums\InvoiceWithdrawalSourceType;
 use App\Enums\TransactionType;
 use App\Exceptions\InvoiceException;
 use App\Models\Invoice;
@@ -14,7 +15,7 @@ use App\Services\Money\Money;
 
 class InvoiceService implements InvoiceServiceContract
 {
-    public function createWithdrawal(Wallet $wallet, Money $amount, string $address): Invoice
+    public function createWithdrawal(Wallet $wallet, Money $amount, string $address, InvoiceWithdrawalSourceType $sourceType): Invoice
     {
         /**
          * @var Wallet $wallet
@@ -32,36 +33,39 @@ class InvoiceService implements InvoiceServiceContract
             'currency' => $amount->getCurrency(),
             'address' => $address,
             'type' => InvoiceType::WITHDRAWAL,
+            'source_type' => $sourceType,
             'status' => InvoiceStatus::PENDING,
             'wallet_id' => $wallet->id,
         ]);
     }
 
-    public function deposit(Wallet $wallet, Money $amount): void
+    public function deposit(Wallet $wallet, Money $amount, InvoiceWithdrawalSourceType $sourceType): void
     {
         Invoice::create([
             'amount' => $amount,
             'currency' => Currency::USDT(),
             'address' => null,
             'type' => InvoiceType::DEPOSIT,
+            'source_type' => $sourceType,
             'status' => InvoiceStatus::SUCCESS,
             'wallet_id' => $wallet->id,
         ]);
-
+        //TODO
         services()->wallet()->giveTrust($wallet, $amount, TransactionType::DEPOSIT_BY_ADMIN);
     }
 
-    public function withdraw(Wallet $wallet, Money $amount): void
+    public function withdraw(Wallet $wallet, Money $amount, InvoiceWithdrawalSourceType $sourceType): void
     {
         Invoice::create([
             'amount' => $amount,
             'currency' => Currency::USDT(),
             'address' => null,
             'type' => InvoiceType::WITHDRAWAL,
+            'source_type' => $sourceType,
             'status' => InvoiceStatus::SUCCESS,
             'wallet_id' => $wallet->id,
         ]);
-
+        //TODO
         services()->wallet()->takeTrust($wallet, $amount, TransactionType::WITHDRAWAL_BY_ADMIN);
     }
 }

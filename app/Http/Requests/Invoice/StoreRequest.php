@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Invoice;
 
+use App\Enums\InvoiceWithdrawalSourceType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -24,6 +26,7 @@ class StoreRequest extends FormRequest
         return [
             'address' => ['required', 'string', 'min:34', 'max:34'],
             'amount' => ['required', 'integer', 'min:1'],
+            'source_type' => ['required', Rule::enum(InvoiceWithdrawalSourceType::class)],
         ];
     }
 }

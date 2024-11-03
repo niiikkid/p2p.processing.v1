@@ -1,25 +1,15 @@
 <script setup>
 import {Head, router, usePage} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import {FwbPagination} from 'flowbite-vue'
-import {onMounted, ref} from "vue";
 import GoBackButton from "@/Components/GoBackButton.vue";
 import DepositModal from "@/Modals/Wallet/DepositModal.vue";
-import {useModalStore} from "@/store/modal.js";
 import WithdrawalModal from "@/Modals/Wallet/WithdrawalModal.vue";
-import EmptyTable from "@/Components/EmptyTable.vue";
 import TraderBalance from "@/Pages/Wallet/Partials/TraderBalance.vue";
 import MerchantBalance from "@/Pages/Wallet/Partials/MerchantBalance.vue";
 import {useViewStore} from "@/store/view.js";
 import OperationsHistory from "@/Pages/Wallet/Partials/OperationsHistory.vue";
 
-const wallet = usePage().props.wallet;
-const reserve_balance = usePage().props.reserve_balance;
-const invoices = usePage().props.invoices;
-const transactions = usePage().props.transactions;
 const user = usePage().props.user;
-const modalStore = useModalStore();
-const currentPage = ref(invoices.meta.current_page)
 const viewStore = useViewStore();
 
 defineOptions({ layout: AuthenticatedLayout })

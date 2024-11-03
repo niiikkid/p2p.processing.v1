@@ -6,6 +6,7 @@ use App\Casts\CurrencyCast;
 use App\Casts\MoneyCast;
 use App\Enums\InvoiceStatus;
 use App\Enums\InvoiceType;
+use App\Enums\InvoiceWithdrawalSourceType;
 use App\Services\Money\Currency;
 use App\Services\Money\Money;
 use Carbon\Carbon;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Currency $currency
  * @property string $address
  * @property InvoiceType $type
+ * @property InvoiceWithdrawalSourceType $source_type
  * @property InvoiceStatus $status
  * @property int $wallet_id
  * @property Wallet $wallet
@@ -34,6 +36,7 @@ class Invoice extends Model
         'currency',
         'address',
         'type',
+        'source_type',
         'status',
         'wallet_id',
     ];
@@ -42,6 +45,7 @@ class Invoice extends Model
         'amount' => MoneyCast::class,
         'currency' => CurrencyCast::class,
         'type' => InvoiceType::class,
+        'source_type' => InvoiceWithdrawalSourceType::class,
         'status' => InvoiceStatus::class,
     ];
 

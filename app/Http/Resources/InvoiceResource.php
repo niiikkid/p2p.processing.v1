@@ -23,6 +23,7 @@ class InvoiceResource extends JsonResource
             'amount' => $this->amount->toBeauty(),
             'currency' => $this->currency->getCode(),
             'type' => $this->type->value,
+            'source_type' => $this->source_type->value,
             'status' => $this->status->value,
             'user' => [//TODO hide if not presented in query
                'id' => $this->wallet->user->id,

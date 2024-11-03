@@ -14,6 +14,7 @@ class InvoiceController extends Controller
             wallet: auth()->user()->wallet,
             amount: Money::fromPrecision($request->amount, Currency::USDT()),
             address: $request->address,
+            sourceType: $request->source_type,
         );
     }
 }
