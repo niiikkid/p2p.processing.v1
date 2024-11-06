@@ -1,13 +1,9 @@
 <script setup>
-import Checkbox from '@/Components/Checkbox.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import PaymentLayout from "@/Layouts/PaymentLayout.vue";
-import CopyText from "@/Components/CopyText.vue";
 import CopyPaymentText from "@/Components/CopyPaymentText.vue";
+import {onMounted, ref} from "vue";
+import {initFlowbite} from "flowbite";
 
 defineProps({
     canResetPassword: {
@@ -18,154 +14,299 @@ defineProps({
     },
 });
 
-const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
-});
+const stage = ref('fail');
 
-const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-    });
-};
+const isDarkColorTheme = ref(false);
+
+const switchThemeColorMode = () => {
+    // if set via local storage previously
+    if (localStorage.getItem('color-theme-payment')) {
+        if (localStorage.getItem('color-theme-payment') === 'light') {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme-payment', 'dark');
+            isDarkColorTheme.value = true;
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme-payment', 'light');
+            isDarkColorTheme.value = false;
+        }
+
+        // if NOT set via local storage previously
+    } else {
+        if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme-payment', 'light');
+            isDarkColorTheme.value = false;
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme-payment', 'dark');
+            isDarkColorTheme.value = true;
+        }
+    }
+}
+
+onMounted(() => {
+    initFlowbite();
+
+    if (localStorage.getItem('color-theme-payment') === 'dark' || (!('color-theme-payment' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('color-theme-payment', 'dark');
+        isDarkColorTheme.value = true;
+    } else {
+        document.documentElement.classList.remove('dark')
+        localStorage.setItem('color-theme-payment', 'light');
+        isDarkColorTheme.value = false;
+    }
+})
 
 defineOptions({ layout: PaymentLayout })
 </script>
 
 <template>
-    <div>
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
         <Head title="Платеж" />
 
-        <div>
-            <div class="flex justify-between">
-                <div>
-                    <div class="text-gray-900 dark:text-gray-200 text-2xl">15.500&#8381;</div>
-                    <div class="text-gray-400 dark:text-gray-500">Сумма для оплаты</div>
-                </div>
-                <div>
-                    <div class="text-gray-900 dark:text-gray-200 text-2xl">09:35</div>
-                    <div class="text-gray-400 dark:text-gray-500">Время на оплату</div>
-                </div>
-            </div>
-            <div class="mt-3 w-full p-3 text-center border border-gray-300 dark:border-gray-600 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
-                ID: c4271bdd-dffc-4fdb-85ce-25715fb9727d
-            </div>
-
-            <div class="my-5 text-base space-y-2">
-                <div class="flex justify-between items-center border border-gray-300 dark:border-gray-600 rounded-lg p-3">
-                    <div class="flex text-gray-900 dark:text-gray-200">
-                        <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/>
-                        </svg>
-                        Номер карты
-                    </div>
-                    <div class="text-gray-200">
-                        <CopyPaymentText text="4000 5000 3000 2000"></CopyPaymentText>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center border border-gray-300 dark:border-gray-600 rounded-lg p-3">
-                    <div class="flex text-gray-900 dark:text-gray-200">
-                        <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-                        </svg>
-                        Держатель карты
-                    </div>
-                    <div class="text-gray-200">
-                        <CopyPaymentText text="IVAN IVANOVICH"></CopyPaymentText>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center border border-gray-300 dark:border-gray-600 rounded-lg p-3">
-                    <div class="flex text-gray-900 dark:text-gray-200">
-                        <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
-                        </svg>
-                        Сумма перевода
-                    </div>
-                    <div class="text-gray-200">
-                        <CopyPaymentText text="15.500&#8381;"></CopyPaymentText>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center p-3 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
-                <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                </svg>
-                <div>
-                    Переводите точную сумму, иначе средства не поступят!
-                </div>
-            </div>
-
-            <div class="mt-5">
-                <button
-                    type="button"
-                    class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    data-modal-target="default-modal"
-                    data-modal-toggle="default-modal"
-                >
-                    Инструкция к оплате
+        <div
+            class="w-full sm:max-w-md"
+        >
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl">Ваше название</h2>
+                <button type="button" class="text-center flex items-center justify-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-xl text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                    <span class="[&>svg]:h-4 [&>svg]:w-4 me-2">
+                      <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 496 512">
+                        <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc. -->
+                        <path
+                            d="M248 8C111 8 0 119 0 256S111 504 248 504 496 393 496 256 385 8 248 8zM363 176.7c-3.7 39.2-19.9 134.4-28.1 178.3-3.5 18.6-10.3 24.8-16.9 25.4-14.4 1.3-25.3-9.5-39.3-18.7-21.8-14.3-34.2-23.2-55.3-37.2-24.5-16.1-8.6-25 5.3-39.5 3.7-3.8 67.1-61.5 68.3-66.7 .2-.7 .3-3.1-1.2-4.4s-3.6-.8-5.1-.5q-3.3 .7-104.6 69.1-14.8 10.2-26.9 9.9c-8.9-.2-25.9-5-38.6-9.1-15.5-5-27.9-7.7-26.8-16.3q.8-6.7 18.5-13.7 108.4-47.2 144.6-62.3c68.9-28.6 83.2-33.6 92.5-33.8 2.1 0 6.6 .5 9.6 2.9a10.5 10.5 0 0 1 3.5 6.7A43.8 43.8 0 0 1 363 176.7z" />
+                      </svg>
+                    </span>
+                    Поддержка
                 </button>
             </div>
-        </div>
 
-
-        <!-- Main modal -->
-        <div id="default-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="relative p-4 w-full max-w-xl max-h-full">
-                <!-- Modal content -->
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                    <!-- Modal header -->
-                    <div class="flex items-center justify-between p-4 md:p-5 rounded-t">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Инструкция к оплате
-                        </h3>
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl">
+                <div class="flex justify-between mt-3 w-full px-6 py-5 text-sm text-gray-800 bg-gray-50 dark:bg-gray-800 rounded-xl dark:text-gray-300">
+                    <div>
+                        <div class="text-gray-900 dark:text-gray-200 text-2xl">15.500&#8381;</div>
+                        <div class="text-gray-400 dark:text-gray-500">Сумма для оплаты</div>
                     </div>
-                    <!-- Modal body -->
-                    <div class="p-6 pt-0">
-                        <ul class="w-full space-y-1 text-gray-500 list-inside dark:text-gray-400">
-                            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-                                <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                                </svg>
-                                <span>Зайдите в свое банковское приложение</span>
-                            </li>
-                            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-                                <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                                </svg>
-                                <span>Скопируйте номер карты для перевода <b class="text-nowrap">4000 5000 3000 2000</b></span>
-                            </li>
-                            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-                                <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                                </svg>
-                                <span>В банковском приложении выберите перевод по карте</span>
-                            </li>
-                            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-                                <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                                </svg>
-                                <span>Сделайте перевод точной суммы <b class="text-nowrap">257₽</b></span>
-                            </li>
-                            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-                                <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                                </svg>
-                                <span>Дождитесь зачисления средств. Не закрывайте страницу до подтверждения
-                                успешной оплаты.</span>
-                            </li>
-                        </ul>
-                        <div class="p-4 mt-5 text-sm text-gray-900 dark:text-gray-400 rounded-lg bg-red-50 dark:bg-gray-800" role="alert">
-                            <span class="font-medium text-red-800 dark:text-red-400">Запрещено:</span> Оплачивать заявку несколькими переводами. В случае
-                            несоблюдений рекомендаций заявка будет отменена, а средства будут утеряны
-                        </div>
-                    </div>
-                    <!-- Modal footer -->
-                    <div class="flex items-center p-6 pt-0 rounded-b dark:border-gray-600">
-                        <button data-modal-hide="default-modal" type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Закрыть</button>
+                    <div v-show="stage === 'payment'">
+                        <div class="text-gray-900 dark:text-gray-200 text-2xl">09:35</div>
+                        <div class="text-gray-400 dark:text-gray-500">Время на оплату</div>
                     </div>
                 </div>
+
+                <div>
+                    <div class="w-full p-2 text-center text-sm text-gray-800 dark:text-gray-300">
+                        <span class="text-blue-500 dark:text-blue-500">ID:</span> c4271bdd-dffc-4fdb-85ce-25715fb9727d
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-xl">
+                <div>
+                    <div v-if="stage === 'payment'" class="pb-3">
+                        <div class="my-5 text-base space-y-2">
+                            <div class="flex justify-between items-center border border-gray-300 dark:border-gray-600 rounded-xl p-3">
+                                <div class="flex text-gray-900 dark:text-gray-200">
+                                    <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/>
+                                    </svg>
+                                    Номер карты
+                                </div>
+                                <div class="text-gray-200">
+                                    <CopyPaymentText text="4000 5000 3000 2000"></CopyPaymentText>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center border border-gray-300 dark:border-gray-600 rounded-xl p-3">
+                                <div class="flex text-gray-900 dark:text-gray-200">
+                                    <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                    </svg>
+                                    Держатель карты
+                                </div>
+                                <div class="text-gray-200">
+                                    <CopyPaymentText text="IVAN IVANOVICH"></CopyPaymentText>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center border border-gray-300 dark:border-gray-600 rounded-xl p-3">
+                                <div class="flex text-gray-900 dark:text-gray-200">
+                                    <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
+                                    </svg>
+                                    Сумма перевода
+                                </div>
+                                <div class="text-gray-200">
+                                    <CopyPaymentText text="15.500&#8381;"></CopyPaymentText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-3 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
+                            <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                            </svg>
+                            <div>
+                                Переводите точную сумму, иначе средства не поступят!
+                            </div>
+                        </div>
+
+                        <div class="mt-5">
+                            <button
+                                type="button"
+                                class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                data-modal-target="default-modal"
+                                data-modal-toggle="default-modal"
+                            >
+                                Инструкция к оплате
+                            </button>
+                        </div>
+                    </div>
+
+                    <div v-if="stage === 'success' || stage === 'fail'" class="py-1 pb-2">
+                        <div class="mt-5 mb-8 text-base flex justify-center">
+                            <div class="w-2/3">
+                                <template v-if="stage === 'success'">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <svg class="w-24 h-24 text-green-400 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="mb-1 text-2xl font-semibold text-gray-900 dark:text-gray-300 text-center">
+                                        Платеж зачислен
+                                    </p>
+                                    <p class="text-sm text-gray-900 dark:text-gray-400 text-center">
+                                        Счет на сумму 15 000 &#8381; оплачен. Спасибо за оплату.
+                                    </p>
+                                </template>
+                                <template v-else>
+                                    <div class="flex items-center justify-center mb-2">
+                                        <svg class="w-24 h-24 text-red-500 dark:text-red-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="mb-1 text-2xl font-semibold text-gray-900 dark:text-gray-300 text-center">
+                                        Время истекло
+                                    </p>
+                                    <p class="text-sm text-gray-900 dark:text-gray-400 text-center">
+                                        Счет на сумму 15 000 &#8381; не оплачен. Оплата не поступила.
+                                    </p>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div class="mt-5">
+                            <button
+                                v-show="stage === 'success'"
+                                type="button"
+                                class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            >
+                                Вернуться на сайт
+                            </button>
+                        </div>
+
+
+                        <div v-show="stage === 'fail'" class="w-full">
+                            <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-16 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                <div class="flex items-center justify-center pt-5 pb-6">
+                                    <svg class="w-8 h-8 mr-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Нажмите, чтобы загрузить файл</p>
+                                    </div>
+                                </div>
+                                <input id="dropzone-file" type="file" class="hidden" />
+                            </label>
+
+                            <div class="mt-4">
+                                <button
+                                    type="button"
+                                    class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                >
+                                    Отправить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main modal -->
+                    <div id="default-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                        <div class="relative p-4 w-full max-w-xl max-h-full">
+                            <!-- Modal content -->
+                            <div class="relative bg-white rounded-xl shadow dark:bg-gray-700">
+                                <!-- Modal header -->
+                                <div class="flex items-center justify-between p-4 md:p-5 rounded-t">
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        Инструкция к оплате
+                                    </h3>
+                                </div>
+                                <!-- Modal body -->
+                                <div class="p-6 pt-0">
+                                    <ul class="w-full space-y-1 text-gray-500 list-inside dark:text-gray-400">
+                                        <li class="flex items-center space-x-3 rtl:space-x-reverse">
+                                            <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                                            </svg>
+                                            <span>Зайдите в свое банковское приложение</span>
+                                        </li>
+                                        <li class="flex items-center space-x-3 rtl:space-x-reverse">
+                                            <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                                            </svg>
+                                            <span>Скопируйте номер карты для перевода <b class="text-nowrap">4000 5000 3000 2000</b></span>
+                                        </li>
+                                        <li class="flex items-center space-x-3 rtl:space-x-reverse">
+                                            <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                                            </svg>
+                                            <span>В банковском приложении выберите перевод по карте</span>
+                                        </li>
+                                        <li class="flex items-center space-x-3 rtl:space-x-reverse">
+                                            <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                                            </svg>
+                                            <span>Сделайте перевод точной суммы <b class="text-nowrap">257₽</b></span>
+                                        </li>
+                                        <li class="flex items-center space-x-3 rtl:space-x-reverse">
+                                            <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                                            </svg>
+                                            <span>Дождитесь зачисления средств. Не закрывайте страницу до подтверждения
+                                успешной оплаты.</span>
+                                        </li>
+                                    </ul>
+                                    <div class="p-4 mt-5 text-sm text-gray-900 dark:text-gray-400 rounded-xl bg-red-50 dark:bg-gray-800" role="alert">
+                                        <span class="font-medium text-red-800 dark:text-red-400">Запрещено:</span> Оплачивать заявку несколькими переводами. В случае
+                                        несоблюдений рекомендаций заявка будет отменена, а средства будут утеряны
+                                    </div>
+                                </div>
+                                <!-- Modal footer -->
+                                <div class="flex items-center p-6 pt-0 rounded-b dark:border-gray-600">
+                                    <button data-modal-hide="default-modal" type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Закрыть</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center mt-3">
+                <button @click.prevent="switchThemeColorMode" type="button" class="text-gray-800 dark:text-white border-none hover:text-gray-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:hover:text-gray-500 dark:focus:ring-blue-800">
+                    <svg v-if="isDarkColorTheme" class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M13 3a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V3ZM6.343 4.929A1 1 0 0 0 4.93 6.343l1.414 1.414a1 1 0 0 0 1.414-1.414L6.343 4.929Zm12.728 1.414a1 1 0 0 0-1.414-1.414l-1.414 1.414a1 1 0 0 0 1.414 1.414l1.414-1.414ZM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm-9 4a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H3Zm16 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2ZM7.757 17.657a1 1 0 1 0-1.414-1.414l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414Zm9.9-1.414a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414ZM13 19a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0v-2Z" clip-rule="evenodd"/>
+                    </svg>
+                    <svg v-else class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5V3m0 18v-2M7.05 7.05 5.636 5.636m12.728 12.728L16.95 16.95M5 12H3m18 0h-2M7.05 16.95l-1.414 1.414M18.364 5.636 16.95 7.05M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="text-xs text-black dark:text-white flex gap-2 cursor-pointer">
+                <div @click="stage = 'payment'" :class="{'text-blue-500' : stage === 'payment'}">payment</div>
+                <div @click="stage = 'success'" :class="{'text-blue-500' : stage === 'success'}">success</div>
+                <div @click="stage = 'fail'" :class="{'text-blue-500' : stage === 'fail'}">fail</div>
             </div>
         </div>
     </div>
