@@ -59,6 +59,65 @@ onMounted(() => {
     }
 })
 
+const data = ref({
+    clock: {
+        days: "0",
+        hours: "0",
+        minutes: "09",
+        seconds: "30",
+    },
+});
+
+onMounted(() => {
+    let deadline = new Date('2024-11-04 05:34:59');
+    let now = new Date('2024-11-04 05:24:59');
+
+    initializeClock('countdown', deadline, now);
+});
+
+const getTimeRemaining = (endtime, now) => {
+    var t = Date.parse(endtime) - Date.parse(now);
+    var seconds = Math.floor((t / 1000) % 60);
+    var minutes = Math.floor((t / 1000 / 60) % 60);
+    var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+    var days = Math.floor(t / (1000 * 60 * 60 * 24));
+
+    return {
+        'total': t,
+        'days': days,
+        'hours': hours,
+        'minutes': minutes,
+        'seconds': seconds
+    };
+}
+
+const initializeClock = (id, endtime, now) => {
+    function updateClock() {
+        now = new Date(Date.parse(now) + 1000);
+        var t = getTimeRemaining(endtime, now);
+        data.value.clock.days = t.days;
+        data.value.clock.hours = ('0' + t.hours).slice(-2);
+        data.value.clock.minutes = ('0' + t.minutes).slice(-2);
+        data.value.clock.seconds = ('0' + t.seconds).slice(-2);
+
+        if (t.total <= 0) {
+            clearInterval(timeinterval);
+            data.value.clock.days = '00';
+            data.value.clock.hours = '00';
+            data.value.clock.minutes = '00';
+            data.value.clock.seconds = '00';
+        } else {
+            data.value.clock.days = t.days;
+            data.value.clock.hours = ('0' + t.hours).slice(-2);
+            data.value.clock.minutes = ('0' + t.minutes).slice(-2);
+            data.value.clock.seconds = ('0' + t.seconds).slice(-2);
+        }
+    }
+
+    updateClock();
+    var timeinterval = setInterval(updateClock, 1000);
+}
+
 defineOptions({ layout: PaymentLayout })
 </script>
 
@@ -93,7 +152,7 @@ defineOptions({ layout: PaymentLayout })
                         <div class="text-gray-400 dark:text-gray-500">Сумма для оплаты</div>
                     </div>
                     <div v-show="stage === 'payment'">
-                        <div class="text-gray-900 dark:text-gray-200 text-2xl">09:35</div>
+                        <div class="text-gray-900 dark:text-gray-200 text-2xl">{{ data.clock.minutes }}:{{ data.clock.seconds }}</div>
                         <div class="text-gray-400 dark:text-gray-500">Время на оплату</div>
                     </div>
                 </div>
