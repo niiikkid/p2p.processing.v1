@@ -14,7 +14,7 @@ defineProps({
     },
 });
 
-const stage = ref('fail');
+const stage = ref('payment');
 
 const isDarkColorTheme = ref(false);
 
@@ -86,8 +86,8 @@ defineOptions({ layout: PaymentLayout })
                 </button>
             </div>
 
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl">
-                <div class="flex justify-between mt-3 w-full px-6 py-5 text-sm text-gray-800 bg-gray-50 dark:bg-gray-800 rounded-xl dark:text-gray-300">
+            <div class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                <div class="flex justify-between mt-3 w-full px-6 py-5 text-sm text-gray-800 bg-white dark:bg-gray-800 rounded-xl dark:text-gray-300">
                     <div>
                         <div class="text-gray-900 dark:text-gray-200 text-2xl">15.500&#8381;</div>
                         <div class="text-gray-400 dark:text-gray-500">Сумма для оплаты</div>
@@ -105,40 +105,40 @@ defineOptions({ layout: PaymentLayout })
                 </div>
             </div>
 
-            <div class="mt-4 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-xl">
+            <div class="mt-4 px-6 py-4 bg-white dark:bg-gray-800 overflow-hidden sm:rounded-xl">
                 <div>
                     <div v-if="stage === 'payment'" class="pb-3">
                         <div class="my-5 text-base space-y-2">
-                            <div class="flex justify-between items-center border border-gray-300 dark:border-gray-600 rounded-xl p-3">
+                            <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
                                 <div class="flex text-gray-900 dark:text-gray-200">
                                     <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/>
                                     </svg>
                                     Номер карты
                                 </div>
-                                <div class="text-gray-200">
+                                <div class="text-gray-900 dark:text-gray-200">
                                     <CopyPaymentText text="4000 5000 3000 2000"></CopyPaymentText>
                                 </div>
                             </div>
-                            <div class="flex justify-between items-center border border-gray-300 dark:border-gray-600 rounded-xl p-3">
+                            <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
                                 <div class="flex text-gray-900 dark:text-gray-200">
                                     <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                                     </svg>
                                     Держатель карты
                                 </div>
-                                <div class="text-gray-200">
+                                <div class="text-gray-900 dark:text-gray-200">
                                     <CopyPaymentText text="IVAN IVANOVICH"></CopyPaymentText>
                                 </div>
                             </div>
-                            <div class="flex justify-between items-center border border-gray-300 dark:border-gray-600 rounded-xl p-3">
+                            <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
                                 <div class="flex text-gray-900 dark:text-gray-200">
                                     <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
                                     </svg>
                                     Сумма перевода
                                 </div>
-                                <div class="text-gray-200">
+                                <div class="text-gray-900 dark:text-gray-200">
                                     <CopyPaymentText text="15.500&#8381;"></CopyPaymentText>
                                 </div>
                             </div>
@@ -174,10 +174,10 @@ defineOptions({ layout: PaymentLayout })
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                         </svg>
                                     </div>
-                                    <p class="mb-1 text-2xl font-semibold text-gray-900 dark:text-gray-300 text-center">
+                                    <p class="mb-1 text-2xl font-semibold text-gray-900 dark:text-gray-200 text-center">
                                         Платеж зачислен
                                     </p>
-                                    <p class="text-sm text-gray-900 dark:text-gray-400 text-center">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
                                         Счет на сумму 15 000 &#8381; оплачен. Спасибо за оплату.
                                     </p>
                                 </template>
@@ -187,10 +187,10 @@ defineOptions({ layout: PaymentLayout })
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                         </svg>
                                     </div>
-                                    <p class="mb-1 text-2xl font-semibold text-gray-900 dark:text-gray-300 text-center">
+                                    <p class="mb-1 text-2xl font-semibold text-gray-900 dark:text-gray-200 text-center">
                                         Время истекло
                                     </p>
-                                    <p class="text-sm text-gray-900 dark:text-gray-400 text-center">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
                                         Счет на сумму 15 000 &#8381; не оплачен. Оплата не поступила.
                                     </p>
                                 </template>
@@ -245,7 +245,7 @@ defineOptions({ layout: PaymentLayout })
                                 </div>
                                 <!-- Modal body -->
                                 <div class="p-6 pt-0">
-                                    <ul class="w-full space-y-1 text-gray-500 list-inside dark:text-gray-400">
+                                    <ul class="w-full space-y-1 text-gray-900 list-inside dark:text-gray-200">
                                         <li class="flex items-center space-x-3 rtl:space-x-reverse">
                                             <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
