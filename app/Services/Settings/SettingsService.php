@@ -15,6 +15,7 @@ class SettingsService implements SettingsServiceContract
     const PRIME_TIME_BONUS_ENDS = 'prime_time_bonus_ends';
     const PRIME_TIME_BONUS_RATE = 'prime_time_bonus_rate';
     const CURRENCY_PRICE_PARSER_SETTINGS = 'currency_price_parser_settings';
+    const SUPPORT_LINK = 'support_link';
 
     public function getPrimeTimeBonus(): PrimeTimeSettings
     {
@@ -48,29 +49,36 @@ class SettingsService implements SettingsServiceContract
         $this->updateParam(self::CURRENCY_PRICE_PARSER_SETTINGS, $param);
     }
 
-    /**
-     * @throws SettingsException
-     */
+    public function getSupportLink(): string
+    {
+        return $this->getParam(self::SUPPORT_LINK);
+    }
+
+    public function updateSupportLink(string $link): void
+    {
+        $this->updateParam(self::SUPPORT_LINK, $link);
+    }
+
     public function createAll(): void
     {
-        if (Setting::query()->count()) {
-            throw new SettingsException('Settings already exist.');
-        }
-
-        Setting::create([
+        Setting::firstOrCreate([
             'key' => self::PRIME_TIME_BONUS_STARTS,
             'value' => '00:00',
         ]);
-        Setting::create([
+        Setting::firstOrCreate([
             'key' => self::PRIME_TIME_BONUS_ENDS,
             'value' => '07:00',
         ]);
-        Setting::create([
+        Setting::firstOrCreate([
             'key' => self::PRIME_TIME_BONUS_RATE,
             'value' => '1.2',
         ]);
+        Setting::firstOrCreate([
+            'key' => self::SUPPORT_LINK,
+            'value' => null,
+        ]);
 
-        Setting::create([
+        Setting::firstOrCreate([
             'key' => self::CURRENCY_PRICE_PARSER_SETTINGS,
             'value' => json_encode([
                 Currency::RUB()->getCode() => (new CurrencyPriceParserSettings(...[

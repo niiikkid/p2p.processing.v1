@@ -279,5 +279,6 @@ return [
         'order'                    => 'сделка',
         'receipt'                  => 'чек',
         'merchant_id'              => 'мерчант',
+        'support_link'             => 'ссылка',
     ],
 ];
