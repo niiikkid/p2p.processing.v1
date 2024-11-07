@@ -16,6 +16,12 @@ class PaymentLinkController extends Controller
             'amount_formated' => number_format($order->amount->toBeauty(), 0, ',', '.'),
             'currency_symbol' => $order->amount->getCurrency()->getSymbol(),
             'payment_link' => services()->settings()->getSupportLink(),
+            'detail' => $order->paymentDetail->detail,
+            'detail_type' => $order->paymentDetail->detail_type->value,
+            'initials' => $order->paymentDetail->initials,
+            'sub_payment_gateway' => $order->paymentDetail->subPaymentGateway?->name,
+            'success_url' => $order->success_url,
+            'fail_url' => $order->fail_url,
         ];
 
         return Inertia::render('PaymentLink/Index', compact('data'));

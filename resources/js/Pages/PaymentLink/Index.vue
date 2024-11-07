@@ -2,7 +2,7 @@
 import {Head, usePage} from '@inertiajs/vue3';
 import PaymentLayout from "@/Layouts/PaymentLayout.vue";
 import CopyPaymentText from "@/Components/CopyPaymentText.vue";
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {initFlowbite} from "flowbite";
 
 defineProps({
@@ -66,6 +66,10 @@ const data = ref({
     amount_formated: usePage().props.data.amount_formated,
     currency_symbol: usePage().props.data.currency_symbol,
     payment_link: usePage().props.data.payment_link,
+    detail: usePage().props.data.detail,
+    detail_type: usePage().props.data.detail_type,
+    initials: usePage().props.data.initials,
+    sub_payment_gateway: usePage().props.data.sub_payment_gateway,
     clock: {
         days: "0",
         hours: "0",
@@ -73,6 +77,20 @@ const data = ref({
         seconds: "30",
     },
 });
+
+const formatedDetail = computed(() => {
+    if (data.value.detail_type === 'card') {
+        return data.value.detail.match(/.{1,4}/g).join(' ');
+    }
+    if (data.value.detail_type === 'phone') {
+        let x = data.value.detail.replace(/\D/g, '').match(/(\d{1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+
+        return  !x[2] ? x[1] : '+' + x[1] + ' (' + x[2] + ') ' + x[3] + '-' + x[4] + '-' + x[5];
+    }
+    if (data.value.detail_type === 'account_number') {
+        return data.value.detail.match(/.{1,4}/g).join(' ');
+    }
+})
 
 const openSupport = () => {
     window.open(data.value.payment_link, '_blank');
@@ -182,16 +200,46 @@ defineOptions({ layout: PaymentLayout })
             <div class="mt-4 px-6 py-4 bg-white dark:bg-gray-800 overflow-hidden sm:rounded-xl">
                 <div>
                     <div v-if="stage === 'payment'" class="pb-3">
+                        <div
+                            v-if="data.sub_payment_gateway"
+                            class="flex text-2xl"
+                        >
+                            <img src="/images/sbp.svg" class="mr-2 w-8 h-8">
+                            Быстрая оплата или СБП
+                        </div>
+                        <div v-if="data.detail_type === 'account_number'" class="flex items-center p-3 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
+                            <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                            </svg>
+                            <div>
+                                Внимание это перевод по счету, а не на карту!
+                            </div>
+                        </div>
+
                         <div class="my-5 text-base space-y-2">
                             <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
                                 <div class="flex text-gray-900 dark:text-gray-200">
-                                    <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/>
-                                    </svg>
-                                    Номер карты
+                                    <template v-if="data.detail_type === 'card'">
+                                        <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/>
+                                        </svg>
+                                        Номер карты
+                                    </template>
+                                    <template v-else-if="data.detail_type === 'phone'">
+                                        <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 15h12M6 6h12m-6 12h.01M7 21h10a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1Z"/>
+                                        </svg>
+                                        Номер телефона
+                                    </template>
+                                    <template v-else-if="data.detail_type === 'account_number'">
+                                        <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9h3m-3 3h3m-3 3h3m-6 1c-.306-.613-.933-1-1.618-1H7.618c-.685 0-1.312.387-1.618 1M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/>
+                                        </svg>
+                                        Номер счета
+                                    </template>
                                 </div>
                                 <div class="text-gray-900 dark:text-gray-200">
-                                    <CopyPaymentText text="4000 5000 3000 2000"></CopyPaymentText>
+                                    <CopyPaymentText :text="formatedDetail" :copy_text="data.detail"></CopyPaymentText>
                                 </div>
                             </div>
                             <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
@@ -199,10 +247,26 @@ defineOptions({ layout: PaymentLayout })
                                     <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                                     </svg>
-                                    Держатель карты
+                                    <template v-if="data.detail_type === 'card'">
+                                        Держатель карты
+                                    </template>
+                                    <template v-else>
+                                        Получатель
+                                    </template>
                                 </div>
                                 <div class="text-gray-900 dark:text-gray-200">
-                                    <CopyPaymentText text="IVAN IVANOVICH"></CopyPaymentText>
+                                    <CopyPaymentText :text="data.initials" :copy_text="data.initials"></CopyPaymentText>
+                                </div>
+                            </div>
+                            <div v-if="data.sub_payment_gateway" class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
+                                <div class="flex text-gray-900 dark:text-gray-200">
+                                    <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M3 21h18M4 18h16M6 10v8m4-8v8m4-8v8m4-8v8M4 9.5v-.955a1 1 0 0 1 .458-.84l7-4.52a1 1 0 0 1 1.084 0l7 4.52a1 1 0 0 1 .458.84V9.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5Z"/>
+                                    </svg>
+                                    Банк
+                                </div>
+                                <div class="text-gray-900 dark:text-gray-200">
+                                    {{ data.sub_payment_gateway }}
                                 </div>
                             </div>
                             <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
@@ -218,7 +282,7 @@ defineOptions({ layout: PaymentLayout })
                             </div>
                         </div>
 
-                        <div class="flex items-center p-3 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
+                        <div v-if="data.detail_type !== 'account_number'" class="flex items-center p-3 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
                             <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                             </svg>
@@ -252,7 +316,7 @@ defineOptions({ layout: PaymentLayout })
                                         Платеж зачислен
                                     </p>
                                     <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
-                                        Счет на сумму 15 000 &#8381; оплачен. Спасибо за оплату.
+                                        Счет на сумму {{ data.amount_formated }}{{ data.currency_symbol }} оплачен. Спасибо за оплату.
                                     </p>
                                 </template>
                                 <template v-else>
@@ -265,7 +329,7 @@ defineOptions({ layout: PaymentLayout })
                                         Время истекло
                                     </p>
                                     <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
-                                        Счет на сумму 15 000 &#8381; не оплачен. Оплата не поступила.
+                                        Счет на сумму {{ data.amount_formated }}{{ data.currency_symbol }} не оплачен. Оплата не поступила.
                                     </p>
                                 </template>
                             </div>
