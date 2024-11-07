@@ -565,11 +565,11 @@ defineOptions({ layout: PaymentLayout });
                 </button>
             </div>
 
-            <div class="text-xs text-black dark:text-white flex gap-2 cursor-pointer">
+<!--            <div class="text-xs text-black dark:text-white flex gap-2 cursor-pointer">
                 <div @click="stage = 'payment'" :class="{'text-blue-500' : stage === 'payment'}">payment</div>
                 <div @click="stage = 'success'" :class="{'text-blue-500' : stage === 'success'}">success</div>
                 <div @click="stage = 'fail'" :class="{'text-blue-500' : stage === 'fail'}">fail</div>
-            </div>
+            </div>-->
         </div>
     </div>
 </template>
