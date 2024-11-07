@@ -1,9 +1,10 @@
 <script setup>
-import {Head, router, usePage} from '@inertiajs/vue3';
+import {Head, router, useForm, usePage} from '@inertiajs/vue3';
 import PaymentLayout from "@/Layouts/PaymentLayout.vue";
 import CopyPaymentText from "@/Components/CopyPaymentText.vue";
 import {computed, onMounted, ref} from "vue";
 import {initFlowbite} from "flowbite";
+import InputError from "@/Components/InputError.vue";
 
 defineProps({
     canResetPassword: {
@@ -90,6 +91,9 @@ const setData = () => {
         created_at: usePage().props.data.created_at,
         expires_at: usePage().props.data.expires_at,
         now: usePage().props.data.now,
+        has_dispute: usePage().props.data.has_dispute,
+        dispute_status: usePage().props.data.dispute_status,
+        dispute_cancel_reason: usePage().props.data.dispute_cancel_reason,
     }
 }
 
@@ -185,16 +189,28 @@ router.on('success', (event) => {
 })
 
 const setStage = () => {
-    if (data.value.order_status === 'pending') {
+    if (data.value.order_status === 'pending' && ! data.value.has_dispute) {
         stage.value = 'payment';
     } else if (data.value.order_status === 'success') {
         stage.value = 'success';
-    } else if (data.value.order_status === 'fail') {
+    } else if (data.value.order_status === 'fail' && ! data.value.has_dispute) {
         stage.value = 'fail';
+    } else if (data.value.has_dispute && data.value.dispute_status === 'pending') {
+        stage.value = 'dispute_review';
+    } else if (data.value.has_dispute  && data.value.dispute_status === 'canceled') {
+        stage.value = 'dispute_canceled';
     }
 }
 
 setStage();
+
+const formReceipt = useForm({
+    receipt: null,
+})
+
+function submitReceipt() {
+    formReceipt.post(route('payment.dispute.store', data.value.uuid))
+}
 
 defineOptions({ layout: PaymentLayout });
 </script>
@@ -396,8 +412,7 @@ defineOptions({ layout: PaymentLayout });
                             </button>
                         </div>
 
-
-                        <div v-show="stage === 'fail'" class="w-full">
+                        <form @submit.prevent="submitReceipt" v-show="stage === 'fail'" class="w-full">
                             <div class="text-gray-500 dark:text-gray-400 text-sm mb-3 text-center">
                                 Загрузите чек вашей транзакции, что бы мы могли найти ваш платеж
                             </div>
@@ -407,15 +422,17 @@ defineOptions({ layout: PaymentLayout });
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                                     </svg>
                                     <div>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Нажмите, чтобы загрузить файл</p>
+                                        <p v-if="!formReceipt.receipt" class="text-sm text-gray-500 dark:text-gray-400">Нажмите, чтобы загрузить файл</p>
+                                        <p v-else class="text-sm text-gray-500 dark:text-gray-400">{{ formReceipt.receipt.name }}</p>
                                     </div>
                                 </div>
-                                <input id="dropzone-file" type="file" class="hidden" />
+                                <input id="dropzone-file" type="file" @input="formReceipt.receipt = $event.target.files[0]" class="hidden" />
                             </label>
+                            <InputError :message="formReceipt.errors.receipt" class="mt-2" />
 
                             <div class="mt-4">
                                 <button
-                                    type="button"
+                                    type="submit"
                                     class="w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:border dark:bg-gray-950/20 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                 >
                                     Отправить
@@ -431,6 +448,45 @@ defineOptions({ layout: PaymentLayout });
                                 >
                                     Вернуться на сайт
                                 </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div v-if="stage === 'dispute_review'" class="py-1 pb-2">
+                        <div class="mt-5 mb-8 text-base flex justify-center">
+                            <div class="w-2/3">
+                                <div class="flex items-center justify-center mb-2">
+                                    <svg class="w-24 h-24 text-green-400 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8.032 12 1.984 1.984 4.96-4.96m4.55 5.272.893-.893a1.984 1.984 0 0 0 0-2.806l-.893-.893a1.984 1.984 0 0 1-.581-1.403V7.04a1.984 1.984 0 0 0-1.984-1.984h-1.262a1.983 1.983 0 0 1-1.403-.581l-.893-.893a1.984 1.984 0 0 0-2.806 0l-.893.893a1.984 1.984 0 0 1-1.403.581H7.04A1.984 1.984 0 0 0 5.055 7.04v1.262c0 .527-.209 1.031-.581 1.403l-.893.893a1.984 1.984 0 0 0 0 2.806l.893.893c.372.372.581.876.581 1.403v1.262a1.984 1.984 0 0 0 1.984 1.984h1.262c.527 0 1.031.209 1.403.581l.893.893a1.984 1.984 0 0 0 2.806 0l.893-.893a1.985 1.985 0 0 1 1.403-.581h1.262a1.984 1.984 0 0 0 1.984-1.984V15.7c0-.527.209-1.031.581-1.403Z"/>
+                                    </svg>
+                                </div>
+                                <p class="mb-1 text-2xl font-semibold text-gray-900 dark:text-gray-200 text-center">
+                                    Чек загружен
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
+                                    Ожидает рассмотрения. Страница обновится автоматически.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="stage === 'dispute_canceled'" class="py-1 pb-2">
+                        <div class="mt-5 mb-8 text-base flex justify-center">
+                            <div class="w-2/3">
+                                <div class="flex items-center justify-center mb-2">
+                                    <svg class="w-24 h-24 text-red-500 dark:text-red-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                    </svg>
+                                </div>
+                                <p class="mb-1 text-2xl font-semibold text-gray-900 dark:text-gray-200 text-center">
+                                    Заявка отклонена
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
+                                    Причина: {{ data.dispute_cancel_reason }}.
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 text-center mt-3">
+                                    Если вы не согласны с решением, свяжитесь с поддержкой, кнопка вверху.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -459,26 +515,29 @@ defineOptions({ layout: PaymentLayout });
                                             <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
                                             </svg>
-                                            <span>Скопируйте номер карты для перевода <b class="text-nowrap">4000 5000 3000 2000</b></span>
+                                            <span v-if="data.detail_type === 'card'">Скопируйте номер карты для перевода <b class="text-nowrap">{{ formatedDetail }}</b></span>
+                                            <span v-if="data.detail_type === 'phone'">Скопируйте номер телефона для перевода <b class="text-nowrap">{{ formatedDetail }}</b></span>
+                                            <span v-if="data.detail_type === 'account_number'">Скопируйте номер счета для перевода <b class="text-nowrap">{{ formatedDetail }}</b></span>
                                         </li>
                                         <li class="flex items-center space-x-3 rtl:space-x-reverse">
                                             <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
                                             </svg>
-                                            <span>В банковском приложении выберите перевод по карте</span>
+                                            <span v-if="data.detail_type === 'card'">В банковском приложении выберите перевод по карте</span>
+                                            <span v-if="data.detail_type === 'phone'">В банковском приложении выберите перевод по СБП</span>
+                                            <span v-if="data.detail_type === 'account_number'">В банковском приложении выберите перевод по номеру счета</span>
                                         </li>
                                         <li class="flex items-center space-x-3 rtl:space-x-reverse">
                                             <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
                                             </svg>
-                                            <span>Сделайте перевод точной суммы <b class="text-nowrap">257₽</b></span>
+                                            <span>Сделайте перевод точной суммы <b class="text-nowrap">{{ data.amount_formated }}{{ data.currency_symbol }}</b></span>
                                         </li>
                                         <li class="flex items-center space-x-3 rtl:space-x-reverse">
                                             <svg class="flex-shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
                                             </svg>
-                                            <span>Дождитесь зачисления средств. Не закрывайте страницу до подтверждения
-                                успешной оплаты.</span>
+                                            <span>Дождитесь зачисления средств. Не закрывайте страницу до подтверждения успешной оплаты.</span>
                                         </li>
                                     </ul>
                                     <div class="p-4 mt-5 text-sm text-gray-900 dark:text-gray-400 rounded-xl bg-red-50 dark:bg-gray-800" role="alert">

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\DisputeException;
+use App\Http\Requests\PaymentLink\Dispute\StoreRequest;
 use App\Models\Order;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PaymentLinkController extends Controller
@@ -26,8 +29,16 @@ class PaymentLinkController extends Controller
             'created_at' => $order->created_at->toDateTimeString(),
             'expires_at' => $order->expires_at->toDateTimeString(),
             'now' => now()->toDateTimeString(),
+            'has_dispute' => intval(!! $order->dispute),
+            'dispute_status' => $order->dispute?->status->value,
+            'dispute_cancel_reason' => $order->dispute?->reason,
         ];
 
         return Inertia::render('PaymentLink/Index', compact('data'));
+    }
+
+    public function storeDispute(StoreRequest $request, Order $order)
+    {
+        services()->dispute()->create($order, $request->receipt);
     }
 }
