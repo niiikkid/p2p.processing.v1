@@ -19,7 +19,7 @@ class OrderResource extends JsonResource
          * @var Order $this
          */
         return [
-            'id' => $this->id,
+            'order_id' => $this->uuid,
             'external_id' => $this->external_id,
             'merchant_id' => $this->merchant->uuid,
             'amount' => $this->amount->toBeauty(),

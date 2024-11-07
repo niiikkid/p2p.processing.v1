@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->nullable();
             $table->string('external_id')->nullable();
             $table->string('base_amount')->nullable(); //стартовая сумма
             $table->string('amount')->nullable(); //стартовая сумма с комиссией сервиса (эту сумму платит клиент)

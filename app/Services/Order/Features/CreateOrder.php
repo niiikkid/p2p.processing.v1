@@ -12,6 +12,7 @@ use App\Models\PaymentDetail;
 use App\Models\PaymentGateway;
 use App\Services\Money\Currency;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 //TODO добавить возможность создавать множественные ордера с одной суммой для одного и тогоже юзера
 class CreateOrder extends BaseFeature
@@ -83,6 +84,7 @@ class CreateOrder extends BaseFeature
         );
 
         return Order::create([
+            'uuid' => (string)Str::uuid(),
             'external_id' => $this->dto->external_id,
             'merchant_id' => $merchant->id,
             'base_amount' => $this->dto->amount,

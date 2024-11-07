@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
+ * @property string $uuid
  * @property string $external_id
  * @property Money $base_amount
  * @property Money $amount
@@ -57,6 +58,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
+        'uuid',
         'external_id',
         'base_amount',
         'amount',

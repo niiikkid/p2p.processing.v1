@@ -21,6 +21,7 @@ class OrderResource extends JsonResource
          */
         return [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'external_id' => $this->external_id,
             'base_amount' => $this->amount->toBeauty(),
             'amount' => $this->amount->toBeauty(),
