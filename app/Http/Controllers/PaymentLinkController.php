@@ -22,6 +22,9 @@ class PaymentLinkController extends Controller
             'sub_payment_gateway' => $order->paymentDetail->subPaymentGateway?->name,
             'success_url' => $order->success_url,
             'fail_url' => $order->fail_url,
+            'created_at' => $order->created_at->toDateTimeString(),
+            'expires_at' => $order->expires_at->toDateTimeString(),
+            'now' => now()->toDateTimeString(),
         ];
 
         return Inertia::render('PaymentLink/Index', compact('data'));

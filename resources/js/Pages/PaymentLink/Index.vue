@@ -1,5 +1,5 @@
 <script setup>
-import {Head, usePage} from '@inertiajs/vue3';
+import {Head, router, usePage} from '@inertiajs/vue3';
 import PaymentLayout from "@/Layouts/PaymentLayout.vue";
 import CopyPaymentText from "@/Components/CopyPaymentText.vue";
 import {computed, onMounted, ref} from "vue";
@@ -57,28 +57,42 @@ onMounted(() => {
         localStorage.setItem('color-theme-payment', 'light');
         isDarkColorTheme.value = false;
     }
+
+    setTimeout(() => {
+        checkPaid();
+    }, 5000)
 })
 
-const data = ref({
-    uuid: usePage().props.data.uuid,
-    name: usePage().props.data.name,
-    amount: usePage().props.data.amount,
-    amount_formated: usePage().props.data.amount_formated,
-    currency_symbol: usePage().props.data.currency_symbol,
-    payment_link: usePage().props.data.payment_link,
-    detail: usePage().props.data.detail,
-    detail_type: usePage().props.data.detail_type,
-    initials: usePage().props.data.initials,
-    sub_payment_gateway: usePage().props.data.sub_payment_gateway,
-    success_url: usePage().props.data.success_url,
-    fail_url: usePage().props.data.fail_url,
-    clock: {
-        days: "0",
-        hours: "0",
-        minutes: "09",
-        seconds: "30",
-    },
+const data = ref({});
+const clock = ref( {
+    days: "0",
+    hours: "0",
+    minutes: "0",
+    seconds: "0",
+    now: null,
 });
+
+const setData = () => {
+    data.value = {
+        uuid: usePage().props.data.uuid,
+        name: usePage().props.data.name,
+        amount: usePage().props.data.amount,
+        amount_formated: usePage().props.data.amount_formated,
+        currency_symbol: usePage().props.data.currency_symbol,
+        payment_link: usePage().props.data.payment_link,
+        detail: usePage().props.data.detail,
+        detail_type: usePage().props.data.detail_type,
+        initials: usePage().props.data.initials,
+        sub_payment_gateway: usePage().props.data.sub_payment_gateway,
+        success_url: usePage().props.data.success_url,
+        fail_url: usePage().props.data.fail_url,
+        created_at: usePage().props.data.created_at,
+        expires_at: usePage().props.data.expires_at,
+        now: usePage().props.data.now,
+    }
+}
+
+setData();
 
 const formatedDetail = computed(() => {
     if (data.value.detail_type === 'card') {
@@ -106,13 +120,6 @@ const openSupport = () => {
     window.open(data.value.payment_link, '_blank');
 };
 
-onMounted(() => {
-    let deadline = new Date('2024-11-04 05:34:59');
-    let now = new Date('2024-11-04 05:24:59');
-
-    initializeClock('countdown', deadline, now);
-});
-
 const getTimeRemaining = (endtime, now) => {
     var t = Date.parse(endtime) - Date.parse(now);
     var seconds = Math.floor((t / 1000) % 60);
@@ -129,26 +136,30 @@ const getTimeRemaining = (endtime, now) => {
     };
 }
 
-const initializeClock = (id, endtime, now) => {
+const initializeClock = () => {
+    let endtime = new Date(data.value.expires_at);
+    clock.value.now = new Date(data.value.now);
+
     function updateClock() {
-        now = new Date(Date.parse(now) + 1000);
-        var t = getTimeRemaining(endtime, now);
-        data.value.clock.days = t.days;
-        data.value.clock.hours = ('0' + t.hours).slice(-2);
-        data.value.clock.minutes = ('0' + t.minutes).slice(-2);
-        data.value.clock.seconds = ('0' + t.seconds).slice(-2);
+        clock.value.now = new Date(Date.parse(clock.value.now) + 1000);
+        var t = getTimeRemaining(endtime, clock.value.now);
+
+        clock.value.days = t.days;
+        clock.value.hours = ('0' + t.hours).slice(-2);
+        clock.value.minutes = ('0' + t.minutes).slice(-2);
+        clock.value.seconds = ('0' + t.seconds).slice(-2);
 
         if (t.total <= 0) {
             clearInterval(timeinterval);
-            data.value.clock.days = '00';
-            data.value.clock.hours = '00';
-            data.value.clock.minutes = '00';
-            data.value.clock.seconds = '00';
+            clock.value.days = '00';
+            clock.value.hours = '00';
+            clock.value.minutes = '00';
+            clock.value.seconds = '00';
         } else {
-            data.value.clock.days = t.days;
-            data.value.clock.hours = ('0' + t.hours).slice(-2);
-            data.value.clock.minutes = ('0' + t.minutes).slice(-2);
-            data.value.clock.seconds = ('0' + t.seconds).slice(-2);
+            clock.value.days = t.days;
+            clock.value.hours = ('0' + t.hours).slice(-2);
+            clock.value.minutes = ('0' + t.minutes).slice(-2);
+            clock.value.seconds = ('0' + t.seconds).slice(-2);
         }
     }
 
@@ -156,7 +167,21 @@ const initializeClock = (id, endtime, now) => {
     var timeinterval = setInterval(updateClock, 1000);
 }
 
-defineOptions({ layout: PaymentLayout })
+initializeClock();
+
+const checkPaid = () => {
+    setInterval(async () => {
+        router.reload({ only: ['data'] })
+    }, 5000);
+}
+
+router.on('success', (event) => {
+    setData();
+
+    clock.value.now = new Date(data.value.now);
+})
+
+defineOptions({ layout: PaymentLayout });
 </script>
 
 <template>
@@ -195,7 +220,7 @@ defineOptions({ layout: PaymentLayout })
                         <div class="text-gray-400 dark:text-gray-500">Сумма для оплаты</div>
                     </div>
                     <div v-show="stage === 'payment'">
-                        <div class="text-gray-900 dark:text-gray-200 text-2xl">{{ data.clock.minutes }}:{{ data.clock.seconds }}</div>
+                        <div class="text-gray-900 dark:text-gray-200 text-2xl">{{ clock.minutes }}:{{ clock.seconds }}</div>
                         <div class="text-gray-400 dark:text-gray-500">Время на оплату</div>
                     </div>
                 </div>
@@ -212,7 +237,7 @@ defineOptions({ layout: PaymentLayout })
                     <div v-if="stage === 'payment'" class="pb-3">
                         <div
                             v-if="data.sub_payment_gateway"
-                            class="flex text-2xl"
+                            class="flex text-2xl text-gray-900 dark:text-gray-200"
                         >
                             <img src="/images/sbp.svg" class="mr-2 w-8 h-8">
                             Быстрая оплата или СБП
