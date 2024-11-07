@@ -10,6 +10,7 @@ class PaymentLinkController extends Controller
     public function show(Order $order)
     {
         $data = [
+            'order_status' => $order->status->value,
             'uuid' => $order->uuid,
             'name' => $order->merchant->name,
             'amount' => $order->amount->toBeauty(),

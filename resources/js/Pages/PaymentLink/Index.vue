@@ -74,6 +74,7 @@ const clock = ref( {
 
 const setData = () => {
     data.value = {
+        order_status: usePage().props.data.order_status,
         uuid: usePage().props.data.uuid,
         name: usePage().props.data.name,
         amount: usePage().props.data.amount,
@@ -179,7 +180,21 @@ router.on('success', (event) => {
     setData();
 
     clock.value.now = new Date(data.value.now);
+
+    setStage();
 })
+
+const setStage = () => {
+    if (data.value.order_status === 'pending') {
+        stage.value = 'payment';
+    } else if (data.value.order_status === 'success') {
+        stage.value = 'success';
+    } else if (data.value.order_status === 'fail') {
+        stage.value = 'fail';
+    }
+}
+
+setStage();
 
 defineOptions({ layout: PaymentLayout });
 </script>
