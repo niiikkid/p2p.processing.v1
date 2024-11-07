@@ -33,6 +33,11 @@ class Currency
         return $this->getConfig()['precision'];
     }
 
+    public function getSymbol(): string
+    {
+        return $this->getConfig()['symbol'];
+    }
+
     public function getCode(): string
     {
         return strtolower($this->currency);

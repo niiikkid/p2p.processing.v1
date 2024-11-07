@@ -5,6 +5,9 @@ const props = defineProps({
     text: {
         type: String,
     },
+    copy_text: {
+        type: String,
+    },
 });
 const { copy, copied } = useClipboard()
 </script>
@@ -14,7 +17,7 @@ const { copy, copied } = useClipboard()
         <a
             href="#"
             :data-tooltip-target="'tooltip'+$.uid"
-            @click.prevent="copy(text)"
+            @click.prevent="copy(copy_text)"
             class="flex items-center justify-center hover:text-blue-500 rounded-lg text-nowrap"
         >
             {{ text }}

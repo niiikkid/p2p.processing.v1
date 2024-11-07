@@ -1,5 +1,5 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
+import {Head, usePage} from '@inertiajs/vue3';
 import PaymentLayout from "@/Layouts/PaymentLayout.vue";
 import CopyPaymentText from "@/Components/CopyPaymentText.vue";
 import {onMounted, ref} from "vue";
@@ -60,6 +60,12 @@ onMounted(() => {
 })
 
 const data = ref({
+    uuid: usePage().props.data.uuid,
+    name: usePage().props.data.name,
+    amount: usePage().props.data.amount,
+    amount_formated: usePage().props.data.amount_formated,
+    currency_symbol: usePage().props.data.currency_symbol,
+    payment_link: usePage().props.data.payment_link,
     clock: {
         days: "0",
         hours: "0",
@@ -67,6 +73,10 @@ const data = ref({
         seconds: "30",
     },
 });
+
+const openSupport = () => {
+    window.open(data.value.payment_link, '_blank');
+};
 
 onMounted(() => {
     let deadline = new Date('2024-11-04 05:34:59');
@@ -129,8 +139,13 @@ defineOptions({ layout: PaymentLayout })
             class="w-full sm:max-w-md"
         >
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl">Ваше название</h2>
-                <button type="button" class="text-center flex items-center justify-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-xl text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl">{{ data.name }}</h2>
+                <button
+                    v-show="data.payment_link"
+                    @click.prevent="openSupport"
+                    type="button"
+                    class="text-center flex items-center justify-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-xl text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                >
                     <span class="[&>svg]:h-4 [&>svg]:w-4 me-2">
                       <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -148,7 +163,7 @@ defineOptions({ layout: PaymentLayout })
             <div class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                 <div class="flex justify-between mt-3 w-full px-6 py-5 text-sm text-gray-800 bg-white dark:bg-gray-800 rounded-xl dark:text-gray-300">
                     <div>
-                        <div class="text-gray-900 dark:text-gray-200 text-2xl">15.500&#8381;</div>
+                        <div class="text-gray-900 dark:text-gray-200 text-2xl">{{ data.amount_formated }}{{ data.currency_symbol }}</div>
                         <div class="text-gray-400 dark:text-gray-500">Сумма для оплаты</div>
                     </div>
                     <div v-show="stage === 'payment'">
@@ -159,7 +174,7 @@ defineOptions({ layout: PaymentLayout })
 
                 <div>
                     <div class="w-full p-2 text-center text-sm text-gray-800 dark:text-gray-300">
-                        <span class="text-blue-500 dark:text-blue-500">ID:</span> c4271bdd-dffc-4fdb-85ce-25715fb9727d
+                        <span class="text-blue-500 dark:text-blue-500">ID:</span> {{ data.uuid }}
                     </div>
                 </div>
             </div>
@@ -198,7 +213,7 @@ defineOptions({ layout: PaymentLayout })
                                     Сумма перевода
                                 </div>
                                 <div class="text-gray-900 dark:text-gray-200">
-                                    <CopyPaymentText text="15.500&#8381;"></CopyPaymentText>
+                                    <CopyPaymentText :text="data.amount_formated+data.currency_symbol" :copy_text="data.amount"></CopyPaymentText>
                                 </div>
                             </div>
                         </div>

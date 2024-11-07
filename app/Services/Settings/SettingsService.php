@@ -49,7 +49,7 @@ class SettingsService implements SettingsServiceContract
         $this->updateParam(self::CURRENCY_PRICE_PARSER_SETTINGS, $param);
     }
 
-    public function getSupportLink(): string
+    public function getSupportLink(): ?string
     {
         return $this->getParam(self::SUPPORT_LINK);
     }

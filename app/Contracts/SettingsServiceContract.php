@@ -16,7 +16,7 @@ interface SettingsServiceContract
 
     public function updateCurrencyPriceParser(Currency $currency, CurrencyPriceParserSettings $settings): void;
 
-    public function getSupportLink(): string;
+    public function getSupportLink(): ?string;
 
     public function updateSupportLink(string $link): void;
 

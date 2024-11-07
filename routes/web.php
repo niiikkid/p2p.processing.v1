@@ -3,7 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/payment-link', [\App\Http\Controllers\PaymentLinkController::class, 'index'])->name('payment-link.index');
+Route::get('/payment/{order:uuid}', [\App\Http\Controllers\PaymentLinkController::class, 'show'])->name('payment-link.show');
 
 Route::group(['middleware' => ['auth', 'banned']], function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
