@@ -164,7 +164,7 @@ defineOptions({ layout: PaymentLayout })
         <Head title="Платеж" />
 
         <div
-            class="w-full sm:max-w-md"
+            class="w-full sm:max-w-md m-8"
         >
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl">{{ data.name }}</h2>
@@ -376,7 +376,7 @@ defineOptions({ layout: PaymentLayout })
                             <div class="mt-4">
                                 <button
                                     type="button"
-                                    class="w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                                    class="w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:border dark:bg-gray-950/20 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                 >
                                     Отправить
                                 </button>
