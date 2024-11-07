@@ -70,6 +70,8 @@ const data = ref({
     detail_type: usePage().props.data.detail_type,
     initials: usePage().props.data.initials,
     sub_payment_gateway: usePage().props.data.sub_payment_gateway,
+    success_url: usePage().props.data.success_url,
+    fail_url: usePage().props.data.fail_url,
     clock: {
         days: "0",
         hours: "0",
@@ -91,6 +93,14 @@ const formatedDetail = computed(() => {
         return data.value.detail.match(/.{1,4}/g).join(' ');
     }
 })
+
+const openSuccess = () => {
+    window.location = data.value.success_url;
+};
+
+const openFail = () => {
+    window.location = data.value.fail_url;
+};
 
 const openSupport = () => {
     window.open(data.value.payment_link, '_blank');
@@ -337,7 +347,8 @@ defineOptions({ layout: PaymentLayout })
 
                         <div class="mt-5">
                             <button
-                                v-show="stage === 'success'"
+                                v-show="stage === 'success' && data.success_url"
+                                @click.prevent="openSuccess"
                                 type="button"
                                 class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
@@ -365,9 +376,20 @@ defineOptions({ layout: PaymentLayout })
                             <div class="mt-4">
                                 <button
                                     type="button"
-                                    class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                    class="w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
                                 >
                                     Отправить
+                                </button>
+                            </div>
+
+                            <div class="mt-5">
+                                <button
+                                    v-show="data.fail_url"
+                                    @click.prevent="openFail"
+                                    type="button"
+                                    class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                >
+                                    Вернуться на сайт
                                 </button>
                             </div>
                         </div>
