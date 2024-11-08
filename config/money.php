@@ -7,25 +7,29 @@ return [
             'subunit'             => 100,
             'base'                => false,
             'symbol'              => '₽',
+            'name'                => 'Российский рубль',
         ],
         'KZT' => [
             'precision'           => 2,
             'subunit'             => 100,
             'base'                => false,
-            'symbol'              => '₸'
+            'symbol'              => '₸',
+            'name'                => 'Казахстанский тенге',
         ],
         'UZS' => [
             'precision'           => 2,
             'subunit'             => 100,
             'base'                => false,
-            'symbol'              => 'Soʻm'
+            'symbol'              => 'Soʻm',
+            'name'                => 'Узбекский сум',
         ],
         //base
         'USDT' => [
             'precision'           => 2,
             'subunit'             => 100,
             'base'                => true,
-            'symbol'              => '₮'
+            'symbol'              => 'USDT',
+            'name'                => 'Tether (USDT)',
         ],
     ]
 ];

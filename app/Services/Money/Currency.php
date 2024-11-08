@@ -38,6 +38,11 @@ class Currency
         return $this->getConfig()['symbol'];
     }
 
+    public function getName(): string
+    {
+        return $this->getConfig()['name'];
+    }
+
     public function getCode(): string
     {
         return strtolower($this->currency);
