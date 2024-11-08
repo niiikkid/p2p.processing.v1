@@ -18,7 +18,11 @@ const props = defineProps({
     },
     label: {
         type: String
-    }
+    },
+    helper: {
+        type: String,
+        default: null,
+    },
 });
 
 const model = defineModel({
@@ -32,6 +36,7 @@ const model = defineModel({
             :form="form"
             :field="field"
             :label="label"
+            :helper="helper"
         >
             <NumberInput
                 :id="field"
