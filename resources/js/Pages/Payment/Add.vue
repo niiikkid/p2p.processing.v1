@@ -40,6 +40,8 @@ const submit = () => {
 
 const gateway_mode = ref('payment_gateway');
 
+const detail_type_mode = ref('card');
+
 defineOptions({ layout: AuthenticatedLayout })
 </script>
 
@@ -64,22 +66,28 @@ defineOptions({ layout: AuthenticatedLayout })
                 <div>
                     <div class="mb-4">
                         <div class="mb-4">
-                            <ul class="hidden text-sm border border-gray-700 font-medium text-center text-gray-500 rounded-lg shadow sm:flex dark:divide-gray-700 dark:text-gray-400">
+                            <InputLabel
+                                for="payment_detail_type"
+                                value="Выберите метод"
+                                :error="!!form.errors.currency || !!form.errors.payment_gateway"
+                                class="mb-1"
+                            />
+                            <ul class="hidden text-sm border border-gray-200 dark:border-gray-700 font-medium text-center text-gray-500 rounded-lg sm:flex dark:divide-gray-700 dark:text-gray-400">
                                 <li class="w-full focus-within:z-10">
                                     <a
                                         @click.prevent="gateway_mode = 'payment_gateway'; form.currency = 0"
                                         href="#"
-                                        class="inline-block w-full p-2 border-r-0 border-gray-200 dark:border-gray-700 rounded-l-lg hover:text-gray-700 hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
-                                        :class="gateway_mode === 'payment_gateway' ? 'text-gray-900 bg-gray-100 border-r rounded-s-lg dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
+                                        class="inline-block w-full p-2 border-r-0 border-gray-200 dark:border-gray-700 rounded-l-lg hover:text-gray-700 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
+                                        :class="gateway_mode === 'payment_gateway' ? 'text-gray-900 bg-gray-200 border-r rounded-s-lg dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
                                     >
-                                        Метод
+                                        Платежный метод
                                     </a>
                                 </li>
                                 <li class="w-full focus-within:z-10">
                                     <a @click.prevent="gateway_mode = 'currency'; form.payment_gateway = 0"
                                        href="#"
-                                       class="inline-block w-full p-2 border-s-0 border-gray-200 dark:border-gray-700 rounded-e-lg hover:text-gray-700 hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
-                                       :class="gateway_mode === 'currency' ? 'text-gray-900 bg-gray-100 border-r rounded-r-lg dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
+                                       class="inline-block w-full p-2 border-s-0 border-gray-200 dark:border-gray-700 rounded-e-lg hover:text-gray-700 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
+                                       :class="gateway_mode === 'currency' ? 'text-gray-900 bg-gray-200 border-r rounded-r-lg dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
                                     >
                                         Валюта
                                     </a>
@@ -134,6 +142,45 @@ defineOptions({ layout: AuthenticatedLayout })
                         </div>
                     </div>
 
+                    <div class="mb-4">
+                        <InputLabel
+                            for="payment_detail_type"
+                            value="Выберите тип реквизитов"
+                            :error="!!form.errors.payment_detail_type"
+                            class="mb-1"
+                        />
+                        <ul class="hidden text-sm border border-gray-200 dark:border-gray-700 font-medium text-center text-gray-500 rounded-lg sm:flex dark:divide-gray-700 dark:text-gray-400">
+                            <li class="w-full focus-within:z-10">
+                                <a
+                                    @click.prevent="detail_type_mode = 'card'; form.payment_detail_type = 'card'"
+                                    href="#"
+                                    class="inline-block w-full p-2 border-r-0 border-gray-200 dark:border-gray-700 rounded-l-lg hover:text-gray-700 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
+                                    :class="detail_type_mode === 'card' ? 'text-gray-900 bg-gray-200 border-r rounded-s-lg dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
+                                >
+                                    Карта
+                                </a>
+                            </li>
+                            <li class="w-full focus-within:z-10">
+                                <a @click.prevent="detail_type_mode = 'phone'; form.payment_detail_type = 'phone'"
+                                   href="#"
+                                   class="inline-block w-full p-2 border-s-0 border-gray-200 dark:border-gray-700 hover:text-gray-700 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
+                                   :class="detail_type_mode === 'phone' ? 'text-gray-900 bg-gray-200 border-r border-l dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
+                                >
+                                    Телефон
+                                </a>
+                            </li>
+                            <li class="w-full focus-within:z-10">
+                                <a @click.prevent="detail_type_mode = 'account_number'; form.payment_detail_type = 'account_number'"
+                                   href="#"
+                                   class="inline-block w-full p-2 border-s-0 border-gray-200 dark:border-gray-700 rounded-e-lg hover:text-gray-700 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
+                                   :class="detail_type_mode === 'account_number' ? 'text-gray-900 bg-gray-200 border-r rounded-r-lg dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
+                                >
+                                    Номер счета
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
                     <div>
                         <InputLabel
                             for="merchant_id"
@@ -154,6 +201,15 @@ defineOptions({ layout: AuthenticatedLayout })
                         ></Select>
 
                         <InputError :message="form.errors.merchant_id" class="mt-2" />
+                    </div>
+                </div>
+
+                <div class="flex items-center p-3 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
+                    <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                    </svg>
+                    <div>
+                        Не для всех вариантов выбранных параметров могут не быть подходящие реквизиты.
                     </div>
                 </div>
 
