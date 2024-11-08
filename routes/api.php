@@ -12,8 +12,8 @@ Route::group(['middleware' => ['api-access-token']], function () {
     Route::post('order', [\App\Http\Controllers\API\OrderController::class, 'store'])->name('api.order');
     Route::patch('order/{order:uuid}/cancel', [\App\Http\Controllers\API\OrderController::class, 'cancel']);
 
-    Route::post('order/{order:uuid}/dispute', [\App\Http\Controllers\API\DisputeController::class, 'store'])->name('api.dispute');
-    Route::get('order/{order:uuid}/dispute', [\App\Http\Controllers\API\DisputeController::class, 'show']);
+    //Route::post('order/{order:uuid}/dispute', [\App\Http\Controllers\API\DisputeController::class, 'store'])->name('api.dispute');
+    //Route::get('order/{order:uuid}/dispute', [\App\Http\Controllers\API\DisputeController::class, 'show']);
 
     Route::get('payment-gateways', [\App\Http\Controllers\API\PaymentGatewayController::class, 'index']);
     Route::get('currencies', [\App\Http\Controllers\API\CurrencyController::class, 'index']);

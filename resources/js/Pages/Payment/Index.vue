@@ -1,5 +1,5 @@
 <script setup>
-import {Head, Link, usePage} from '@inertiajs/vue3';
+import {Head, Link, router, usePage} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import OrderStatus from "@/Components/OrderStatus.vue";
 import PaymentDetail from "@/Components/PaymentDetail.vue";
@@ -15,6 +15,7 @@ import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import DateTime from "@/Components/DateTime.vue";
 import {useViewStore} from "@/store/view.js";
 import ShowAction from "@/Components/Table/ShowAction.vue";
+import {FwbButton} from "flowbite-vue";
 
 const viewStore = useViewStore();
 const orders = usePage().props.orders;
@@ -35,6 +36,9 @@ defineOptions({ layout: AuthenticatedLayout })
             title="Платежи"
             :data="orders"
         >
+            <template v-slot:button>
+                <fwb-button @click="router.visit(route('payments.create'))" color="default">Создать платеж</fwb-button>
+            </template>
             <template v-slot:body>
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
