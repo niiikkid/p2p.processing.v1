@@ -17,6 +17,8 @@ interface OrderQueries
 
     public function paginateForUser(User $user): LengthAwarePaginator;
 
+    public function paginateForMerchant(User $user): LengthAwarePaginator;
+
     /**
      * @return Collection<int, Dispute>
      */

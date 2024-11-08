@@ -33,6 +33,9 @@ onMounted(() => {
     if (route().current('integration.*')) {
         viewStore.setMerchantViewMode()
     }
+    if (route().current('payments.*')) {
+        viewStore.setMerchantViewMode()
+    }
 
     initFlowbite();
 

@@ -35,6 +35,7 @@ class OrderResource extends JsonResource
             'finished_at' => $this->finished_at?->getTimestamp(),
             'expires_at' => $this->expires_at->getTimestamp(),
             'created_at' => $this->created_at->getTimestamp(),
+            'payment_link' => route('payment.show', $this->uuid),
         ];
     }
 }

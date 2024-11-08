@@ -58,6 +58,8 @@ Route::group(['middleware' => ['auth', 'banned', 'role:Merchant|Super Admin']], 
     Route::get('/integration', [\App\Http\Controllers\ApiIntegrationController::class, 'index'])->name('integration.index');
 
     Route::get('/merchant/finances', [\App\Http\Controllers\WalletController::class, 'index'])->name('merchant.finances.index');
+
+    Route::resource('/payments', \App\Http\Controllers\PaymentController::class)->only(['index', 'create', 'store']);
 });
 
 Route::group(['prefix' => 'admin', 'as'=>'admin.', 'middleware' => ['auth', 'banned', 'role:Super Admin']], function () {

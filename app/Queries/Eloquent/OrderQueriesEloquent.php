@@ -39,6 +39,15 @@ class OrderQueriesEloquent implements OrderQueries
             ->paginate(10);
     }
 
+    public function paginateForMerchant(User $user): LengthAwarePaginator
+    {
+        return Order::query()
+            ->whereRelation('merchant', 'user_id', $user->id)
+            ->orderByDesc('id')
+            ->paginate(10);
+    }
+
+
     /**
      * @return Collection<int, Dispute>
      */
