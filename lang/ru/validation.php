@@ -280,5 +280,6 @@ return [
         'receipt'                  => 'чек',
         'merchant_id'              => 'мерчант',
         'support_link'             => 'ссылка',
+        'payment_detail_type'      => 'тип реквизитов',
     ],
 ];

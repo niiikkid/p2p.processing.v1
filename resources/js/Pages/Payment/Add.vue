@@ -1,16 +1,13 @@
 <script setup>
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
 import InputHelper from '@/Components/InputHelper.vue';
 import {Head, router, useForm, usePage} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Select from "@/Components/Select.vue";
-import NumberInput from "@/Components/NumberInput.vue";
 import SaveButton from "@/Components/Form/SaveButton.vue";
 import SecondaryPageSection from "@/Wrappers/SecondaryPageSection.vue";
 import {useViewStore} from "@/store/view.js";
-import TextInputBlock from "@/Components/Form/TextInputBlock.vue";
 import NumberInputBlock from "@/Components/Form/NumberInputBlock.vue";
 import {ref} from "vue";
 
@@ -20,26 +17,42 @@ const payment_gateways = usePage().props.paymentGateways;
 const currencies = usePage().props.currencies;
 const merchants = usePage().props.merchants;
 
+const flash = ref(usePage().props.flash?.message)
+
 const form = useForm({
     amount: null,
     currency: 0,
     payment_gateway: 0,
-    payment_detail_type: null,
+    payment_detail_type: 'card',
     merchant_id: 0,
 });
 const submit = () => {
     form
+        .transform((data) => {
+            if (data.payment_gateway === 0) {
+                if (data.currency) {
+                    data.currency = data.currency.toLowerCase()
+                }
+                delete data.payment_gateway;
+            }
+            if (data.currency === 0) {
+                delete data.currency;
+            }
+            if (data.merchant_id === 0) {
+                delete data.merchant_id;
+            }
+
+            return data;
+        })
         .post(route('payments.store'), {
             preserveScroll: true,
             onSuccess: () => {
-                form.reset();
-                router.visit(route('payments.index'))
+                flash.value = usePage().props.flash?.message;
             },
         });
 };
 
 const gateway_mode = ref('payment_gateway');
-
 const detail_type_mode = ref('card');
 
 defineOptions({ layout: AuthenticatedLayout })
@@ -55,6 +68,15 @@ defineOptions({ layout: AuthenticatedLayout })
             description="Здесь вы можете вручную создать платеж для клиента."
         >
             <form @submit.prevent="submit" class="mt-6 space-y-6">
+                <div v-show="flash" class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+                    <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                    </svg>
+                    <div>
+                        <span class="font-medium">Внимание</span> {{ flash }}
+                    </div>
+                </div>
+
                 <NumberInputBlock
                     v-model="form.amount"
                     :form="form"
@@ -69,7 +91,6 @@ defineOptions({ layout: AuthenticatedLayout })
                             <InputLabel
                                 for="payment_detail_type"
                                 value="Выберите метод"
-                                :error="!!form.errors.currency || !!form.errors.payment_gateway"
                                 class="mb-1"
                             />
                             <ul class="hidden text-sm border border-gray-200 dark:border-gray-700 font-medium text-center text-gray-500 rounded-lg sm:flex dark:divide-gray-700 dark:text-gray-400">
@@ -99,7 +120,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <InputLabel
                                 for="payment_gateway"
                                 value="Платежный метод"
-                                :error="!!form.errors.sub_payment_gateway_id"
+                                :error="!!form.errors.payment_gateway"
                                 class="mb-1"
                             />
                             <Select
@@ -215,7 +236,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
                 <SaveButton
                     :disabled="form.processing"
-                    :saved="form.recentlySuccessful"
+                    :saved="false"
                 ></SaveButton>
             </form>
         </SecondaryPageSection>

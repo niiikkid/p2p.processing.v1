@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\OrderServiceContract;
+use App\DTO\Order\OrderCreateDTO;
 use App\Exceptions\OrderException;
+use App\Http\Requests\Payment\StoreRequest;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\PaymentGatewayResource;
 use App\Models\Merchant;
@@ -40,7 +43,7 @@ class PaymentController extends Controller
             ->orderByDesc('id')
             ->get()
             ->transform(function (Merchant $merchant) {
-                $data['id'] = $merchant->uuid;
+                $data['id'] = $merchant->id;
                 $data['name'] = $merchant->name;
 
                 return $data;
@@ -49,8 +52,19 @@ class PaymentController extends Controller
         return Inertia::render('Payment/Add', compact('paymentGateways', 'currencies', 'merchants'));
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        //TODO validate that user owner of merchant
+        try {
+            make(OrderServiceContract::class)->create(
+                OrderCreateDTO::formMerchantRequest(
+                    $request->all(),
+                )
+            );
+        } catch (OrderException $e) {
+            return redirect()->route('payments.create')->with('message', $e->getMessage());
+        }
+
+        return redirect()->route('payments.index');
     }
 }

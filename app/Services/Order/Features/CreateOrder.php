@@ -125,11 +125,11 @@ class CreateOrder extends BaseFeature
                 ->paymentGateway()
                 ->getByCurrencyForOrderCreate($this->dto->currency, $this->dto->amount);
         } else {
-            throw OrderException::make('Currency or Payment Gateway is required');
+            throw OrderException::make('Требуется валюта или платежный метод.');
         }
 
         if ($paymentGateways->isEmpty()) {
-            throw OrderException::make('Payment Gateway is not found');
+            throw OrderException::make('Подходящий платежный метод не найден. Попробуйте изменить метод/валюту или сумму.');
         }
 
         $base_conversion_price = services()->market()->getBuyPrice(
@@ -147,7 +147,7 @@ class CreateOrder extends BaseFeature
             );
 
         if (! $paymentDetail) {
-            throw OrderException::make('Empty payment detail');
+            throw OrderException::make('Подходящие платежные реквизиты не найдены.');
         }
 
         return [$paymentDetail->paymentGateway, $paymentDetail];
@@ -185,13 +185,13 @@ class CreateOrder extends BaseFeature
     protected function validateMerchant(Merchant $merchant): void
     {
         if (!$merchant->validated_at) {
-            throw new OrderException('The merchant is under moderation.');
+            throw new OrderException('Мерчант находится на модерации.');
         }
         if ($merchant->banned_at) {
-            throw new OrderException('The merchant is banned.');
+            throw new OrderException('Мерчант заблокирован.');
         }
         if (!$merchant->active) {
-            throw new OrderException('The merchant is not active.');
+            throw new OrderException('Мерчант отключен.');
         }
     }
 }
