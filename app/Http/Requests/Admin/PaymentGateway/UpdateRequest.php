@@ -41,6 +41,8 @@ class UpdateRequest extends FormRequest
             'service_commission_rate' => ['required', 'numeric', 'min:0'],
             'is_active' => ['required', 'boolean'],
             'reservation_time' => ['required', 'integer', 'min:1'],
+            'sms_senders' => ['nullable', 'array'],
+            'sms_senders.*' => ['required', 'string'],
         ];
     }
 
@@ -57,6 +59,7 @@ class UpdateRequest extends FormRequest
             'service_commission_rate' => __('комиссия сервиса'),
             'is_active' => __('активность'),
             'reservation_time' => __('время резервирования'),
+            'sms_senders' => __('отправители смс/push'),
         ];
     }
 

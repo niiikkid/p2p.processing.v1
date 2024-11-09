@@ -10,6 +10,8 @@ import GoBackButton from "@/Components/GoBackButton.vue";
 import DropDownWithCheckbox from "@/Components/Form/DropDownWithCheckbox.vue";
 import DropDownWithRadio from "@/Components/Form/DropDownWithRadio.vue";
 import TextInputBlock from "@/Components/Form/TextInputBlock.vue";
+import {ref} from "vue";
+import TextInput from "@/Components/TextInput.vue";
 
 const currencies = usePage().props.currencies;
 const detail_types = usePage().props.detailTypes;
@@ -27,6 +29,7 @@ const form = useForm({
     currency: null,
     detail_types: [],
     sub_payment_gateways: [],
+    sms_senders: [],
 });
 const submit = () => {
     form.post(route('admin.payment-gateways.store'), {
@@ -34,6 +37,28 @@ const submit = () => {
         onSuccess: () => form.reset(),
     });
 };
+
+const sms_sender = ref(null);
+
+const addSender = () => {
+    if (! sms_sender.value) {
+        return;
+    }
+
+    form.sms_senders.push(sms_sender.value)
+
+    form.sms_senders = form.sms_senders.filter((value, index, array) => {
+        return array.indexOf(value) === index;
+    });
+
+    sms_sender.value = null;
+}
+
+const removeSender = (sender) => {
+    form.sms_senders = form.sms_senders.filter((item) => {
+        return item !== sender
+    });
+}
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
@@ -208,6 +233,41 @@ defineOptions({ layout: AuthenticatedLayout })
 
                                 <InputError :message="form.errors.reservation_time" class="mt-2" />
                                 <InputHelper v-if="! form.errors.reservation_time" model-value="Время на одну операцию обмена в минутах"></InputHelper>
+                            </div>
+
+                            <div>
+                                <InputLabel
+                                    for="sms_senders"
+                                    value="Отправители смс/push"
+                                    :error="!!form.errors.sms_senders"
+                                    class="mb-1"
+                                />
+
+                                <div class="relative">
+                                    <TextInput
+                                        id="sms_senders"
+                                        v-model="sms_sender"
+                                        class="block w-full"
+                                        :error="!!form.errors.sms_senders"
+                                        @input="form.clearErrors('sms_senders')"
+                                    />
+
+                                    <button @click.prevent="addSender" type="button" class="text-white absolute end-1.5 bottom-1 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Добавить</button>
+                                </div>
+
+                                <InputError :message="form.errors.sms_senders" class="mt-2" />
+                                <InputHelper v-if="! form.errors.sms_senders" model-value="Например: 900, Alfabank"></InputHelper>
+
+                                <div class="flex gap-0.5 mt-2">
+                                    <div v-for="sender in form.sms_senders">
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded me-2 dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
+                                            {{ sender }}
+                                            <svg @click="removeSender(sender)" class="w-2.5 h-2.5 ml-1.5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div>

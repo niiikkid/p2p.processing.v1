@@ -29,6 +29,7 @@ class PaymentGatewayResource extends JsonResource
             'currency' => $this->currency->getCode(),
             'min_limit' => $this->min_limit,
             'max_limit' => $this->max_limit,
+            'sms_senders' => $this->sms_senders,
             'commission_rate' => $this->commission_rate,
             'service_commission_rate' => $this->service_commission_rate,
             'is_active' => $this->is_active,

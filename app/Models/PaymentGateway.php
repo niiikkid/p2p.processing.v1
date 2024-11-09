@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name_with_currency
  * @property string $min_limit
  * @property string $max_limit
+ * @property array $sms_senders
  * @property float $commission_rate
  * @property float $service_commission_rate
  * @property string $is_active
@@ -40,6 +41,7 @@ class PaymentGateway extends Model
         'currency',
         'min_limit',
         'max_limit',
+        'sms_senders',
         'commission_rate',
         'service_commission_rate',
         'is_active',
@@ -52,6 +54,7 @@ class PaymentGateway extends Model
         'currency' => CurrencyCast::class,
         'detail_types' => 'array',
         'sub_payment_gateways' => 'array',
+        'sms_senders' => 'array',
     ];
 
     public $timestamps = false;

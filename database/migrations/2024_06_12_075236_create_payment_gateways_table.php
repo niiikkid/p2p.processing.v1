@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('currency')->nullable();
             $table->string('min_limit')->nullable();
             $table->string('max_limit')->nullable();
+            $table->longText('sms_senders')->nullable();
             $table->float('commission_rate', 2)->nullable();
             $table->float('service_commission_rate', 2)->default(9)->nullable();
             $table->boolean('is_active')->default(true);
