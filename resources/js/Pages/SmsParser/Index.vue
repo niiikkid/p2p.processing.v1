@@ -55,8 +55,8 @@ defineOptions({ layout: AuthenticatedLayout })
                 <fwb-table>
                     <fwb-table-head>
                         <fwb-table-head-cell>ID</fwb-table-head-cell>
+                        <fwb-table-head-cell>Метод</fwb-table-head-cell>
                         <fwb-table-head-cell>Формат</fwb-table-head-cell>
-                        <fwb-table-head-cell>Regex</fwb-table-head-cell>
                         <fwb-table-head-cell>
                             <span class="sr-only">Редактировать</span>
                         </fwb-table-head-cell>
@@ -64,8 +64,8 @@ defineOptions({ layout: AuthenticatedLayout })
                     <fwb-table-body>
                         <fwb-table-row v-for="sms_parser in sms_parsers.data">
                             <fwb-table-cell>{{ sms_parser.id }}</fwb-table-cell>
+                            <fwb-table-cell>{{ sms_parser.payment_gateway_name }}</fwb-table-cell>
                             <fwb-table-cell>{{ sms_parser.format }}</fwb-table-cell>
-                            <fwb-table-cell>{{ sms_parser.regex }}</fwb-table-cell>
                             <fwb-table-cell class="inline-flex">
                                 <EditAction class="mr-2" :link="route('admin.sms-parsers.edit', sms_parser.id)"></EditAction>
                                 <DeleteAction @click.prevent="confirmDeleteParser(sms_parser)"></DeleteAction>

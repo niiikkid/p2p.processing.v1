@@ -20,8 +20,8 @@ class SmsParserResource extends JsonResource
          */
         return [
             'id' => $this->id,
-            //'payment_gateway_id' => $this->paymentGateway->id,
-            //'payment_gateway_name' => $this->paymentGateway->name,
+            'payment_gateway_id' => $this->paymentGateway->id,
+            'payment_gateway_name' => $this->paymentGateway->name,
             'format' => $this->format,
             'regex' => $this->regex,
             'currency' => $this->currency->getCode(),

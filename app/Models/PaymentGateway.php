@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Currency $currency
  * @property Collection<int, PaymentDetail> $paymentDetails
  * @property Collection<int, Order> $orders
- * @property Collection<int, SmsParser> $smsParser
+ * @property Collection<int, SmsParser> $smsParsers
  */
 class PaymentGateway extends Model
 {

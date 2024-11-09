@@ -82,17 +82,17 @@ class InstallAppCommand extends Command
                 DetailType::CARD, DetailType::ACCOUNT_NUMBER,
             ]],
             ['id' => 3, 'name' => 'Райффайзенбанк', 'code' => 'raiffeisen_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'СБП', 'code' => 'sbp_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::PHONE], 'sub_payment_gateways' => [1, 2, 3]],
-            ['name' => 'HUMO', 'code' => 'humo_uzs', 'currency' => Currency::UZS(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'UZCARD', 'code' => 'uzcard_uzs', 'currency' => Currency::UZS(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'Halyk', 'code' => 'halyk_kzt', 'currency' => Currency::KZT(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'Jusan', 'code' => 'jusan_kzt', 'currency' => Currency::KZT(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'Eurasian', 'code' => 'eurasian_kzt', 'currency' => Currency::KZT(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'ОТП', 'code' => 'otp_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'ПСБ', 'code' => 'psb_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'МТС Банк', 'code' => 'mts_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'ДОМ.РФ', 'code' => 'domrf_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
-            ['name' => 'Росбанк', 'code' => 'rosbank_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 4, 'name' => 'СБП', 'code' => 'sbp_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::PHONE], 'sub_payment_gateways' => [1, 2, 3]],
+            ['id' => 5, 'name' => 'HUMO', 'code' => 'humo_uzs', 'currency' => Currency::UZS(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 6, 'name' => 'UZCARD', 'code' => 'uzcard_uzs', 'currency' => Currency::UZS(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 7, 'name' => 'Halyk', 'code' => 'halyk_kzt', 'currency' => Currency::KZT(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 8, 'name' => 'Jusan', 'code' => 'jusan_kzt', 'currency' => Currency::KZT(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 9, 'name' => 'Eurasian', 'code' => 'eurasian_kzt', 'currency' => Currency::KZT(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 10, 'name' => 'ОТП', 'code' => 'otp_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 11, 'name' => 'ПСБ', 'code' => 'psb_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 12, 'name' => 'МТС Банк', 'code' => 'mts_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 13, 'name' => 'ДОМ.РФ', 'code' => 'domrf_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
+            ['id' => 14, 'name' => 'Росбанк', 'code' => 'rosbank_rub', 'currency' => Currency::RUB(), 'detail_types' => [DetailType::CARD]],
         ];
 
         foreach ($payment_gateways as $payment_gateway) {
@@ -110,59 +110,52 @@ class InstallAppCommand extends Command
 
         $parsers = [
             [
-                'format' => "MIR-9008 18:33 зачисление 10р TINKOFF Баланс: 5216.25р",
-                'regex' => "^(?<card_type>[A-Z]{3,4})-(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sзачисление\s(?<amount>\d+(.\d+){0,3})р\s.+\sБаланс:\s.+р$",
-                'currency' => new Currency('rub'),
-            ],
-            [
-                'format' => "MIR-6403 21:27 Перевод из Ozon банк +3455р от СЕРГЕЙ П. Баланс: 50612.66р",
+                'payment_gateway_id' => 1,
+                'format' => "MIR-0000 21:27 Перевод из Ozon банк +3455р от СЕРГЕЙ П. Баланс: 50612.66р",
                 'regex' => "^(?<card_type>[A-Z]{3,4})-(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sПеревод\sиз\s.+\s\+(?<amount>\d+(.\d+){0,3})р\sот\s.+\sБаланс:\s.+р(\s«#\d+»)?$",
                 'currency' => new Currency('rub'),
             ],
             [
-                'format' => "СЧЁТ0293 18:33 Перевод из Тинькофф Банк +10р от АРТЕМ К. Баланс: 5206.25р",
-                'regex' => "^СЧЁТ(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sПеревод\sиз\s.*\s\+(?<amount>\d+(.\d+){0,3})р\sот\s.+\sБаланс:\s.+р(\s«Перевод\sденежных\sсредств»)?$",
-                'currency' => new Currency('rub'),
-            ],
-            [
-                'format' => "СЧЁТ0293 15:19 Перевод 10р от Артём К. Баланс: 5196.25р",
+                'payment_gateway_id' => 1,
+                'format' => "СЧЁТ0000 15:19 Перевод 10р от Артём К. Баланс: 5196.25р",
                 'regex' => "^СЧЁТ(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sПеревод\s(?<amount>\d+(.\d+){0,3})р\sот\s.+\sБаланс:\s.+р$",
                 'currency' => new Currency('rub'),
             ],
             [
+                'payment_gateway_id' => 1,
                 'format' => "ECMC0000 00:18 Перевод 3758.01р от Иван Д. Баланс: 19475.10р",
                 'regex' => "^(?<card_type>[A-Z]{3,4})(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sПеревод\s(?<amount>\d+(.\d+){0,3})р\sот\s.+\sБаланс:\s.+р$",
                 'currency' => new Currency('rub'),
             ],
             [
-                'format' => "MIR-9008 15:19 Перевод 10р от Артём К. Баланс: 5186.25р",
+                'payment_gateway_id' => 1,
+                'format' => "MIR-0000 15:19 Перевод 10р от Артём К. Баланс: 5186.25р",
                 'regex' => "^(?<card_type>[A-Z]{3,4})-(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sПеревод\s(?<amount>\d+(.\d+){0,3})р\sот\s.+\sБаланс:\s.+р$",
                 'currency' => new Currency('rub'),
             ],
             [
-                'format' => "СЧЁТ3668 31.07.24 зачислен перевод по СБП 5000р из Т-Банк от АННА ВАДИМОВНА Д.",
+                'payment_gateway_id' => 1,
+                'format' => "СЧЁТ0000 31.07.24 зачислен перевод по СБП 5000р из Т-Банк от АННА ВАДИМОВНА Д.",
                 'regex' => "^СЧЁТ(?<card_last_digits>\d{4})\s\d{2}\.\d{2}\.\d{2}\sзачислен\sперевод\sпо\sСБП\s(?<amount>\d+(.\d+){0,3})р\sиз\s.+\sот\s.+$",
                 'currency' => new Currency('rub'),
             ],
             [
+                'payment_gateway_id' => 1,
                 'format' => "Перевод из Тинькофф Банк +768.11р от Иван К. СЧЁТ0000 — Баланс: 10800.50р",
                 'regex' => "^Перевод\sиз\s.+\s\+(?<amount>\d+(.\d+){0,3})р\sот\s.+\СЧЁТ(?<card_last_digits>\d{4})\s—\sБаланс:\s.+р$",
                 'currency' => new Currency('rub'),
             ],
             [
-                'format' => "Пришел перевод на счет *4943 | + 2 400.00 ₽ от +79173952722, Рамазан Айнурович Г. Теперь на счете 2 532.17 ₽",
+                'payment_gateway_id' => 3,
+                'format' => "Пришел перевод на счет *0000 | + 2 400.00 ₽ от +79000000000, Рамазан Айнурович Г. Теперь на счете 2 532.17 ₽",
                 'regex' => "^Пришел\sперевод\sна\sсчет\s\*(?<card_last_digits>\d{4})\s\|\s\+\s(?<amount>\d+(.\d+){0,3})\s₽\sот\s.+$",
-                'currency' => new Currency('rub'),
-            ],
-            [
-                'format' => "Пополнение, счет RUB. 45278 RUB. Рамазан Г. Доступно 55478,61 RUB",
-                'regex' => "^Пополнение,\sсчет\sRUB\.\s(?<amount>\d+(.\d+){0,3})\sRUB\..*Доступно\s.*RUB$",
                 'currency' => new Currency('rub'),
             ],
         ];
 
         foreach ($parsers as $parser) {
             SmsParser::create([
+                'payment_gateway_id' => $parser['payment_gateway_id'],
                 'format' => $parser['format'],
                 'regex' => $parser['regex'],
                 'currency' => $parser['currency'],

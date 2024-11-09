@@ -39,6 +39,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         <fwb-table-head-cell>Валюта</fwb-table-head-cell>
                         <fwb-table-head-cell>Мин/Макс лимит</fwb-table-head-cell>
                         <fwb-table-head-cell>Комиссия %</fwb-table-head-cell>
+                        <fwb-table-head-cell>Парсеры</fwb-table-head-cell>
                         <fwb-table-head-cell>Статус</fwb-table-head-cell>
                         <fwb-table-head-cell>
                             <span class="sr-only">Действия</span>
@@ -51,6 +52,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <fwb-table-cell>{{ payment_gateway.currency }}</fwb-table-cell>
                             <fwb-table-cell>{{ payment_gateway.min_limit }}/{{ payment_gateway.max_limit }}</fwb-table-cell>
                             <fwb-table-cell>{{ payment_gateway.commission_rate }}% / {{ payment_gateway.service_commission_rate }}%</fwb-table-cell>
+                            <fwb-table-cell>{{ payment_gateway.sms_parsers_count }}</fwb-table-cell>
                             <fwb-table-cell>
                                 <IsActiveStatus :is_active="payment_gateway.is_active"></IsActiveStatus>
                             </fwb-table-cell>

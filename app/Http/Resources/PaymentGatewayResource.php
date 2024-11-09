@@ -33,6 +33,7 @@ class PaymentGatewayResource extends JsonResource
             'commission_rate' => $this->commission_rate,
             'service_commission_rate' => $this->service_commission_rate,
             'is_active' => $this->is_active,
+            'sms_parsers_count' => $this->smsParsers?->count() ?? 0,
             'reservation_time' => $this->reservation_time,
         ];
     }
