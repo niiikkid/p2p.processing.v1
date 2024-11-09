@@ -9,6 +9,8 @@ import MerchantBalance from "@/Pages/Wallet/Partials/MerchantBalance.vue";
 import {useViewStore} from "@/store/view.js";
 import OperationsHistory from "@/Pages/Wallet/Partials/OperationsHistory.vue";
 import {ref} from "vue";
+import EscrowBalance from "@/Pages/Wallet/Partials/EscrowBalance.vue";
+import DisputeBalance from "@/Pages/Wallet/Partials/DisputeBalance.vue";
 
 const user = usePage().props.user;
 const viewStore = useViewStore();
@@ -44,6 +46,8 @@ defineOptions({ layout: AuthenticatedLayout })
         <div class="grid grid-cols-2 gap-4 mb-6">
             <TraderBalance v-show="viewStore.isTraderViewMode || viewStore.isAdminViewMode" @setSourceType="setSourceType"/>
             <MerchantBalance v-show="viewStore.isMerchantViewMode || viewStore.isAdminViewMode" @setSourceType="setSourceType"/>
+            <EscrowBalance v-show="viewStore.isTraderViewMode || viewStore.isAdminViewMode" @setSourceType="setSourceType"/>
+            <DisputeBalance v-show="viewStore.isTraderViewMode || viewStore.isAdminViewMode" @setSourceType="setSourceType"/>
         </div>
 
         <OperationsHistory/>

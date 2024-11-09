@@ -32,6 +32,11 @@ class SucceedOrder extends BaseFeature
                 $this->order->paymentDetail->update([
                     'current_daily_limit' => $current_daily_limit
                 ]);
+
+                services()->wallet()->giveMerchant(
+                    wallet: $this->order->paymentDetail->user->wallet,
+                    amount: $this->order->merchant_profit,
+                );
             });
         } else {
             throw OrderException::make('Cant succeed not pending order');

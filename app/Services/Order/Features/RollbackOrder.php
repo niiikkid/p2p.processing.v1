@@ -28,6 +28,13 @@ class RollbackOrder extends BaseFeature
                     type: $this->transactionType
                 );
             }
+            if ($this->order->status->equals(OrderStatus::SUCCESS)) {
+                services()->wallet()->takeMerchant(
+                    wallet: $this->order->paymentDetail->user->wallet,
+                    amount: $this->order->merchant_profit,
+                );
+            }
+
             $this->order->update([
                 'status' => OrderStatus::PENDING,
                 'finished_at' => null
