@@ -23,7 +23,7 @@ const form = useForm({
     format: sms_parser.format,
     regex: sms_parser.regex,
     currency: sms_parser.currency.toUpperCase(),
-    //payment_gateway_id: sms_parser.payment_gateway_id,
+    payment_gateway_id: sms_parser.payment_gateway_id,
 });
 const submit = () => {
     form
@@ -65,7 +65,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         </header>
 
                         <form @submit.prevent="submit" class="mt-6 space-y-6">
-<!--                            <div>
+                            <div>
                                 <InputLabel
                                     for="payment_gateway_id"
                                     value="Платежный метод"
@@ -85,7 +85,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 ></Select>
 
                                 <InputError :message="form.errors.payment_gateway_id" class="mt-2" />
-                            </div>-->
+                            </div>
                             <div>
                                 <InputLabel
                                     for="format"

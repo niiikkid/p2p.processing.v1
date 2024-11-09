@@ -20,7 +20,7 @@ const form = useForm({
     format: '',
     regex: '',
     currency: 0,
-    //payment_gateway_id: 0,
+    payment_gateway_id: 0,
 });
 const submit = () => {
     form
@@ -62,7 +62,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         </header>
 
                         <form @submit.prevent="submit" class="mt-6 space-y-6">
-<!--                            <div>
+                            <div>
                                 <InputLabel
                                     for="payment_gateway_id"
                                     value="Платежный метод"
@@ -82,7 +82,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 ></Select>
 
                                 <InputError :message="form.errors.payment_gateway_id" class="mt-2" />
-                            </div>-->
+                            </div>
                             <div>
                                 <InputLabel
                                     for="format"

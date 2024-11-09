@@ -31,7 +31,7 @@ class UpdateRequest extends FormRequest
         $smsParser = $this->route('sms_parser');
 
         return [
-            //'payment_gateway_id' => ['required', 'exists:payment_gateways,id'],
+            'payment_gateway_id' => ['required', 'exists:payment_gateways,id'],
             'currency' => ['required', Rule::in(Currency::getAllCodes())],
             'format' => ['required', 'string', 'max:255'],
             'regex' => [

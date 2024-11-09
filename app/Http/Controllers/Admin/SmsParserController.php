@@ -10,6 +10,7 @@ use App\Http\Resources\SmsParserResource;
 use App\Models\PaymentGateway;
 use App\Models\SmsParser;
 use App\Services\Money\Currency;
+use Illuminate\Database\Eloquent\Collection;
 use Inertia\Inertia;
 
 class SmsParserController extends Controller
@@ -88,7 +89,7 @@ class SmsParserController extends Controller
     }
 
     //TODO временное решение. Придумать как исключить ненужные методы из доступных для создания парсера
-    protected function getPaymentGateways(): \Illuminate\Database\Eloquent\Collection
+    protected function getPaymentGateways(): Collection
     {
         $paymentGateways = queries()->paymentGateway()->getAllActive();
 
