@@ -19,7 +19,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
     <div>
         <section class="antialiased">
-            <div class="mx-auto max-w-screen-xl 2xl:px-0">
+            <div class="mx-auto">
                 <div class="mx-auto">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl mb-6">Интеграция по API</h2>
 
