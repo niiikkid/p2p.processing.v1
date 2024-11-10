@@ -77,7 +77,7 @@ class InstallAppCommand extends Command
         $payment_gateways = [
             ['id' => 1, 'name' => 'Сбербанк', 'code' => 'sberbank_rub', 'currency' => Currency::RUB(), 'detail_types' => [
                 DetailType::CARD, DetailType::ACCOUNT_NUMBER,
-            ]],
+            ], 'sms_senders' => ['900']],
             ['id' => 2, 'name' => 'Альфа-Банк', 'code' => 'alfabank_rub', 'currency' => Currency::RUB(), 'detail_types' => [
                 DetailType::CARD, DetailType::ACCOUNT_NUMBER,
             ]],
@@ -102,6 +102,7 @@ class InstallAppCommand extends Command
                 'currency' => $payment_gateway['currency'],
                 'min_limit' => 1000,
                 'max_limit' => 100000,
+                'sms_senders' => $payment_gateway['sms_senders'] ?? [],
                 'commission_rate' => 2.5,
                 'detail_types' => $payment_gateway['detail_types'],
                 'sub_payment_gateways' => ! empty($payment_gateway['sub_payment_gateways']) ? $payment_gateway['sub_payment_gateways'] : [],
@@ -143,12 +144,6 @@ class InstallAppCommand extends Command
                 'payment_gateway_id' => 1,
                 'format' => "Перевод из Тинькофф Банк +768.11р от Иван К. СЧЁТ0000 — Баланс: 10800.50р",
                 'regex' => "^Перевод\sиз\s.+\s\+(?<amount>\d+(.\d+){0,3})р\sот\s.+\СЧЁТ(?<card_last_digits>\d{4})\s—\sБаланс:\s.+р$",
-                'currency' => new Currency('rub'),
-            ],
-            [
-                'payment_gateway_id' => 3,
-                'format' => "Пришел перевод на счет *0000 | + 2 400.00 ₽ от +79000000000, Рамазан Айнурович Г. Теперь на счете 2 532.17 ₽",
-                'regex' => "^Пришел\sперевод\sна\sсчет\s\*(?<card_last_digits>\d{4})\s\|\s\+\s(?<amount>\d+(.\d+){0,3})\s₽\sот\s.+$",
                 'currency' => new Currency('rub'),
             ],
         ];
