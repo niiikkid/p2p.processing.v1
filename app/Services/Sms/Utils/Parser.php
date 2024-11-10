@@ -3,6 +3,7 @@
 namespace App\Services\Sms\Utils;
 
 use App\Exceptions\SmsServiceException;
+use App\Models\PaymentGateway;
 use App\Models\SmsParser;
 use App\Services\Money\Money;
 use App\Services\Sms\ValueObjects\ParserResultValue;
@@ -10,11 +11,24 @@ use Illuminate\Database\Eloquent\Collection;
 
 class Parser
 {
-    public function parse(string $message): ?ParserResultValue
+    public function parse(string $sender, string $message): ?ParserResultValue
     {
         $smsParsers = $this->getParsers();
 
         $result = null;
+
+        $sms_senders = [];
+        $p = PaymentGateway::get(['sms_senders'])->pluck('sms_senders')->toArray();
+
+        foreach ($p as $item) {
+            $item = array_map('strtolower', $item);
+            $sms_senders = array_merge(array_values($item), $sms_senders);
+        }
+        $sms_senders = array_unique($sms_senders);
+
+        if (! in_array($sender, $sms_senders)) {
+            return null;
+        }
 
         foreach ($smsParsers as $smsParser) {
             $props = $this->parseMessage($message, $smsParser);
@@ -32,7 +46,8 @@ class Parser
             $result = new ParserResultValue(
                 amount: $props['amount'],
                 card_type: $props['card_type'],
-                card_last_digits: $props['card_last_digits']
+                card_last_digits: $props['card_last_digits'],
+                paymentGateway: $smsParser->paymentGateway,
             );
         }
 

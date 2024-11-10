@@ -18,7 +18,7 @@ class SmsService implements SmsServiceContract
     {
         $smsLog = $this->logSms($sms);
 
-        $result = (new Parser())->parse($sms->message);
+        $result = (new Parser())->parse($sms->sender, $sms->message);
 
         if (empty($result)) {
             return;
@@ -27,6 +27,10 @@ class SmsService implements SmsServiceContract
         $order = queries()
             ->order()
             ->findPending($result->amount, $sms->user);
+
+        if ($order->paymentGateway->code !== $result->paymentGateway->code) {
+            return;
+        }
 
         if ($order && $order->status->equals(OrderStatus::PENDING)) {
             services()->order()->succeed($order);
