@@ -22,10 +22,16 @@ class InvoiceService implements InvoiceServiceContract
          */
         $wallet = auth()->user()->wallet;
 
-        $max = intval($wallet->trust_balance->add($wallet->reserve_balance)->toBeauty());
+        $max = 0;
+        if ($sourceType->equals(InvoiceWithdrawalSourceType::TRUST)) {
+            $max = intval($wallet->trust_balance->add($wallet->reserve_balance)->toBeauty());
+        }
+        if ($sourceType->equals(InvoiceWithdrawalSourceType::MERCHANT)) {
+            $max = intval($wallet->merchant_balance->toBeauty());
+        }
 
         if (intval($amount->toBeauty()) > $max) {
-            throw new InvoiceException('Insufficient balance');
+            throw new InvoiceException('Недостаточно средств на балансе.');
         }
 
         $invoice = Invoice::create([

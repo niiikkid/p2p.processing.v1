@@ -5,6 +5,7 @@ import {useViewStore} from "@/store/view.js";
 
 const viewStore = useViewStore();
 const modalStore = useModalStore();
+
 const wallet = usePage().props.wallet;
 const user = usePage().props.user;
 const dispute_balance = usePage().props.dispute_balance;

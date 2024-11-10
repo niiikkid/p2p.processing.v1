@@ -72,7 +72,7 @@ class WalletService implements WalletServiceContract
             ]);
         }
 
-        if (self::RESERVE_BALANCE / 10 > intval($wallet->trust_balance->toBeauty())) {
+        if (self::RESERVE_BALANCE / 10 > intval($wallet->trust_balance->toBeauty()) && $wallet->user->telegram) {
             SendTelegramNotificationJob::dispatch(
                 new LowBalance(
                     telegram: $wallet->user->telegram,

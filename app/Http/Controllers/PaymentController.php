@@ -62,7 +62,7 @@ class PaymentController extends Controller
                 )
             );
         } catch (OrderException $e) {
-            return redirect()->route('payments.create')->with('message', $e->getMessage());
+            return redirect()->back()->with('message', $e->getMessage());
         }
 
         return redirect()->route('payments.index');

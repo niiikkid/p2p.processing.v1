@@ -62,7 +62,9 @@ const withdraw = () => {
             .post(route('invoice.store'), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    router.visit(route(route().current()));
+                    if (! usePage().props.flash?.message) {
+                        router.visit(route(route().current()));
+                    }
                     modalStore.closeAll()
                 },
             });
