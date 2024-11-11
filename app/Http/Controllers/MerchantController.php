@@ -23,13 +23,13 @@ class MerchantController extends Controller
             ->withSum(['orders' => function ($query) {
                 $query->where('status', OrderStatus::SUCCESS);
                 $query->whereDate('created_at', now()->today());
-            }], 'profit')
+            }], 'merchant_profit')
             ->where('user_id', auth()->user()->id)
             ->orderByDesc('id')
             ->paginate(9);
 
         $merchants->transform(function (Merchant $merchant) {
-            $merchant->orders_sum_profit = $merchant->orders_sum_profit ?? 0;
+            $merchant->orders_sum_merchant_profit = $merchant->orders_sum_merchant_profit ?? 0;
             return $merchant;
         });
 
@@ -64,34 +64,38 @@ class MerchantController extends Controller
         $orders = OrderResource::collection($orders);
         $paymentGateways = PaymentGatewayResource::collection($paymentGateways);
 
-        $merchant = MerchantResource::make($merchant)->resolve();
-
         $today = Order::query()
                 ->where('status', OrderStatus::SUCCESS)
+                ->where('merchant_id', $merchant->id)
                 ->whereDate('created_at', now()->today());
 
         $yesterday = Order::query()
                 ->where('status', OrderStatus::SUCCESS)
+                ->where('merchant_id', $merchant->id)
                 ->whereDate('created_at', now()->yesterday());
 
         $month = Order::query()
                 ->where('status', OrderStatus::SUCCESS)
+                ->where('merchant_id', $merchant->id)
                 ->whereDate('created_at', '>', now()->startOfMonth());
 
         $total = Order::query()
-                ->where('status', OrderStatus::SUCCESS);
+                ->where('status', OrderStatus::SUCCESS)
+                ->where('merchant_id', $merchant->id);
 
         $statistics = [
-            'today_profit' => Money::fromUnits($today->sum('profit') ?? 0, Currency::USDT())->toBeauty(),
-            'yesterday_profit' => Money::fromUnits($yesterday->sum('profit') ?? 0, Currency::USDT())->toBeauty(),
-            'month_profit' => Money::fromUnits($month->sum('profit') ?? 0, Currency::USDT())->toBeauty(),
-            'total_profit' => Money::fromUnits($total->sum('profit') ?? 0, Currency::USDT())->toBeauty(),
+            'today_profit' => Money::fromUnits($today->sum('merchant_profit') ?? 0, Currency::USDT())->toBeauty(),
+            'yesterday_profit' => Money::fromUnits($yesterday->sum('merchant_profit') ?? 0, Currency::USDT())->toBeauty(),
+            'month_profit' => Money::fromUnits($month->sum('merchant_profit') ?? 0, Currency::USDT())->toBeauty(),
+            'total_profit' => Money::fromUnits($total->sum('merchant_profit') ?? 0, Currency::USDT())->toBeauty(),
             'today_orders_count' => $today->count('id'),
             'yesterday_orders_count' => $yesterday->count('id'),
             'month_orders_count' => $month->count('id'),
             'total_orders_count' => $total->count('id'),
             'currency' => Currency::USDT()->getCode(),
         ];
+
+        $merchant = MerchantResource::make($merchant)->resolve();
 
         return Inertia::render('Merchant/Show', compact('merchant', 'orders', 'paymentGateways', 'commissionSettings', 'statistics'));
     }
