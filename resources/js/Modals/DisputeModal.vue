@@ -153,7 +153,7 @@ const showUserSmsLogs = (dispute) => {
                                     <div class="flex justify-between items-center">
                                         <div>
                                             <div class="mr-3 text-sm text-nowrap text-gray-900 dark:text-gray-300">
-                                                Квитанция об оплате
+                                                Квитанция
                                             </div>
                                         </div>
                                         <div>
