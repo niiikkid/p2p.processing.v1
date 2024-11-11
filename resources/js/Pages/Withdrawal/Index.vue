@@ -78,21 +78,21 @@ defineOptions({ layout: AuthenticatedLayout })
                     <fwb-table-body>
                         <fwb-table-row v-for="invoice in invoices.data">
                             <fwb-table-cell>{{ invoice.id }}</fwb-table-cell>
-                            <fwb-table-cell>{{ invoice.amount }} {{invoice.currency.toUpperCase()}}</fwb-table-cell>
+                            <fwb-table-cell class="text-nowrap">{{ invoice.amount }} {{invoice.currency.toUpperCase()}}</fwb-table-cell>
                             <fwb-table-cell>{{ invoice.user.email }}</fwb-table-cell>
                             <fwb-table-cell>
-                                <template v-show="invoice.source_type === 'trust'">
+                                <span v-show="invoice.source_type === 'trust'">
                                     Траст
-                                </template>
-                                <template v-show="invoice.source_type === 'merchant'">
+                                </span>
+                                <span v-show="invoice.source_type === 'merchant'">
                                     Мерчант
-                                </template>
+                                </span>
                             </fwb-table-cell>
                             <fwb-table-cell>
                                <InvoiceStatus :status="invoice.status"></InvoiceStatus>
                             </fwb-table-cell>
-                            <fwb-table-cell>{{ invoice.created_at }}</fwb-table-cell>
-                            <fwb-table-cell>
+                            <fwb-table-cell class="text-nowrap">{{ invoice.created_at }}</fwb-table-cell>
+                            <fwb-table-cell class="text-nowrap">
                                 <template v-if="invoice.status === 'pending'">
                                     <SuccessAction @click.prevent="confirmSuccessWithdrawal(invoice)"/>
                                     <FailAction class="ml-3" @click.prevent="confirmFailParser(invoice)"/>
