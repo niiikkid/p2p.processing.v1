@@ -44,10 +44,12 @@ defineOptions({ layout: AuthenticatedLayout })
                         <fwb-table-row v-for="sms_log in sms_logs.data">
                             <fwb-table-cell>{{ sms_log.id }}</fwb-table-cell>
                             <fwb-table-cell>{{ sms_log.sender }}</fwb-table-cell>
-                            <fwb-table-cell>{{ sms_log.message }}</fwb-table-cell>
+                            <fwb-table-cell>
+                                <div style="min-width: 200px;">{{ sms_log.message }}</div>
+                            </fwb-table-cell>
                             <fwb-table-cell>{{ sms_log.type }}</fwb-table-cell>
                             <fwb-table-cell v-if="viewStore.isAdminViewMode">{{ sms_log.user.email }}</fwb-table-cell>
-                            <fwb-table-cell>{{ sms_log.timestamp }}</fwb-table-cell>
+                            <fwb-table-cell class="text-nowrap">{{ sms_log.timestamp }}</fwb-table-cell>
                             <fwb-table-cell></fwb-table-cell>
                         </fwb-table-row>
                     </fwb-table-body>

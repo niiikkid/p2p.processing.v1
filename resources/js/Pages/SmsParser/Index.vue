@@ -16,6 +16,7 @@ import DeleteAction from "@/Components/Table/DeleteAction.vue";
 import {useModalStore} from "@/store/modal.js";
 import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
 import MainTableSection from "@/Wrappers/MainTableSection.vue";
+import AddMobileIcon from "@/Components/AddMobileIcon.vue";
 
 const sms_parsers = usePage().props.smsParsers;
 const modalStore = useModalStore();
@@ -49,7 +50,14 @@ defineOptions({ layout: AuthenticatedLayout })
             :data="sms_parsers"
         >
             <template v-slot:button>
-                <fwb-button @click="router.visit(route('admin.sms-parsers.create'))" color="default">Создать парсер</fwb-button>
+                <fwb-button
+                    @click="router.visit(route('admin.sms-parsers.create'))"
+                    color="default"
+                    class="hidden md:block"
+                >Создать парсер</fwb-button>
+                <AddMobileIcon
+                    @click="router.visit(route('admin.sms-parsers.create'))"
+                />
             </template>
             <template v-slot:body>
                 <fwb-table>
@@ -65,8 +73,12 @@ defineOptions({ layout: AuthenticatedLayout })
                         <fwb-table-row v-for="sms_parser in sms_parsers.data">
                             <fwb-table-cell>{{ sms_parser.id }}</fwb-table-cell>
                             <fwb-table-cell>{{ sms_parser.payment_gateway_name }}</fwb-table-cell>
-                            <fwb-table-cell>{{ sms_parser.format }}</fwb-table-cell>
-                            <fwb-table-cell class="inline-flex">
+                            <fwb-table-cell>
+                                <div style="min-width: 200px;">
+                                    {{ sms_parser.format }}
+                                </div>
+                            </fwb-table-cell>
+                            <fwb-table-cell class="inline-flex text-nowrap">
                                 <EditAction class="mr-2" :link="route('admin.sms-parsers.edit', sms_parser.id)"></EditAction>
                                 <DeleteAction @click.prevent="confirmDeleteParser(sms_parser)"></DeleteAction>
                             </fwb-table-cell>

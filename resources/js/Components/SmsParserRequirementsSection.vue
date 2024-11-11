@@ -3,8 +3,8 @@
 </script>
 
 <template>
-    <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Важные указания:</h2>
-    <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400 mb-2">
+    <h2 class="mb-2 sm:text-lg text-base font-semibold text-gray-900 dark:text-white">Важные указания:</h2>
+    <ul class="max-w-md sm:text-base text-sm space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400 mb-2">
         <li>
             Необходимо указывать имя группы <span class="font-semibold text-gray-900 dark:text-white">amount</span> для суммы перевода. (только цифровую часть)
             <span class="text-yellow-400">*</span>
