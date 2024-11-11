@@ -43,7 +43,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         <h2 class="text-lg font-medium dark:text-gray-100 text-gray-900">Создание пользователя</h2>
 
                         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            Здесь вы можете создать нового пользователя
+                            Здесь вы можете создать пользователя
                         </p>
                     </header>
 

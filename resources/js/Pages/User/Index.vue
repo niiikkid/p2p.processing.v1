@@ -67,8 +67,8 @@ defineOptions({ layout: AuthenticatedLayout })
                             </fwb-table-cell>
                             <fwb-table-cell>{{ user.email }}</fwb-table-cell>
                             <fwb-table-cell>{{ user.role.name }}</fwb-table-cell>
-                            <fwb-table-cell>{{ user.created_at }}</fwb-table-cell>
-                            <fwb-table-cell>
+                            <fwb-table-cell class="text-nowrap">{{ user.created_at }}</fwb-table-cell>
+                            <fwb-table-cell class="text-nowrap">
                                 <Link
                                     :href="route('admin.users.wallet.index', user.id)"
                                     class="mr-2 px-0 py-0 text-yellow-400 hover:text-yellow-500 dark:text-yellow-500 dark:hover:text-yellow-600 inline-flex items-center hover:underline"

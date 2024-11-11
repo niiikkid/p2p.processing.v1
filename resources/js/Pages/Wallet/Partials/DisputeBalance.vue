@@ -15,7 +15,7 @@ const disputes_count = usePage().props.disputes_count;
 
 <template>
     <div>
-        <div class="grow sm:mt-8 lg:mt-0">
+        <div class="grow lg:mt-0">
             <div class="rounded-lg border border-gray-300 bg-white shadow p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div>
                     <div class="flex justify-between">

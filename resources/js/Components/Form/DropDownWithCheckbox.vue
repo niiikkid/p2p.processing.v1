@@ -42,7 +42,7 @@ const {uid} = getCurrentInstance()
 </script>
 
 <template>
-    <div class="flex">
+    <div class="sm:flex">
         <div>
             <button :id="'dropdownButton'+uid" :data-dropdown-toggle="'dropdown'+uid" class="text-nowrap text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800 inline-flex items-center" type="button">
                 {{ label }}
@@ -72,7 +72,7 @@ const {uid} = getCurrentInstance()
             </div>
         </div>
 
-        <div class="ml-3">
+        <div class="sm:ml-3 mt-3 sm:mt-0">
             <span v-for="item in selectedTimes" class="inline-block text-gray-900 text-xs font-medium me-2 px-2.5 py-0.5 my-1 rounded bg-gray-100 border-gray-300 dark:bg-gray-700 dark:text-gray-400 border dark:border-gray-500 text-nowrap">
                 {{item[name]}}
             </span>

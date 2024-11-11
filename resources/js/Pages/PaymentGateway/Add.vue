@@ -252,13 +252,13 @@ defineOptions({ layout: AuthenticatedLayout })
                                         @input="form.clearErrors('sms_senders')"
                                     />
 
-                                    <button @click.prevent="addSender" type="button" class="text-white absolute end-1.5 bottom-1 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Добавить</button>
+                                    <button @click.prevent="addSender" type="button" class="text-white absolute end-1.5 sm:bottom-1 bottom-1.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:px-3 sm:py-1.5 px-2 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Добавить</button>
                                 </div>
 
                                 <InputError :message="form.errors.sms_senders" class="mt-2" />
                                 <InputHelper v-if="! form.errors.sms_senders" model-value="Например: 900, Alfabank"></InputHelper>
 
-                                <div class="flex gap-0.5 mt-2">
+                                <div class="flex flex-wrap gap-0.5 mt-2">
                                     <div v-for="sender in form.sms_senders">
                                         <span class="bg-gray-100 text-gray-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded me-2 dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
                                             {{ sender }}

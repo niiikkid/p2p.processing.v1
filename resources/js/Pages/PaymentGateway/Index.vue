@@ -14,6 +14,7 @@ import { usePage } from '@inertiajs/vue3';
 import IsActiveStatus from "@/Components/IsActiveStatus.vue";
 import EditAction from "@/Components/Table/EditAction.vue";
 import MainTableSection from "@/Wrappers/MainTableSection.vue";
+import AddMobileIcon from "@/Components/AddMobileIcon.vue";
 
 const payment_gateways = usePage().props.paymentGateways;
 
@@ -29,7 +30,14 @@ defineOptions({ layout: AuthenticatedLayout })
             :data="payment_gateways"
         >
             <template v-slot:button>
-                <fwb-button @click="router.visit(route('admin.payment-gateways.create'))" color="default">Создать метод</fwb-button>
+                <fwb-button
+                    @click="router.visit(route('admin.payment-gateways.create'))"
+                    color="default"
+                    class="hidden md:block"
+                >Создать метод</fwb-button>
+                <AddMobileIcon
+                    @click="router.visit(route('admin.payment-gateways.create'))"
+                />
             </template>
             <template v-slot:body>
                 <fwb-table>
