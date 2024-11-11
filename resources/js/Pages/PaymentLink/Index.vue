@@ -208,6 +208,22 @@ const formReceipt = useForm({
     receipt: null,
 })
 
+const receiptName = computed(() => {
+    if (! formReceipt?.receipt?.name) {
+        return null;
+    }
+
+    var split = formReceipt.receipt.name.split('.');
+    var filename = split[0];
+    var extension = split[1];
+
+    if (filename.length > 10) {
+        filename = filename.substring(0, 5) + '...' + filename.substring(5, 10);
+    }
+
+    return filename + '.' + extension;
+})
+
 function submitReceipt() {
     formReceipt.post(route('payment.dispute.store', data.value.uuid))
 }
@@ -423,7 +439,7 @@ defineOptions({ layout: PaymentLayout });
                                     </svg>
                                     <div>
                                         <p v-if="!formReceipt.receipt" class="text-sm text-gray-500 dark:text-gray-400">Нажмите, чтобы загрузить файл</p>
-                                        <p v-else class="text-sm text-gray-500 dark:text-gray-400">{{ formReceipt.receipt.name }}</p>
+                                        <p v-else class="text-sm text-gray-500 dark:text-gray-400">{{ receiptName }}</p>
                                     </div>
                                 </div>
                                 <input id="dropzone-file" type="file" @input="formReceipt.receipt = $event.target.files[0]" class="hidden" />
