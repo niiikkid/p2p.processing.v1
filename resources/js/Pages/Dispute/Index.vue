@@ -72,38 +72,40 @@ defineOptions({ layout: AuthenticatedLayout })
             :data="disputes"
         >
             <template v-slot:body>
-                <HeadllesTable>
-                    <HeadlessTableTr
-                        v-for="dispute in disputes.data"
-                        @click="modalStore.openDisputeModal({dispute})"
-                        :hoverable="true"
-                    >
-                        <HeadlessTableTh>#{{ dispute.id }}</HeadlessTableTh>
-                        <HeadlessTableTd>
-                            <PaymentDetail
-                                :detail="dispute.payment_detail.detail"
-                                :type="dispute.payment_detail.type"
-                                :copyable="false"
-                                class="text-gray-900 dark:text-gray-200"
-                            ></PaymentDetail>
-                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.payment_detail.name }}</div>
-                        </HeadlessTableTd>
-                        <HeadlessTableTd>
-                            <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ dispute.order.amount }} {{dispute.order.currency.toUpperCase()}}</div>
-                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.order.profit }} {{dispute.order.base_currency.toUpperCase()}}</div>
-                        </HeadlessTableTd>
-                        <HeadlessTableTd v-if="viewStore.isAdminViewMode">
-                            <div class="text-nowrap text-gray-900 dark:text-gray-200">Трейдер</div>
-                            <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.user.email }}</div>
-                        </HeadlessTableTd>
-                        <HeadlessTableTd>
-                            <DisputeStatus :status="dispute.status"></DisputeStatus>
-                        </HeadlessTableTd>
-                        <HeadlessTableTd>
-                            <DateTime :data="dispute.created_at"></DateTime>
-                        </HeadlessTableTd>
-                    </HeadlessTableTr>
-                </HeadllesTable>
+                <div class="relative overflow-x-auto">
+                    <HeadllesTable>
+                        <HeadlessTableTr
+                            v-for="dispute in disputes.data"
+                            @click="modalStore.openDisputeModal({dispute})"
+                            :hoverable="true"
+                        >
+                            <HeadlessTableTh>#{{ dispute.id }}</HeadlessTableTh>
+                            <HeadlessTableTd>
+                                <PaymentDetail
+                                    :detail="dispute.payment_detail.detail"
+                                    :type="dispute.payment_detail.type"
+                                    :copyable="false"
+                                    class="text-gray-900 dark:text-gray-200"
+                                ></PaymentDetail>
+                                <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.payment_detail.name }}</div>
+                            </HeadlessTableTd>
+                            <HeadlessTableTd>
+                                <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ dispute.order.amount }} {{dispute.order.currency.toUpperCase()}}</div>
+                                <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.order.profit }} {{dispute.order.base_currency.toUpperCase()}}</div>
+                            </HeadlessTableTd>
+                            <HeadlessTableTd v-if="viewStore.isAdminViewMode">
+                                <div class="text-nowrap text-gray-900 dark:text-gray-200">Трейдер</div>
+                                <div class="text-nowrap text-gray-500 dark:text-gray-500">{{ dispute.user.email }}</div>
+                            </HeadlessTableTd>
+                            <HeadlessTableTd>
+                                <DisputeStatus :status="dispute.status"></DisputeStatus>
+                            </HeadlessTableTd>
+                            <HeadlessTableTd>
+                                <DateTime :data="dispute.created_at"></DateTime>
+                            </HeadlessTableTd>
+                        </HeadlessTableTr>
+                    </HeadllesTable>
+                </div>
             </template>
         </MainTableSection>
 
