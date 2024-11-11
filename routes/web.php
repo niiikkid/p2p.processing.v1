@@ -12,12 +12,19 @@ Route::group(['middleware' => ['auth', 'banned']], function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::group(['middleware' => ['auth', 'banned', 'role:Trader|Super Admin']], function () {
+Route::group(['middleware' => ['auth', 'banned']], function () {
     Route::get('/', function () {
-        return redirect()->route('wallet.index');
+
+        if (auth()->user()->hasRole('Merchant')) {
+            return redirect()->route('merchants.index');
+        }
+
+        return redirect()->route('payment-details.index');
         //return Inertia::render('Dashboard');
     })->name('dashboard');
+});
 
+Route::group(['middleware' => ['auth', 'banned', 'role:Trader|Super Admin']], function () {
     Route::resource('/payment-details', \App\Http\Controllers\PaymentDetailController::class)->only(['index', 'create', 'store', 'edit', 'update']);
 
     //orders
