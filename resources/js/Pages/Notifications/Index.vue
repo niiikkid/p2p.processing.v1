@@ -13,6 +13,7 @@ import NotificationModal from "@/Modals/NotificationModal.vue";
 import ProgressNumber from "@/Components/ProgressNumber.vue";
 import {computed, ref} from "vue";
 import {useViewStore} from "@/store/view.js";
+import AddMobileIcon from "@/Components/AddMobileIcon.vue";
 
 const modalStore = useModalStore();
 const viewStore = useViewStore();
@@ -84,25 +85,33 @@ defineOptions({ layout: AuthenticatedLayout })
         </div>
         <div v-if="viewStore.isAdminViewMode">
             <div class="flex justify-between">
-                <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl">Отправленные уведомления</h2>
+                <h2 class="text:xl font-medium text-gray-900 dark:text-white sm:text-2xl">Отправленные уведомления</h2>
                 <div>
-                    <fwb-button @click="modalStore.openNotificationModal({})" color="default">Новое уведомление</fwb-button>
+                    <fwb-button
+                        @click="modalStore.openNotificationModal({})" color="default"
+                        class="hidden md:block"
+                    >Новое уведомление</fwb-button>
+                    <AddMobileIcon
+                        @click="modalStore.openNotificationModal({})" color="default"
+                    />
                 </div>
             </div>
-            <HeadllesTable>
-                <HeadlessTableTr v-for="notification in notifications.data">
-                    <HeadlessTableTh>#{{ notification.id }}</HeadlessTableTh>
-                    <HeadlessTableTd>
-                        {{ notification.message }}
-                    </HeadlessTableTd>
-                    <HeadlessTableTd style="width: 150px">
-                        <ProgressNumber :current="notification.delivered_count" :total="notification.recipients_count"></ProgressNumber>
-                    </HeadlessTableTd>
-                    <HeadlessTableTd>
-                        <DateTime class="justify-end text-nowrap" :data="notification.created_at"/>
-                    </HeadlessTableTd>
-                </HeadlessTableTr>
-            </HeadllesTable>
+            <div class="relative overflow-x-auto mb-3">
+                <HeadllesTable>
+                    <HeadlessTableTr v-for="notification in notifications.data">
+                        <HeadlessTableTh>#{{ notification.id }}</HeadlessTableTh>
+                        <HeadlessTableTd>
+                            {{ notification.message }}
+                        </HeadlessTableTd>
+                        <HeadlessTableTd style="width: 150px">
+                            <ProgressNumber :current="notification.delivered_count" :total="notification.recipients_count"></ProgressNumber>
+                        </HeadlessTableTd>
+                        <HeadlessTableTd>
+                            <DateTime class="justify-end text-nowrap" :data="notification.created_at"/>
+                        </HeadlessTableTd>
+                    </HeadlessTableTr>
+                </HeadllesTable>
+            </div>
             <fwb-pagination
                 v-model="currentPage"
                 :total-items="notifications.meta.total"

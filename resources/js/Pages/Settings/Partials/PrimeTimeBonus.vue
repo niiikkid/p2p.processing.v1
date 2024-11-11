@@ -31,7 +31,7 @@ const submit = () => {
         </header>
 
         <form @submit.prevent="submit" class="mt-6 space-y-6">
-            <div class="max-w-[24rem] grid grid-cols-2 gap-4">
+            <div class="max-w-[24rem] grid sm:grid-cols-2 grid-cols-1 gap-4">
                 <div>
                     <label for="start-time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Время начала:</label>
                     <div class="relative">
