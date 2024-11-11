@@ -12,6 +12,7 @@ import {
 } from 'flowbite-vue'
 import EditAction from "@/Components/Table/EditAction.vue";
 import MainTableSection from "@/Wrappers/MainTableSection.vue";
+import AddMobileIcon from "@/Components/AddMobileIcon.vue";
 
 const users = usePage().props.users;
 
@@ -27,7 +28,14 @@ defineOptions({ layout: AuthenticatedLayout })
             :data="users"
         >
             <template v-slot:button>
-                <fwb-button @click="router.visit(route('admin.users.create'))" color="default">Создать пользователя</fwb-button>
+                <fwb-button
+                    @click="router.visit(route('admin.users.create'))"
+                    color="default"
+                    class="hidden md:block"
+                >Создать пользователя</fwb-button>
+                <AddMobileIcon
+                    @click="router.visit(route('admin.users.create'))"
+                />
             </template>
             <template v-slot:body>
                 <fwb-table>
