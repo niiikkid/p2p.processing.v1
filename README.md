@@ -22,7 +22,7 @@
 - Команды:
   - php artisan config:cache
   - php artisan route:cache
-  - php artisan app:install - кастомная специальную команда для установки проекта. Сама запускает миграции и другие необходимые команды. Как работает можно посмотреть в InstallAppCommand.
+  - php artisan app:install - кастомная команда для установки проекта. Сама запускает миграции и другие необходимые команды. Как работает можно посмотреть в InstallAppCommand.
   - npm run build
 - Очереди - используется базовая инструкция из документации ларавель.
   - https://laravel.com/docs/11.x/queues#supervisor-configuration
