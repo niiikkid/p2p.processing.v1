@@ -28,3 +28,12 @@
   - https://laravel.com/docs/11.x/queues#supervisor-configuration
   - команда: php artisan queue:work (работает в одном потоке)
   - в системе есть только одна очередь - default.
+
+### Кастомные параметры в .env
+- TELEGRAM_BOT_NAME
+- TELEGRAM_BOT_TOKEN
+- TELEGRAM_REDIRECT_URI=https://example.com/auth/telegram/callback
+  - используется для редиректа после авторизации в разделе уведомлений
+- TELEGRAM_WEBHOOK_TOKEN=token
+  - секретный токен, нужен чтобы убедиться что уведомления приходят от телеграм, а не ктото шлет их ручками.
+  - https://example.com/telegram-bot/{token}/webhook
