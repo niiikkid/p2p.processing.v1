@@ -22,9 +22,13 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'role' => RoleResource::make($this->roles[0])->resolve(),
             'banned_at' => $this->banned_at?->toDateString(),
             'created_at' => $this->created_at->toDateString(),
+            $this->mergeWhen($this->resource->relationLoaded('roles'), function () {
+                return [
+                    'role' => RoleResource::make($this->roles[0])->resolve()
+                ];
+            }),
         ];
     }
 }
