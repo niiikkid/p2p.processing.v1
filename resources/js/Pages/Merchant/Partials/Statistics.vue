@@ -8,8 +8,8 @@ const statistics = usePage().props.statistics;
     <div>
         <section>
             <div class="mx-auto text-center">
-                <div class="bg-white dark:bg-gray-800 border shadow border-gray-200 dark:border-gray-700 rounded-lg grid max-w-full mx-auto text-gray-900 lg:grid-cols-4 sm:grid-cols-3 dark:text-white">
-                    <div class="border-r border-gray-200 dark:border-gray-700 py-5 flex flex-col items-center justify-center">
+                <div class="bg-white dark:bg-gray-800 border shadow border-gray-200 dark:border-gray-700 rounded-lg grid max-w-full mx-auto text-gray-900 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 dark:text-white">
+                    <div class="lg:border-b-0 border-b md:border-r border-gray-200 dark:border-gray-700 py-5 flex flex-col items-center justify-center">
                         <div class="mb-2 text-3xl md:text-3xl font-extrabold">
                             {{ statistics.today_profit }}
                             <span class="text-xl text-gray-500 dark:text-gray-400">
@@ -24,7 +24,7 @@ const statistics = usePage().props.statistics;
                             Платежей {{ statistics.today_orders_count }}
                         </div>
                     </div>
-                    <div class="border-r border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center">
+                    <div class="lg:border-b-0 border-b lg:border-r border-gray-200 dark:border-gray-700 py-5 flex flex-col items-center justify-center">
                         <div class="mb-2 text-3xl md:text-3xl font-extrabold">
                             {{ statistics.yesterday_profit }}
                             <span class="text-xl text-gray-500 dark:text-gray-400">
@@ -39,7 +39,7 @@ const statistics = usePage().props.statistics;
                             Платежей {{ statistics.yesterday_orders_count }}
                         </div>
                     </div>
-                    <div class="border-r border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center">
+                    <div class="md:border-b-0 border-b md:border-r border-gray-200 dark:border-gray-700 py-5 flex flex-col items-center justify-center">
                         <div class="mb-2 text-3xl md:text-3xl font-extrabold">
                             {{ statistics.month_profit }}
                             <span class="text-xl text-gray-500 dark:text-gray-400">
@@ -54,7 +54,7 @@ const statistics = usePage().props.statistics;
                             Платежей {{ statistics.month_orders_count }}
                         </div>
                     </div>
-                    <div class="flex flex-col items-center justify-center">
+                    <div class="flex flex-col items-center justify-center py-5">
                         <div class="mb-2 text-3xl md:text-3xl font-extrabold">
                             {{ statistics.total_profit }}
                             <span class="text-xl text-gray-500 dark:text-gray-400">
