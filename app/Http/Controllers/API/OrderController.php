@@ -11,14 +11,17 @@ use App\Exceptions\OrderException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Order\StoreRequest;
 use App\Http\Resources\API\OrderResource;
+use App\Models\Merchant;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
     public function show(Order $order): JsonResponse
     {
-        //TODO validate that user owner of order
+        Gate::authorize('access-to-order', $order);
+
         return response()->success(
             OrderResource::make($order)
         );
@@ -26,7 +29,10 @@ class OrderController extends Controller
 
     public function store(StoreRequest $request): JsonResponse
     {
-        //TODO validate that user owner of merchant
+        $merchant = Merchant::where('uuid', $request->merchant_id)->first();
+
+        Gate::authorize('access-to-merchant', $merchant);
+
         try {
             $order = make(OrderServiceContract::class)->create(
                 OrderCreateDTO::make($request->validated())
@@ -42,7 +48,8 @@ class OrderController extends Controller
 
     public function cancel(Order $order): JsonResponse
     {
-        //TODO validate that user owner of order
+        Gate::authorize('access-to-order', $order);
+
         if ($order->status->notEquals(OrderStatus::PENDING)) {
             return response()->failWithMessage('It is not possible to cancel a completed order.');
         }

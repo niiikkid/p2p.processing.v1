@@ -15,6 +15,7 @@ use App\Contracts\TelegramBotServiceContract;
 use App\Contracts\WalletServiceContract;
 use App\Mixins\ResponseMixins;
 use App\Models\Dispute;
+use App\Models\Merchant;
 use App\Models\Order;
 use App\Models\PaymentDetail;
 use App\Models\User;
@@ -119,6 +120,9 @@ class AppServiceProvider extends ServiceProvider
         });
         Gate::define('access-to-order', function (User $user, Order $order) {
             return $user->id === $order->paymentDetail->user_id || $user->hasRole('Super Admin');
+        });
+        Gate::define('access-to-merchant', function (User $user, Merchant $merchant) {
+            return $user->id === $merchant->user_id || $user->hasRole('Super Admin');
         });
 
         Gate::define('access-to-dispute-receipt', function (User $user, Dispute $dispute) {

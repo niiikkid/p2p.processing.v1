@@ -8,12 +8,14 @@ use App\Http\Requests\API\Dispute\StoreRequest;
 use App\Http\Resources\API\DisputeResource;
 use App\Models\Order;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Gate;
 
 class DisputeController extends Controller
 {
     public function show(Order $order)
     {
-        //TODO validate that user is owner of order
+        Gate::authorize('access-to-order', $order);
+
         return response()->success(
             DisputeResource::make($order->dispute)
         );
@@ -21,7 +23,8 @@ class DisputeController extends Controller
 
     public function store(StoreRequest $request, Order $order)
     {
-        //TODO validate that user is owner of order
+        Gate::authorize('access-to-order', $order);
+
         try {
             services()->dispute()->create($order, $request->receipt);
         } catch (DisputeException $e) {
