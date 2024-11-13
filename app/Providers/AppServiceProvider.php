@@ -114,7 +114,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Response::mixin(new ResponseMixins());
 
-        //TODO это временное решение, до тех пор пока приложение не усложнится.
         Gate::define('access-to-payment-detail', function (User $user, PaymentDetail $paymentDetail) {
             return $user->id === $paymentDetail->user_id || $user->hasRole('Super Admin');
         });
@@ -124,11 +123,12 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('access-to-merchant', function (User $user, Merchant $merchant) {
             return $user->id === $merchant->user_id || $user->hasRole('Super Admin');
         });
-
+        Gate::define('access-to-dispute', function (User $user, Dispute $dispute) {
+            return $user->id === optional($dispute->order->paymentDetail)->user_id || $user->hasRole('Super Admin');
+        });
         Gate::define('access-to-dispute-receipt', function (User $user, Dispute $dispute) {
             return $user->id === optional($dispute->order->paymentDetail)->user_id || $user->hasRole('Super Admin');
         });
-
         Gate::define('access-to-self', function (User $user) {
             return $user->id === auth()->id() || $user->hasRole('Super Admin');
         });

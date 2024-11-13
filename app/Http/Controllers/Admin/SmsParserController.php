@@ -88,7 +88,6 @@ class SmsParserController extends Controller
         return redirect()->route('admin.sms-parsers.index');
     }
 
-    //TODO временное решение. Придумать как исключить ненужные методы из доступных для создания парсера
     protected function getPaymentGateways(): Collection
     {
         $paymentGateways = queries()->paymentGateway()->getAllActive();

@@ -26,7 +26,6 @@ class StoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        //TODO refactoring
         return [
             'payment_gateway_id' => ['required', 'exists:payment_gateways,id'],
             'format' => ['required', 'string', 'max:255'],

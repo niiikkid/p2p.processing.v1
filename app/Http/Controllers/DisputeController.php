@@ -21,19 +21,20 @@ class DisputeController extends Controller
 
     public function accept(Dispute $dispute)
     {
-        //TODO проверка - мой $dispute
+        Gate::authorize('access-to-dispute', $dispute);
+
         services()->dispute()->accept($dispute);
     }
 
     public function cancel(CancelRequest $request, Dispute $dispute)
     {
-        //TODO проверка - мой $dispute
+        Gate::authorize('access-to-dispute', $dispute);
+
         services()->dispute()->cancel($dispute, $request->reason);
     }
 
     public function rollback(Dispute $dispute)
     {
-        //TODO restrict only for admins
         services()->dispute()->rollback($dispute);
     }
 

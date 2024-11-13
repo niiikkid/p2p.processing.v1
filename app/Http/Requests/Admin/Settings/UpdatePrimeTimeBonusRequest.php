@@ -30,7 +30,7 @@ class UpdatePrimeTimeBonusRequest extends FormRequest
 
     public function attributes()
     {
-        return [//TODO localization
+        return [
             'starts' => 'время начала',
             'ends' => 'время окончания',
             'rate' => 'рейт %',
