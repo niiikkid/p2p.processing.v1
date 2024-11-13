@@ -114,37 +114,31 @@ class InstallAppCommand extends Command
                 'payment_gateway_id' => 1,
                 'format' => "MIR-0000 21:27 Перевод из Ozon банк +3455р от СЕРГЕЙ П. Баланс: 50612.66р",
                 'regex' => "^(?<card_type>[A-Z]{3,4})-(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sПеревод\sиз\s.+\s\+(?<amount>\d+(.\d+){0,3})р\sот\s.+\sБаланс:\s.+р(\s«#\d+»)?$",
-                'currency' => new Currency('rub'),
             ],
             [
                 'payment_gateway_id' => 1,
                 'format' => "СЧЁТ0000 15:19 Перевод 10р от Артём К. Баланс: 5196.25р",
                 'regex' => "^СЧЁТ(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sПеревод\s(?<amount>\d+(.\d+){0,3})р\sот\s.+\sБаланс:\s.+р$",
-                'currency' => new Currency('rub'),
             ],
             [
                 'payment_gateway_id' => 1,
                 'format' => "ECMC0000 00:18 Перевод 3758.01р от Иван Д. Баланс: 19475.10р",
                 'regex' => "^(?<card_type>[A-Z]{3,4})(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sПеревод\s(?<amount>\d+(.\d+){0,3})р\sот\s.+\sБаланс:\s.+р$",
-                'currency' => new Currency('rub'),
             ],
             [
                 'payment_gateway_id' => 1,
                 'format' => "MIR-0000 15:19 Перевод 10р от Артём К. Баланс: 5186.25р",
                 'regex' => "^(?<card_type>[A-Z]{3,4})-(?<card_last_digits>\d{4})\s\d{2}:\d{2}\sПеревод\s(?<amount>\d+(.\d+){0,3})р\sот\s.+\sБаланс:\s.+р$",
-                'currency' => new Currency('rub'),
             ],
             [
                 'payment_gateway_id' => 1,
                 'format' => "СЧЁТ0000 31.07.24 зачислен перевод по СБП 5000р из Т-Банк от АННА ВАДИМОВНА Д.",
                 'regex' => "^СЧЁТ(?<card_last_digits>\d{4})\s\d{2}\.\d{2}\.\d{2}\sзачислен\sперевод\sпо\sСБП\s(?<amount>\d+(.\d+){0,3})р\sиз\s.+\sот\s.+$",
-                'currency' => new Currency('rub'),
             ],
             [
                 'payment_gateway_id' => 1,
                 'format' => "Перевод из Тинькофф Банк +768.11р от Иван К. СЧЁТ0000 — Баланс: 10800.50р",
                 'regex' => "^Перевод\sиз\s.+\s\+(?<amount>\d+(.\d+){0,3})р\sот\s.+\СЧЁТ(?<card_last_digits>\d{4})\s—\sБаланс:\s.+р$",
-                'currency' => new Currency('rub'),
             ],
         ];
 
@@ -153,7 +147,6 @@ class InstallAppCommand extends Command
                 'payment_gateway_id' => $parser['payment_gateway_id'],
                 'format' => $parser['format'],
                 'regex' => $parser['regex'],
-                'currency' => $parser['currency'],
             ]);
         }
 

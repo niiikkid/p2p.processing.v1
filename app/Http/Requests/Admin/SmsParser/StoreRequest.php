@@ -29,7 +29,6 @@ class StoreRequest extends FormRequest
         //TODO refactoring
         return [
             'payment_gateway_id' => ['required', 'exists:payment_gateways,id'],
-            'currency' => ['required', Rule::in(Currency::getAllCodes())],
             'format' => ['required', 'string', 'max:255'],
             'regex' => [
                 'required',

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('payment_gateway_id')->nullable();
             $table->string('format')->nullable();
             $table->string('regex')->nullable();
-            $table->string('currency')->nullable();
         });
     }
 

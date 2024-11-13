@@ -11,26 +11,14 @@ import SmsParserRequirementsSection from "@/Components/SmsParserRequirementsSect
 import InputHelper from "@/Components/InputHelper.vue";
 
 const payment_gateways = usePage().props.paymentGateways;
-const currencies = usePage().props.currencies.map(function(currency){
-    currency['code'] = currency['code'].toUpperCase();
-    return currency;
-});
 
 const form = useForm({
     format: '',
     regex: '',
-    currency: 0,
     payment_gateway_id: 0,
 });
 const submit = () => {
     form
-        .transform((data) => {
-            if (data.currency !== 0) {
-                data.currency = data.currency.toLowerCase()
-            }
-
-            return data;
-        })
         .post(route('admin.sms-parsers.store'), {
             preserveScroll: true,
             onSuccess: () => form.reset(),
@@ -118,28 +106,6 @@ defineOptions({ layout: AuthenticatedLayout })
                                 />
 
                                 <InputError :message="form.errors.regex" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <InputLabel
-                                    for="currency"
-                                    value="Валюта"
-                                    :error="!!form.errors.currency"
-                                    class="mb-1"
-                                />
-                                <Select
-                                    id="currency"
-                                    v-model="form.currency"
-                                    :error="!!form.errors.currency"
-                                    :items="currencies"
-                                    key="code"
-                                    value="code"
-                                    name="code"
-                                    default_title="Выберите валюту"
-                                    @change="form.clearErrors('currency')"
-                                ></Select>
-
-                                <InputError :message="form.errors.currency" class="mt-2" />
                             </div>
 
                             <div class="flex items-center p-4 text-sm text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600" role="alert">

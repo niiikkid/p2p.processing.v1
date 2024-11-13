@@ -28,6 +28,10 @@ class SmsService implements SmsServiceContract
             ->order()
             ->findPending($result->amount, $sms->user);
 
+        if (! $order) {
+            return;
+        }
+
         if ($order->paymentGateway->code !== $result->paymentGateway->code) {
             return;
         }

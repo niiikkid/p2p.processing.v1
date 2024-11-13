@@ -57,7 +57,7 @@ class Parser
     protected function prepareProps(array $props, SmsParser $smsParser): array
     {
         $props['amount'] = preg_replace('~[^.\d]~', '', $props['amount']);
-        $props['amount'] = Money::fromPrecision($props['amount'], $smsParser->currency);
+        $props['amount'] = Money::fromPrecision($props['amount'], $smsParser->paymentGateway->currency);
 
         $props['card_type'] = ! empty($props['card_type']) ? strtoupper($props['card_type']) : null;
 
