@@ -22,6 +22,7 @@ class PaymentGatewayQueriesEloquent implements PaymentGatewayQueries
     public function paginateForAdmin(): LengthAwarePaginator
     {
         return PaymentGateway::query()
+            ->withCount('smsParsers')
             ->orderByDesc('id')
             ->paginate(10);
     }
