@@ -5,7 +5,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import SaveButton from "@/Components/Form/SaveButton.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
 import {onMounted, ref} from "vue";
-import CopyText from "@/Components/CopyText.vue";
+import CopyUUID from "@/Components/CopyUUID.vue";
 import {useViewStore} from "@/store/view.js";
 
 const viewStore = useViewStore();
@@ -104,7 +104,7 @@ onMounted(() => {
                 <li class="w-full px-4 py-3 rounded-b-lg flex justify-between">
                     <span class="text-gray-900 dark:text-gray-200">Merchant ID</span>
                     <span class="text-gray-500 dark:text-gray-400">
-                        <CopyText class="blur blur-xs hover:blur-none" :text="merchant.uuid"></CopyText>
+                        <CopyUUID :text="merchant.uuid"></CopyUUID>
                     </span>
                 </li>
                 <li v-if="viewStore.isAdminViewMode" class="w-full px-4 py-3 rounded-b-lg flex justify-between">
@@ -202,7 +202,7 @@ onMounted(() => {
         </div>
         <div class="2xl:col-span-4 xl:col-span-3">
             <div>
-                <div class="flex justify-between items-center mb-3">
+                <div class="lg:flex block justify-between items-center mb-3">
                     <h3 class="text-xl font-medium text-gray-900 dark:text-white">Комиссии</h3>
                     <div class="flex items-center">
                         <span class="flex text-xs text-gray-900 dark:text-gray-200 mr-3">
