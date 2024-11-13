@@ -15,7 +15,7 @@ class ModalController extends Controller
 
         $smsLogs = SmsLog::query()
             ->where('user_id', $user->id)
-            ->with(['user'])
+            ->with('user')
             ->orderByDesc('id')
             ->paginate(10);
         $smsLogs = SmsLogResource::collection($smsLogs);

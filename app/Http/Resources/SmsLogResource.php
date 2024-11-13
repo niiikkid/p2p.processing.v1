@@ -25,8 +25,12 @@ class SmsLogResource extends JsonResource
             'message' => $this->message,
             'timestamp' => Carbon::createFromTimestamp($this->timestamp)->toDateTimeString(),
             'type' => $this->type->value,
-            'user' => UserResource::make($this->user),
             'created_at' => $this->created_at->toDateTimeString(),
+            $this->mergeWhen($this->resource->relationLoaded('user'), function () {
+                return [
+                    'user' => UserResource::make($this->user)
+                ];
+            }),
         ];
     }
 }
