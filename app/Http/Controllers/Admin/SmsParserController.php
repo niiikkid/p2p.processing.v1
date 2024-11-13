@@ -20,7 +20,10 @@ class SmsParserController extends Controller
      */
     public function index()
     {
-        $smsParsers = SmsParser::query()->orderByDesc('id')->paginate(10);
+        $smsParsers = SmsParser::query()
+            ->with('paymentGateway')
+            ->orderByDesc('id')
+            ->paginate(10);
 
         $smsParsers = SmsParserResource::collection($smsParsers);
 
@@ -57,6 +60,7 @@ class SmsParserController extends Controller
      */
     public function edit(SmsParser $smsParser)
     {
+        $smsParser->load('paymentGateway');
         $smsParser = SmsParserResource::make($smsParser)->resolve();
         $paymentGateways = PaymentGatewayResource::collection($this->getPaymentGateways())->resolve();
 
