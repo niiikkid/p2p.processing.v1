@@ -39,7 +39,7 @@ export const useModalStore = defineStore('modal', {
             },
         }
     },
-    getters: {//TODO а нахрена я это сделал? Надо убрать. Можно напрямую следить за состоянием.
+    getters: {
         confirmModal: (state) => state.modals.confirm,
         disputeModal: (state) => state.modals.dispute,
         disputeCancelModal: (state) => state.modals.disputeCancel,

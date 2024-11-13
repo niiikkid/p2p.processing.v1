@@ -11,6 +11,7 @@ use App\Http\Resources\PaymentGatewayResource;
 use App\Models\Merchant;
 use App\Services\Money\Currency;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class PaymentController extends Controller
@@ -54,7 +55,10 @@ class PaymentController extends Controller
 
     public function store(StoreRequest $request)
     {
-        //TODO validate that user owner of merchant
+        $merchant = Merchant::where('id', $request->merchant_id)->first();
+
+        Gate::authorize('access-to-merchant', $merchant);
+
         try {
             make(OrderServiceContract::class)->create(
                 OrderCreateDTO::formMerchantRequest(

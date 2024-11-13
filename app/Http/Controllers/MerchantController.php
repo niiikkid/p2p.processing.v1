@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Services\Money\Currency;
 use App\Services\Money\Money;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -40,7 +41,8 @@ class MerchantController extends Controller
 
     public function show(Merchant $merchant)
     {
-        //TODO check ownership
+        Gate::authorize('access-to-merchant', $merchant);
+
         $orders = Order::query()
             ->where('merchant_id', $merchant->id)
             ->where('status', OrderStatus::SUCCESS)
@@ -121,7 +123,8 @@ class MerchantController extends Controller
 
     public function updateCallbackURL(Request $request, Merchant $merchant)
     {
-        //TODO check ownership
+        Gate::authorize('access-to-merchant', $merchant);
+
         $request->validate(['callback_url' => 'required', 'string', 'url', 'max:256']);
 
         $merchant->update([
@@ -131,7 +134,8 @@ class MerchantController extends Controller
 
     public function updateCommissionSettings(Request $request, Merchant $merchant)
     {
-        //TODO check ownership
+        Gate::authorize('access-to-merchant', $merchant);
+
         $request->validate([
             'commission_settings' => 'required', 'array',
         ]);

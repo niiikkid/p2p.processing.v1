@@ -15,7 +15,7 @@ const viewStore = useViewStore();
 const payment_detail = usePage().props.paymentDetail;
 const payment_gateways = usePage().props.paymentGateways;
 
-const detail_type_names = { //TODO refactoring
+const detail_type_names = {
     'card': 'Карта',
     'phone': 'Телефон',
     'account_number': 'Номер счета',

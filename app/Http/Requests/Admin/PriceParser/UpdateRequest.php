@@ -30,7 +30,7 @@ class UpdateRequest extends FormRequest
 
     public function attributes(): array
     {
-        return [//TODO localization
+        return [
             'payment_method' => 'платежный метод',
             'ad_quantity' => 'количество объявлений',
         ];
