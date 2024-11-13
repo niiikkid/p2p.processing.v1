@@ -47,6 +47,7 @@ class PaymentDetailController extends Controller
     {
         Gate::authorize('access-to-payment-detail', $paymentDetail);
 
+        $paymentDetail->load('paymentGateway');
         $paymentDetail = PaymentDetailResource::make($paymentDetail)->resolve();
         $paymentGateways = PaymentGatewayResource::collection(queries()->paymentGateway()->getAllActive())->resolve();
 

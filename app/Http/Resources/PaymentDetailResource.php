@@ -28,12 +28,20 @@ class PaymentDetailResource extends JsonResource
             'daily_limit' => $this->daily_limit->toBeauty(),
             'current_daily_limit' => $this->current_daily_limit->toBeauty(),
             'currency' => $this->currency->getCode(),
-            'payment_gateway_id' => $this->paymentGateway->id,
-            'sub_payment_gateway_id' => $this->subPaymentGateway?->id,
-            'payment_gateway_code' => $this->paymentGateway->code,
-            'payment_gateway_name' => $this->paymentGateway->name_with_currency,
-            'owner_email' => $this->user->email,
+            'payment_gateway_id' => $this->payment_gateway_id,
+            'sub_payment_gateway_id' => $this->sub_payment_gateway_id,
             'created_at' => $this->created_at->toDateString(),
+            $this->mergeWhen($this->resource->relationLoaded('user'), function () {
+                return [
+                    'owner_email' => $this->user->email,
+                ];
+            }),
+            $this->mergeWhen($this->resource->relationLoaded('paymentGateway'), function () {
+                return [
+                    'payment_gateway_code' => $this->paymentGateway->code,
+                    'payment_gateway_name' => $this->paymentGateway->name_with_currency,
+                ];
+            }),
         ];
     }
 }
