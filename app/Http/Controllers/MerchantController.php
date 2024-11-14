@@ -44,6 +44,7 @@ class MerchantController extends Controller
         Gate::authorize('access-to-merchant', $merchant);
 
         $orders = Order::query()
+            ->with(['paymentDetail.subPaymentGateway', 'paymentGateway', 'smsLog', 'merchant', 'dispute'])
             ->where('merchant_id', $merchant->id)
             ->where('status', OrderStatus::SUCCESS)
             ->orderByDesc('id')

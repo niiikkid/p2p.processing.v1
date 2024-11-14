@@ -11,6 +11,8 @@ class OrderCallbackService implements OrderCallbackServiceContract
 {
     public function send(Order $order): void
     {
+        $order->load(['paymentDetail.subPaymentGateway', 'paymentGateway', 'smsLog', 'merchant', 'dispute']);
+
         $callback_url = $order->callback_url ?? $order->merchant->callback_url;
 
         if (! $callback_url) {
