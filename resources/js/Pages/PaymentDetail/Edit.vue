@@ -2,7 +2,7 @@
 import TextInput from '@/Components/TextInput.vue';
 import {Head, useForm, usePage} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import Select from "@/Components/Select.vue";
 import SaveButton from "@/Components/Form/SaveButton.vue";
 import SecondaryPageSection from "@/Wrappers/SecondaryPageSection.vue";
@@ -33,6 +33,17 @@ const form = useForm({
     sub_payment_gateway_id: payment_detail.sub_payment_gateway_id ?? 0,
     detail_type: payment_detail.detail_type,
 });
+
+const details = ref({
+    'card': '',
+    'phone': '',
+    'account_number': '',
+});
+
+onMounted(() => {
+    details.value[payment_detail.detail_type] = payment_detail.detail;
+})
+
 const submit = () => {
     form
         .transform((data) => {
@@ -44,11 +55,12 @@ const submit = () => {
             }
             data.detail_type = selectedDetailType.value;
 
+            data.detail = details.value[data.detail_type]
+
             return data;
         })
         .patch(route('payment-details.update', payment_detail.id), {
             preserveScroll: true,
-            onSuccess: () => form.reset(),
         });
 };
 
@@ -95,7 +107,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         value="id"
                         name="name"
                         default_title="Выберите платежный метод"
-                        @change="form.clearErrors('role_id');form.detail = null;selectedDetailType = currentPaymentGateway.detail_types[0];"
+                        @change="form.clearErrors('role_id'); form.clearErrors('detail'); selectedDetailType = currentPaymentGateway.detail_types[0];"
                     ></Select>
                 </InputBlock>
 
@@ -114,7 +126,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             >
                                 <template v-if="index !== currentPaymentGateway.detail_types.length - 1">
                                     <a
-                                        @click.prevent="selectedDetailType = detail_type;form.detail = null"
+                                        @click.prevent="selectedDetailType = detail_type; form.clearErrors('detail')"
                                         href="#"
                                         class="inline-block w-full p-2 border-r-0 border-gray-200 dark:border-gray-700 hover:text-gray-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                                         :class="detail_type === selectedDetailType ? 'text-gray-900 bg-gray-200 border-r dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
@@ -124,7 +136,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 </template>
                                 <template v-else>
                                     <a
-                                        @click.prevent="selectedDetailType = detail_type;form.detail = null"
+                                        @click.prevent="selectedDetailType = detail_type; form.clearErrors('detail')"
                                         href="#"
                                         class="inline-block w-full p-2 border-s-0 border-gray-200 dark:border-gray-700 hover:text-gray-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                                         :class="detail_type === selectedDetailType ? 'text-gray-900 bg-gray-200 border-r dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
@@ -138,7 +150,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
                     <TextInputBlock
                         v-if="selectedDetailType === 'card'"
-                        v-model="form.detail"
+                        v-model="details['card']"
                         :form="form"
                         field="detail"
                         placeholder="0000 0000 0000 0000"
@@ -157,7 +169,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             </div>
                             <TextInput
                                 id="detail"
-                                v-model="form.detail"
+                                v-model="details['phone']"
                                 type="text"
                                 class="block w-full ps-7"
                                 placeholder="70000000000"
@@ -169,7 +181,7 @@ defineOptions({ layout: AuthenticatedLayout })
 
                     <TextInputBlock
                         v-if="selectedDetailType === 'account_number'"
-                        v-model="form.detail"
+                        v-model="details['account_number']"
                         :form="form"
                         field="detail"
                         placeholder="00000000000000000000"

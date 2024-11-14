@@ -281,5 +281,6 @@ return [
         'merchant_id'              => 'мерчант',
         'support_link'             => 'ссылка',
         'payment_detail_type'      => 'тип реквизитов',
+        'sub_payment_gateway_id'   => 'метод',
     ],
 ];
