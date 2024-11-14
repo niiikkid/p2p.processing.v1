@@ -18,18 +18,18 @@ const orders_count = usePage().props.orders_count;
             <div class="rounded-lg border border-gray-300 bg-white shadow p-4 dark:border-gray-700 dark:bg-gray-800">
                 <div>
                     <div class="flex justify-between">
-                        <div class="text-xl text-gray-900 dark:text-gray-200">Эскроу-счет (проводится сделка)</div>
+                        <div class="md:text-xl text-lg text-gray-900 dark:text-gray-200">Эскроу-счет <span class="md:inline-block hidden">(проводится сделка)</span></div>
                     </div>
 
-                    <div class="pt-5 inline-block align-middle">
-                        <span class="text-xl font-bold text-gray-900 dark:text-gray-200">
+                    <div class="md:pt-5 pt-1 inline-block align-middle">
+                        <span class="md:text-xl text-lg font-bold text-gray-900 dark:text-gray-200">
                            {{ escrow_balance }} USDT
                         </span>
                     </div>
 
-                    <div class="mt-2">
+                    <div class="md:mt-2 mt-0">
                         <div class="inline-flex">
-                            <div class="text-base text-gray-500 dark:text-gray-400">
+                            <div class="md:text-base text-sm text-gray-500 dark:text-gray-400">
                                 {{ escrow_balance_rub }} RUB - Сделок - {{ orders_count }}
                             </div>
                         </div>
