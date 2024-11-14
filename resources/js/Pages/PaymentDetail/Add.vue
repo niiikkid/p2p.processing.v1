@@ -225,8 +225,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 :error="!!form.errors.detail"
                                 @input="form.clearErrors('detail')"
                             />
-
-
+                            
                             <InputError :message="form.errors.detail" class="mt-2" />
                         </div>
                     </template>
