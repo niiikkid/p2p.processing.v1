@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MerchantResource;
 use App\Models\Merchant;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class MerchantController extends Controller
@@ -13,6 +12,7 @@ class MerchantController extends Controller
     public function index()
     {
         $merchants = Merchant::query()
+            ->with('user')
             ->orderByDesc('id')
             ->paginate(10);
 

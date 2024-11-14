@@ -21,6 +21,7 @@ class MerchantController extends Controller
     public function index()
     {
         $merchants = Merchant::query()
+            ->with('user')
             ->withSum(['orders' => function ($query) {
                 $query->where('status', OrderStatus::SUCCESS);
                 $query->whereDate('created_at', now()->today());
