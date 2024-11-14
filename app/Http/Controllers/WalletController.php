@@ -32,6 +32,7 @@ class WalletController extends Controller
          */
         $wallet = $request->user()->wallet;
         $invoices = Invoice::query()
+            ->with('wallet.user')
             ->where('wallet_id', $wallet->id)
             ->where('source_type', $sourceType)
             ->orderByDesc('id')

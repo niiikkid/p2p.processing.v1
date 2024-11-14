@@ -16,6 +16,7 @@ class WithdrawalController extends Controller
     public function index()
     {
         $invoices = Invoice::query()
+            ->with('wallet.user')
             ->where('type', InvoiceType::WITHDRAWAL)
             ->orderByDesc('id')
             ->paginate(10);

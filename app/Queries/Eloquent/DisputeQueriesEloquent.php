@@ -12,7 +12,7 @@ class DisputeQueriesEloquent implements DisputeQueries
     public function paginateForAdmin(): LengthAwarePaginator
     {
         return Dispute::query()
-            ->with(['order'])
+            ->with(['order.paymentDetail.user'])
             ->orderByDesc('id')
             ->paginate(10);
     }
@@ -21,7 +21,7 @@ class DisputeQueriesEloquent implements DisputeQueries
     {
         return Dispute::query()
             ->whereRelation('order.paymentDetail', 'user_id', auth()->user()->id)
-            ->with(['order'])
+            ->with(['order.paymentDetail.user'])
             ->orderByDesc('id')
             ->paginate(10);
     }

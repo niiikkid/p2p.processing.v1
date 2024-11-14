@@ -26,6 +26,7 @@ class UserWalletController extends Controller
     {
         $wallet = $user->wallet;
         $invoices = Invoice::query()
+            ->with('wallet.user')
             ->where('wallet_id', $wallet->id)
             ->orderByDesc('id')
             ->paginate(10);
