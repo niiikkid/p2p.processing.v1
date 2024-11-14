@@ -26,8 +26,6 @@ class UpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        //TODO refactoring
-
         $smsParser = $this->route('sms_parser');
 
         return [

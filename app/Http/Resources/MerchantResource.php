@@ -30,7 +30,7 @@ class MerchantResource extends JsonResource
             'active' => $this->active,
             'today_profit' => $this->when(isset($this->orders_sum_merchant_profit), Money::fromUnits($this->orders_sum_merchant_profit ?? 0, Currency::USDT())->toBeauty()),
             'profit_currency' => $this->when(isset($this->orders_sum_merchant_profit), Currency::USDT()->getCode()),
-            'owner' => [ //TODO hide if not exists
+            'owner' => [
                 'id' => $this->user->id,
                 'email' => $this->user->email,
             ],

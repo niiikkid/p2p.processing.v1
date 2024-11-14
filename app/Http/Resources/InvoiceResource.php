@@ -25,7 +25,7 @@ class InvoiceResource extends JsonResource
             'type' => $this->type->value,
             'source_type' => $this->source_type->value,
             'status' => $this->status->value,
-            'user' => [//TODO hide if not presented in query
+            'user' => [
                'id' => $this->wallet->user->id,
                'email' => $this->wallet->user->email,
             ],
