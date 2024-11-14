@@ -94,7 +94,7 @@ const withdraw = () => {
                         <div>
                             <InputLabel
                                 for="amount"
-                                value="Сумма"
+                                value="Сумма вывода"
                                 :error="!!form.errors.amount"
                             />
 

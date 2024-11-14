@@ -69,7 +69,7 @@ const deposit = () => {
                         <div>
                             <InputLabel
                                 for="amount"
-                                value="Сумма пополнения в USDT"
+                                value="Сумма пополнения"
                                 :error="!!form.errors.amount"
                             />
 
@@ -77,6 +77,7 @@ const deposit = () => {
                                 id="amount"
                                 class="mt-1 block w-full"
                                 v-model="form.amount"
+                                placeholder="Сумма в USDT"
                                 required
                                 autofocus
                                 :error="!!form.errors.amount"
