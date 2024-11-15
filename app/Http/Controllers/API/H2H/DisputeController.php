@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\H2H;
 
 use App\Exceptions\DisputeException;
 use App\Http\Controllers\Controller;
