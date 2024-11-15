@@ -1,20 +1,14 @@
 <script setup>
-import {Head, Link, router, usePage} from '@inertiajs/vue3';
+import {Head, router, usePage} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import OrderStatus from "@/Components/OrderStatus.vue";
-import PaymentDetail from "@/Components/PaymentDetail.vue";
 import SmsLogsModal from "@/Modals/SmsLogsModal.vue";
 import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
 import MainTableSection from "@/Wrappers/MainTableSection.vue";
 import OrderModal from "@/Modals/OrderModal.vue";
 import {useModalStore} from "@/store/modal.js";
-import HeadllesTable from "@/Components/HeadlesTable/HeadllesTable.vue";
-import HeadlessTableTr from "@/Components/HeadlesTable/HeadlessTableTr.vue";
-import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
-import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import DateTime from "@/Components/DateTime.vue";
 import {useViewStore} from "@/store/view.js";
-import ShowAction from "@/Components/Table/ShowAction.vue";
 import {FwbButton} from "flowbite-vue";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
 
@@ -105,7 +99,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
                                     </svg>
                                 </button>
-                                <span v-else>
+                                <div v-else>
                                     <button
                                         @click.prevent="false"
                                         type="button"
@@ -117,7 +111,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                     <div :id="'tooltip-h2h-'+order.id" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                                         Для сделок созданных через H2H API невозможно открыть платежную ссылку. Так как управление платежом передается на внешний сервис.
                                     </div>
-                                </span>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
