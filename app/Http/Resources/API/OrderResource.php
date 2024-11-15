@@ -31,7 +31,7 @@ class OrderResource extends JsonResource
             'payment_gateway' => $this->paymentGateway->code,
             'payment_gateway_name' => $this->paymentGateway->name,
             'method' => optional($this->paymentDetail->subPaymentGateway)->code,
-            'method_name' => optional($this->paymentDetail->subPaymentGateway)->public_name,
+            'method_name' => optional($this->paymentDetail->subPaymentGateway)->name,
             'finished_at' => $this->finished_at?->getTimestamp(),
             'expires_at' => $this->expires_at->getTimestamp(),
             'created_at' => $this->created_at->getTimestamp(),
