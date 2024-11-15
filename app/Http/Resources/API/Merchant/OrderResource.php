@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\API;
+namespace App\Http\Resources\API\Merchant;
 
 use App\Models\Order;
 use Illuminate\Http\Request;

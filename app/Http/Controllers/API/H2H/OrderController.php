@@ -8,8 +8,8 @@ use App\Enums\OrderStatus;
 use App\Enums\TransactionType;
 use App\Exceptions\OrderException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\Order\StoreRequest;
-use App\Http\Resources\API\OrderResource;
+use App\Http\Requests\API\H2H\Order\StoreRequest;
+use App\Http\Resources\API\H2H\OrderResource;
 use App\Models\Merchant;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
@@ -34,7 +34,7 @@ class OrderController extends Controller
 
         try {
             $order = make(OrderServiceContract::class)->create(
-                OrderCreateDTO::make($request->validated())
+                OrderCreateDTO::make($request->validated() + ['h2h' => true])
             );
 
             return response()->success(

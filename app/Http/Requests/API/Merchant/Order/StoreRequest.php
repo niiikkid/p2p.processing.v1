@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\API\Order;
+namespace App\Http\Requests\API\Merchant\Order;
 
 use App\Enums\DetailType;
 use App\Models\Merchant;

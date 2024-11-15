@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\API\Dispute;
+namespace App\Http\Requests\API\H2H\Dispute;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
@@ -28,7 +28,7 @@ class StoreRequest extends FormRequest
             'receipt' => [
                 'required',
                 'image',
-                'mimes:jpeg,jpg,png',
+                'mimes:jpeg,jpg,png,pdf',
                 'max:2048'
             ],
         ];

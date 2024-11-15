@@ -15,6 +15,7 @@ class OrderCreateDTO extends BaseDTO
     public function __construct(
         public Money $amount,
         public string $merchant_uuid,
+        public bool $h2h = false,
         public ?string $external_id = null,
         public ?string $callback_url = null,
         public ?string $success_url = null,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\API;
+namespace App\Http\Resources\API\H2H;
 
 use App\Models\Dispute;
 use Illuminate\Http\Request;
