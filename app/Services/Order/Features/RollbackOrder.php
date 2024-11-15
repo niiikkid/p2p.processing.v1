@@ -30,7 +30,7 @@ class RollbackOrder extends BaseFeature
             }
             if ($this->order->status->equals(OrderStatus::SUCCESS)) {
                 services()->wallet()->takeMerchant(
-                    wallet: $this->order->paymentDetail->user->wallet,
+                    wallet: $this->order->merchant->user->wallet,
                     amount: $this->order->merchant_profit,
                 );
             }

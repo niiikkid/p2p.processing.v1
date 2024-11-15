@@ -34,7 +34,7 @@ class SucceedOrder extends BaseFeature
                 ]);
 
                 services()->wallet()->giveMerchant(
-                    wallet: $this->order->paymentDetail->user->wallet,
+                    wallet: $this->order->merchant->user->wallet,
                     amount: $this->order->merchant_profit,
                 );
             });
