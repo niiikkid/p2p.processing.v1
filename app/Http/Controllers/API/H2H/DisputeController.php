@@ -16,6 +16,9 @@ class DisputeController extends Controller
         if (! $order->is_h2h) {
             return response()->failWithMessage('Сделка предназначена не для H2H API, а для Merchant API.');
         }
+        if (! $order->dispute) {
+            return response()->failWithMessage('По сделке пока что небыло споров.');
+        }
 
         Gate::authorize('access-to-order', $order);
 
@@ -33,11 +36,12 @@ class DisputeController extends Controller
         Gate::authorize('access-to-order', $order);
 
         try {
-            services()->dispute()->create($order, $request->receipt);
+            $dispute = services()->dispute()->create($order, $request->receipt);
+            return response()->success(
+                DisputeResource::make($dispute)
+            );
         } catch (DisputeException $e) {
             return response()->failWithMessage($e->getMessage());
         }
-
-        return response()->success();
     }
 }

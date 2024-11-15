@@ -19,8 +19,9 @@ class DisputeResource extends JsonResource
          * @var Dispute $this
          */
         return [
-            'order_id' => $this->order_id,
+            'order_id' => $this->order->uuid,
             'status' => $this->status->value,
+            'cancel_reason' => $this->reason,
         ];
     }
 }

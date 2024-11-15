@@ -104,6 +104,7 @@ class CreateOrder extends BaseFeature
             'callback_url' => $this->dto->callback_url,
             'success_url' => $this->dto->success_url,
             'fail_url' => $this->dto->fail_url,
+            'is_h2h' => $this->dto->h2h,
             'payment_gateway_id' => $paymentGateway->id,
             'payment_detail_id' => $paymentDetail->id,
             'currency_id' => $paymentGateway->currency_id,
