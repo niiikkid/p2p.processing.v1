@@ -19,6 +19,10 @@ class OrderController extends Controller
 {
     public function show(Order $order): JsonResponse
     {
+        if (! $order->is_h2h) {
+            return response()->failWithMessage('Сделка предназначена не для H2H API, а для Merchant API.');
+        }
+
         Gate::authorize('access-to-order', $order);
 
         return response()->success(
@@ -47,6 +51,10 @@ class OrderController extends Controller
 
     public function cancel(Order $order): JsonResponse
     {
+        if (! $order->is_h2h) {
+            return response()->failWithMessage('Сделка предназначена не для H2H API, а для Merchant API.');
+        }
+
         Gate::authorize('access-to-order', $order);
 
         if ($order->status->notEquals(OrderStatus::PENDING)) {

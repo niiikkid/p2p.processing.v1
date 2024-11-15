@@ -13,6 +13,10 @@ class DisputeController extends Controller
 {
     public function show(Order $order)
     {
+        if (! $order->is_h2h) {
+            return response()->failWithMessage('Сделка предназначена не для H2H API, а для Merchant API.');
+        }
+
         Gate::authorize('access-to-order', $order);
 
         return response()->success(
@@ -22,6 +26,10 @@ class DisputeController extends Controller
 
     public function store(StoreRequest $request, Order $order)
     {
+        if (! $order->is_h2h) {
+            return response()->failWithMessage('Сделка предназначена не для H2H API, а для Merchant API.');
+        }
+
         Gate::authorize('access-to-order', $order);
 
         try {

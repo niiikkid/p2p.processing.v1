@@ -17,6 +17,10 @@ class OrderController extends Controller
 {
     public function show(Order $order): JsonResponse
     {
+        if ($order->is_h2h) {
+            return response()->failWithMessage('Сделка предназначена для H2H API.');
+        }
+
         Gate::authorize('access-to-order', $order);
 
         return response()->success(
