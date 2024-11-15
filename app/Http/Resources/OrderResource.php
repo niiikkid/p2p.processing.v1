@@ -43,6 +43,7 @@ class OrderResource extends JsonResource
             'status' => $this->status->value,
             'status_name' => $this->status_name,
             'callback_url' => $this->callback_url,
+            'is_h2h' => $this->is_h2h,
             'payment_gateway_code' => $this->paymentGateway->code,
             'sub_payment_gateway_code' => optional($this->paymentDetail->subPaymentGateway)->code,
             'payment_gateway_name' => $this->paymentGateway->name_with_currency,

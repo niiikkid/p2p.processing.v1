@@ -12,6 +12,10 @@ class PaymentLinkController extends Controller
 {
     public function show(Order $order)
     {
+        if ($order->is_h2h) {
+            abort(404);
+        }
+
         $data = [
             'order_status' => $order->status->value,
             'uuid' => $order->uuid,

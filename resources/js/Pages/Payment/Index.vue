@@ -96,6 +96,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             </td>
                             <td class="px-6 py-3 text-right">
                                 <button
+                                    v-if="! order.is_h2h"
                                     @click="orderPaymentLink(order.payment_link)"
                                     type="button"
                                     class="px-0 py-0 justify-items-center text-blue-500 hover:text-blue-600 inline-flex items-center hover:underline"
@@ -104,6 +105,19 @@ defineOptions({ layout: AuthenticatedLayout })
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
                                     </svg>
                                 </button>
+                                <span v-else>
+                                    <button
+                                        @click.prevent="false"
+                                        type="button"
+                                        class="ml-1.5 px-2 py-1 text-xs font-medium text-center inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                        :data-tooltip-target="'tooltip-h2h-'+order.id"
+                                    >
+                                        H2H
+                                    </button>
+                                    <div :id="'tooltip-h2h-'+order.id" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                        Для сделок созданных через H2H API невозможно открыть платежную ссылку. Так как управление платежом передается на внешний сервис.
+                                    </div>
+                                </span>
                             </td>
                         </tr>
                         </tbody>
