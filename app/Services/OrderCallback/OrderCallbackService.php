@@ -3,7 +3,6 @@
 namespace App\Services\OrderCallback;
 
 use App\Contracts\OrderCallbackServiceContract;
-use App\Http\Resources\API\OrderResource;
 use App\Models\Order;
 use Illuminate\Support\Facades\Http;
 
@@ -19,7 +18,11 @@ class OrderCallbackService implements OrderCallbackServiceContract
             return;
         }
 
-        $data = OrderResource::make($order)->resolve();
+        if ($order->is_h2h) {
+            $data = \App\Http\Resources\API\H2H\OrderResource::make($order)->resolve();
+        } else {
+            $data = \App\Http\Resources\API\Merchant\OrderResource::make($order)->resolve();
+        }
 
         $token = $order->merchant->user->api_access_token;
 
