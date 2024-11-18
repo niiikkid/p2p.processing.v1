@@ -16,6 +16,8 @@ import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import {useViewStore} from "@/store/view.js";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
+import DateTime from "@/Components/DateTime.vue";
+import OrderStatus from "@/Components/OrderStatus.vue";
 
 const viewStore = useViewStore();
 const payment_details = usePage().props.paymentDetails;
@@ -42,7 +44,69 @@ defineOptions({ layout: AuthenticatedLayout })
                 />
             </template>
             <template v-slot:body>
-                <div class="relative overflow-x-auto">
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">
+                                    ID
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Название
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Реквизит
+                                </th>
+                                <th scope="col" class="px-6 py-3" v-if="viewStore.isAdminViewMode">
+                                    Трейдер
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Дневной лимит
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Статус
+                                </th>
+                                <th scope="col" class="px-6 py-3 flex justify-center">
+                                    <span class="sr-only">Действия</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="payment_detail in payment_details.data" class="bg-white border-b last:border-none dark:bg-gray-800 dark:border-gray-700">
+                                <th scope="row" class="px-6 py-3 font-medium whitespace-nowrap text-gray-900 dark:text-gray-200">{{ payment_detail.id }}</th>
+                                <td class="px-6 py-3">
+                                    <div class="text-nowrap text-gray-900 dark:text-gray-200">
+                                        {{ payment_detail.name }}
+                                    </div>
+                                    <div class="text-nowrap text-gray-500 dark:text-gray-500">
+                                        {{ payment_detail.payment_gateway_name }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3">
+                                    <PaymentDetail :detail="payment_detail.detail" :type="payment_detail.detail_type"></PaymentDetail>
+                                </td>
+                                <td
+                                    v-if="viewStore.isAdminViewMode"
+                                    class="px-6 py-3 font-medium text-gray-900 dark:text-gray-200"
+                                >
+                                    {{ payment_detail.owner_email }}
+                                </td>
+                                <td class="px-6 py-3">
+                                    <PaymentDetailLimit :current_daily_limit="payment_detail.current_daily_limit" :daily_limit="payment_detail.daily_limit"></PaymentDetailLimit>
+                                </td>
+                                <td class="px-6 py-3">
+                                    <IsActiveStatus :is_active="payment_detail.is_active"></IsActiveStatus>
+                                </td>
+                                <td class="px-6 py-3 text-right">
+                                    <div class="flex justify-center gap-2">
+                                        <EditAction :link="route(viewStore.adminPrefix + 'payment-details.edit', payment_detail.id)"></EditAction>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+<!--                <div class="relative overflow-x-auto">
                     <HeadllesTable>
                         <HeadlessTableTr v-for="payment_detail in payment_details.data">
                             <HeadlessTableTh>#{{ payment_detail.id }}</HeadlessTableTh>
@@ -71,7 +135,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             </HeadlessTableTd>
                         </HeadlessTableTr>
                     </HeadllesTable>
-                </div>
+                </div>-->
             </template>
         </MainTableSection>
     </div>

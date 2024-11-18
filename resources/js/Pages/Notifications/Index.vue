@@ -14,6 +14,10 @@ import ProgressNumber from "@/Components/ProgressNumber.vue";
 import {computed, ref} from "vue";
 import {useViewStore} from "@/store/view.js";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
+import IsActiveStatus from "@/Components/IsActiveStatus.vue";
+import EditAction from "@/Components/Table/EditAction.vue";
+import PaymentDetailLimit from "@/Components/PaymentDetailLimit.vue";
+import PaymentDetail from "@/Components/PaymentDetail.vue";
 
 const modalStore = useModalStore();
 const viewStore = useViewStore();
@@ -53,7 +57,7 @@ defineOptions({ layout: AuthenticatedLayout })
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2 mb-6">
             <div class="grow sm:mt-8 lg:mt-0">
 
-                <div class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                <div class="rounded-lg border shadow-md border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                     <div>
                         <div class="flex justify-between">
                             <div class="text-xl text-gray-900 dark:text-gray-200">Телеграм</div>
@@ -84,7 +88,7 @@ defineOptions({ layout: AuthenticatedLayout })
             </div>
         </div>
         <div v-if="viewStore.isAdminViewMode">
-            <div class="flex justify-between">
+            <div class="flex justify-between mb-3">
                 <h2 class="text:xl font-medium text-gray-900 dark:text-white sm:text-2xl">Отправленные уведомления</h2>
                 <div>
                     <fwb-button
@@ -96,7 +100,43 @@ defineOptions({ layout: AuthenticatedLayout })
                     />
                 </div>
             </div>
-            <div class="relative overflow-x-auto mb-3">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-3">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                ID
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Сообщение
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Прогресс доставки
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-right">
+                                Дата отправки
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="notification in notifications.data" class="bg-white border-b last:border-none dark:bg-gray-800 dark:border-gray-700">
+                            <th scope="row" class="px-6 py-3 font-medium whitespace-nowrap text-gray-900 dark:text-gray-200">
+                                {{ notification.id }}
+                            </th>
+                            <td class="px-6 py-3">
+                                {{ notification.message }}
+                            </td>
+                            <td class="px-6 py-3" style="width: 200px">
+                                <ProgressNumber :current="notification.delivered_count" :total="notification.recipients_count"></ProgressNumber>
+                            </td>
+                            <td class="px-6 py-3">
+                                <DateTime class="justify-end text-nowrap" :data="notification.created_at"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+<!--            <div class="relative overflow-x-auto mb-3">
                 <HeadllesTable>
                     <HeadlessTableTr v-for="notification in notifications.data">
                         <HeadlessTableTh>#{{ notification.id }}</HeadlessTableTh>
@@ -111,7 +151,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         </HeadlessTableTd>
                     </HeadlessTableTr>
                 </HeadllesTable>
-            </div>
+            </div>-->
             <fwb-pagination
                 v-model="currentPage"
                 :total-items="notifications.meta.total"
