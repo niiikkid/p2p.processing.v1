@@ -17,6 +17,12 @@ const payment_gateways = usePage().props.paymentGateways;
 const currencies = usePage().props.currencies;
 const merchants = usePage().props.merchants;
 
+const detail_types = [
+    {id: 'card', name: 'Карта'},
+    {id: 'phone', name: 'Телефон'},
+    {id: 'account_number', name: 'Номер счета'},
+]
+
 const form = useForm({
     amount: null,
     currency: 0,
@@ -85,10 +91,10 @@ defineOptions({ layout: AuthenticatedLayout })
                         <div class="mb-4">
                             <InputLabel
                                 for="payment_detail_type"
-                                value="Выберите метод"
+                                value="Выберите направление"
                                 class="mb-1"
                             />
-                            <ul class="hidden text-sm border border-gray-200 dark:border-gray-700 font-medium text-center text-gray-500 rounded-lg sm:flex dark:divide-gray-700 dark:text-gray-400">
+                            <ul class="text-sm border border-gray-200 dark:border-gray-700 font-medium text-center text-gray-500 rounded-lg flex dark:divide-gray-700 dark:text-gray-400">
                                 <li class="w-full focus-within:z-10">
                                     <a
                                         @click.prevent="gateway_mode = 'payment_gateway'; form.currency = 0"
@@ -96,7 +102,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                         class="inline-block w-full p-2 border-r-0 border-gray-200 dark:border-gray-700 rounded-l-lg hover:text-gray-700 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:hover:text-white dark:hover:bg-gray-700"
                                         :class="gateway_mode === 'payment_gateway' ? 'text-gray-900 bg-gray-200 border-r rounded-s-lg dark:bg-gray-700 dark:text-white' : 'bg-white dark:bg-gray-800'"
                                     >
-                                        Платежный метод
+                                        Метод
                                     </a>
                                 </li>
                                 <li class="w-full focus-within:z-10">
@@ -195,6 +201,18 @@ defineOptions({ layout: AuthenticatedLayout })
                                 </a>
                             </li>
                         </ul>
+                        <div class="block sm:hidden">
+                            <Select
+                                id="payment_detail_type"
+                                v-model="form.payment_detail_type"
+                                :items="detail_types"
+                                key="id"
+                                value="id"
+                                name="name"
+                                default_title="Выберите тип реквизитов"
+                                @change="detail_type_mode = $event.target.value"
+                            ></Select>
+                        </div>
                     </div>
 
                     <div>

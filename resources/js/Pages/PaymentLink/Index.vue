@@ -172,13 +172,13 @@ const initializeClock = () => {
     var timeinterval = setInterval(updateClock, 1000);
 }
 
-initializeClock();
+//initializeClock();
 
-const checkPaid = () => {
+/*const checkPaid = () => {
     setInterval(async () => {
         router.reload({ only: ['data'] })
     }, 5000);
-}
+}*/
 
 router.on('success', (event) => {
     setData();
@@ -238,7 +238,7 @@ defineOptions({ layout: PaymentLayout });
         <div
             class="w-full sm:max-w-md m-8"
         >
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center px-2 sm:px-0">
                 <h2 class="text-xl font-medium text-gray-900 dark:text-white sm:text-2xl">{{ data.name }}</h2>
                 <button
                     v-show="data.payment_link"
@@ -260,7 +260,7 @@ defineOptions({ layout: PaymentLayout });
                 </button>
             </div>
 
-            <div class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+            <div class="sm:mx-0 mx-2 bg-gray-200 dark:bg-gray-700 rounded-xl">
                 <div class="flex justify-between mt-3 w-full px-6 py-5 text-sm text-gray-800 bg-white dark:bg-gray-800 rounded-xl dark:text-gray-300">
                     <div>
                         <div class="text-gray-900 dark:text-gray-200 text-2xl">{{ data.amount_formated }}{{ data.currency_symbol }}</div>
@@ -279,17 +279,17 @@ defineOptions({ layout: PaymentLayout });
                 </div>
             </div>
 
-            <div class="mt-4 px-6 py-4 bg-white dark:bg-gray-800 overflow-hidden sm:rounded-xl">
+            <div class="sm:mx-0 mx-2 mt-4 sm:px-6 px-3 py-4 bg-white dark:bg-gray-800 overflow-hidden rounded-xl">
                 <div>
-                    <div v-if="stage === 'payment'" class="pb-3">
+                    <div v-if="stage === 'payment'" class="sm:pb-3">
                         <div
                             v-if="data.sub_payment_gateway"
-                            class="flex text-2xl text-gray-900 dark:text-gray-200"
+                            class="flex items-center sm:text-2xl text-xl text-gray-900 dark:text-gray-200 sm:mb-0 mb-3"
                         >
                             <img src="/images/sbp.svg" class="mr-2 w-8 h-8">
                             Быстрая оплата или СБП
                         </div>
-                        <div v-if="data.detail_type === 'account_number'" class="flex items-center p-3 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
+                        <div v-if="data.detail_type === 'account_number'" class="flex items-center p-3 mb-4 sm:text-sm text-xs text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
                             <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                             </svg>
@@ -298,23 +298,23 @@ defineOptions({ layout: PaymentLayout });
                             </div>
                         </div>
 
-                        <div class="my-5 text-base space-y-2">
+                        <div class="sm:my-5 sm:text-base text-sm space-y-2">
                             <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
-                                <div class="flex text-gray-900 dark:text-gray-200">
+                                <div class="flex items-center text-gray-900 dark:text-gray-200 sm:text-base text-xs">
                                     <template v-if="data.detail_type === 'card'">
-                                        <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <svg class="mr-2 text-blue-500 sm:w-6 sm:h-6 w-5 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/>
                                         </svg>
                                         Номер карты
                                     </template>
                                     <template v-else-if="data.detail_type === 'phone'">
-                                        <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <svg class="mr-2 text-blue-500 sm:w-6 sm:h-6 w-5 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 15h12M6 6h12m-6 12h.01M7 21h10a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1Z"/>
                                         </svg>
                                         Номер телефона
                                     </template>
                                     <template v-else-if="data.detail_type === 'account_number'">
-                                        <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <svg class="mr-2 text-blue-500 sm:w-6 sm:h-6 w-5 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9h3m-3 3h3m-3 3h3m-6 1c-.306-.613-.933-1-1.618-1H7.618c-.685 0-1.312.387-1.618 1M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/>
                                         </svg>
                                         Номер счета
@@ -325,8 +325,8 @@ defineOptions({ layout: PaymentLayout });
                                 </div>
                             </div>
                             <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
-                                <div class="flex text-gray-900 dark:text-gray-200">
-                                    <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <div class="flex items-center text-gray-900 dark:text-gray-200 sm:text-base text-xs">
+                                    <svg class="mr-2 text-blue-500 sm:w-6 sm:h-6 w-5 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                                     </svg>
                                     <template v-if="data.detail_type === 'card'">
@@ -341,8 +341,8 @@ defineOptions({ layout: PaymentLayout });
                                 </div>
                             </div>
                             <div v-if="data.sub_payment_gateway" class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
-                                <div class="flex text-gray-900 dark:text-gray-200">
-                                    <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <div class="flex items-center text-gray-900 dark:text-gray-200 sm:text-base text-xs">
+                                    <svg class="mr-2 text-blue-500 sm:w-6 sm:h-6 w-5 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M3 21h18M4 18h16M6 10v8m4-8v8m4-8v8m4-8v8M4 9.5v-.955a1 1 0 0 1 .458-.84l7-4.52a1 1 0 0 1 1.084 0l7 4.52a1 1 0 0 1 .458.84V9.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5Z"/>
                                     </svg>
                                     Банк
@@ -352,8 +352,8 @@ defineOptions({ layout: PaymentLayout });
                                 </div>
                             </div>
                             <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
-                                <div class="flex text-gray-900 dark:text-gray-200">
-                                    <svg class="mr-2 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <div class="flex items-center text-gray-900 dark:text-gray-200 sm:text-base text-xs">
+                                    <svg class="mr-2 text-blue-500 sm:w-6 sm:h-6 w-5 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
                                     </svg>
                                     Сумма перевода
@@ -364,7 +364,7 @@ defineOptions({ layout: PaymentLayout });
                             </div>
                         </div>
 
-                        <div v-if="data.detail_type !== 'account_number'" class="flex items-center p-3 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
+                        <div v-if="data.detail_type !== 'account_number'" class="mt-3 sm:mt-0 flex items-center p-3 mb-4 sm:text-sm text-xs text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
                             <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                             </svg>
@@ -385,8 +385,8 @@ defineOptions({ layout: PaymentLayout });
                         </div>
                     </div>
 
-                    <div v-if="stage === 'success' || stage === 'fail'" class="py-1 pb-2">
-                        <div class="mt-5 mb-8 text-base flex justify-center">
+                    <div v-if="stage === 'success' || stage === 'fail'" class="py-1">
+                        <div class="mt-5 mb-5 text-base flex justify-center">
                             <div class="w-2/3">
                                 <template v-if="stage === 'success'">
                                     <div class="flex items-center justify-center mb-2">
@@ -417,9 +417,8 @@ defineOptions({ layout: PaymentLayout });
                             </div>
                         </div>
 
-                        <div class="mt-5">
+                        <div class="mt-5" v-show="stage === 'success' && data.success_url">
                             <button
-                                v-show="stage === 'success' && data.success_url"
                                 @click.prevent="openSuccess"
                                 type="button"
                                 class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
@@ -468,8 +467,8 @@ defineOptions({ layout: PaymentLayout });
                         </form>
                     </div>
 
-                    <div v-if="stage === 'dispute_review'" class="py-1 pb-2">
-                        <div class="mt-5 mb-8 text-base flex justify-center">
+                    <div v-if="stage === 'dispute_review'" class="py-1">
+                        <div class="mt-5 mb-5 text-base flex justify-center">
                             <div class="w-2/3">
                                 <div class="flex items-center justify-center mb-2">
                                     <svg class="w-24 h-24 text-green-400 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -486,8 +485,8 @@ defineOptions({ layout: PaymentLayout });
                         </div>
                     </div>
 
-                    <div v-if="stage === 'dispute_canceled'" class="py-1 pb-2">
-                        <div class="mt-5 mb-8 text-base flex justify-center">
+                    <div v-if="stage === 'dispute_canceled'">
+                        <div class="mt-5 mb-5 text-base flex justify-center">
                             <div class="w-2/3">
                                 <div class="flex items-center justify-center mb-2">
                                     <svg class="w-24 h-24 text-red-500 dark:text-red-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -585,6 +584,8 @@ defineOptions({ layout: PaymentLayout });
                 <div @click="stage = 'payment'" :class="{'text-blue-500' : stage === 'payment'}">payment</div>
                 <div @click="stage = 'success'" :class="{'text-blue-500' : stage === 'success'}">success</div>
                 <div @click="stage = 'fail'" :class="{'text-blue-500' : stage === 'fail'}">fail</div>
+                <div @click="stage = 'dispute_review'" :class="{'text-blue-500' : stage === 'dispute_review'}">dispute_review</div>
+                <div @click="stage = 'dispute_canceled'" :class="{'text-blue-500' : stage === 'dispute_canceled'}">dispute_canceled</div>
             </div>-->
         </div>
     </div>

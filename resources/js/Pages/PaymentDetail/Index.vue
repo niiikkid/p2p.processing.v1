@@ -55,7 +55,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <HeadlessTableTd class="text-gray-900 dark:text-gray-200">
                                 <PaymentDetail :detail="payment_detail.detail" :type="payment_detail.detail_type"></PaymentDetail>
                             </HeadlessTableTd>
-                            <HeadlessTableTd v-if="viewStore.isMerchantViewMode" class="text-gray-900 dark:text-gray-200">
+                            <HeadlessTableTd v-if="viewStore.isAdminViewMode" class="text-gray-900 dark:text-gray-200">
                                 {{ payment_detail.owner_email }}
                             </HeadlessTableTd>
                             <HeadlessTableTd>

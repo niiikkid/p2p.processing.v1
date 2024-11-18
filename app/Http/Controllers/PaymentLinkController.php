@@ -21,7 +21,7 @@ class PaymentLinkController extends Controller
             'uuid' => $order->uuid,
             'name' => $order->merchant->name,
             'amount' => $order->amount->toBeauty(),
-            'amount_formated' => number_format($order->amount->toBeauty(), 0, ',', '.'),
+            'amount_formated' => number_format($order->amount->toBeauty(), 0, ',', ''),
             'currency_symbol' => $order->amount->getCurrency()->getSymbol(),
             'payment_link' => services()->settings()->getSupportLink(),
             'detail' => $order->paymentDetail->detail,

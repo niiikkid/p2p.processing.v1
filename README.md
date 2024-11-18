@@ -26,8 +26,8 @@
   - npm run build
 - Очереди - используется базовая инструкция из документации ларавель.
   - https://laravel.com/docs/11.x/queues#supervisor-configuration
-  - команда: php artisan queue:work (работает в одном потоке)
-  - в системе есть только одна очередь - default.
+  - команда: php artisan queue:work --queue="default,callback,notification"
+  - можно по желанию установить Redis, Horizon и использовать QUEUE_CONNECTION=redis
 
 ### Кастомные параметры в .env
 - TELEGRAM_BOT_NAME
