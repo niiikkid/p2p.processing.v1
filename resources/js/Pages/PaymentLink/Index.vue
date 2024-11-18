@@ -284,12 +284,12 @@ defineOptions({ layout: PaymentLayout });
                     <div v-if="stage === 'payment'" class="sm:pb-3">
                         <div
                             v-if="data.sub_payment_gateway"
-                            class="flex text-2xl text-gray-900 dark:text-gray-200"
+                            class="flex items-center sm:text-2xl text-xl text-gray-900 dark:text-gray-200 sm:mb-0 mb-3"
                         >
                             <img src="/images/sbp.svg" class="mr-2 w-8 h-8">
                             Быстрая оплата или СБП
                         </div>
-                        <div v-if="data.detail_type === 'account_number'" class="flex items-center p-3 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
+                        <div v-if="data.detail_type === 'account_number'" class="flex items-center p-3 mb-4 sm:text-sm text-xs text-yellow-800 border border-yellow-300 rounded-xl bg-yellow-50 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800">
                             <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                             </svg>
@@ -298,7 +298,7 @@ defineOptions({ layout: PaymentLayout });
                             </div>
                         </div>
 
-                        <div class="sm:my-5 sm:text-base text-xs space-y-2">
+                        <div class="sm:my-5 sm:text-base text-sm space-y-2">
                             <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
                                 <div class="flex items-center text-gray-900 dark:text-gray-200 sm:text-base text-xs">
                                     <template v-if="data.detail_type === 'card'">
@@ -325,7 +325,7 @@ defineOptions({ layout: PaymentLayout });
                                 </div>
                             </div>
                             <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
-                                <div class="flex items-center text-gray-900 dark:text-gray-200">
+                                <div class="flex items-center text-gray-900 dark:text-gray-200 sm:text-base text-xs">
                                     <svg class="mr-2 text-blue-500 sm:w-6 sm:h-6 w-5 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                                     </svg>
@@ -341,7 +341,7 @@ defineOptions({ layout: PaymentLayout });
                                 </div>
                             </div>
                             <div v-if="data.sub_payment_gateway" class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
-                                <div class="flex items-center text-gray-900 dark:text-gray-200">
+                                <div class="flex items-center text-gray-900 dark:text-gray-200 sm:text-base text-xs">
                                     <svg class="mr-2 text-blue-500 sm:w-6 sm:h-6 w-5 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M3 21h18M4 18h16M6 10v8m4-8v8m4-8v8m4-8v8M4 9.5v-.955a1 1 0 0 1 .458-.84l7-4.52a1 1 0 0 1 1.084 0l7 4.52a1 1 0 0 1 .458.84V9.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5Z"/>
                                     </svg>
@@ -352,7 +352,7 @@ defineOptions({ layout: PaymentLayout });
                                 </div>
                             </div>
                             <div class="flex justify-between items-center border border-gray-200 dark:border-gray-600 rounded-xl p-3">
-                                <div class="flex items-center text-gray-900 dark:text-gray-200">
+                                <div class="flex items-center text-gray-900 dark:text-gray-200 sm:text-base text-xs">
                                     <svg class="mr-2 text-blue-500 sm:w-6 sm:h-6 w-5 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
                                     </svg>
