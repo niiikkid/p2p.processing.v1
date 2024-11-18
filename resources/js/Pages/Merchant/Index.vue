@@ -11,6 +11,11 @@ import HeadlessTableTr from "@/Components/HeadlesTable/HeadlessTableTr.vue";
 import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import {useViewStore} from "@/store/view.js";
+import IsActiveStatus from "@/Components/IsActiveStatus.vue";
+import EditAction from "@/Components/Table/EditAction.vue";
+import PaymentDetailLimit from "@/Components/PaymentDetailLimit.vue";
+import PaymentDetail from "@/Components/PaymentDetail.vue";
+import ShowAction from "@/Components/Table/ShowAction.vue";
 
 const viewStore = useViewStore();
 
@@ -33,8 +38,62 @@ defineOptions({ layout: AuthenticatedLayout })
                 </div>
             </template>
             <template v-slot:body>
-                <div class="relative overflow-x-auto" v-if="viewStore.isAdminViewMode">
-                    <HeadllesTable>
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg" v-if="viewStore.isAdminViewMode">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">
+                                    ID
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Название
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Владелец
+                                </th>
+                                <th scope="col" class="px-6 py-3" v-if="viewStore.isAdminViewMode">
+                                    Статус
+                                </th>
+                                <th scope="col" class="px-6 py-3 flex justify-center">
+                                    <span class="sr-only">Действия</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="merchant in merchants.data" class="bg-white border-b last:border-none dark:bg-gray-800 dark:border-gray-700">
+                            <th scope="row" class="px-6 py-3 font-medium whitespace-nowrap text-gray-900 dark:text-gray-200">
+                                {{ merchant.id }}
+                            </th>
+                            <td class="px-6 py-3">
+                               <div class="text-gray-900 dark:text-gray-200">{{merchant.name}}</div>
+                                <div class="text-gray-400 dark:text-gray-500 text-xs">{{merchant.domain}}</div>
+                            </td>
+                            <td class="px-6 py-3 text-gray-900 dark:text-gray-200">
+                                {{merchant.owner.email}}
+                            </td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center text-nowrap text-gray-900 dark:text-gray-200">
+                                    <template v-if="! merchant.validated_at">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-yellow-400 dark:bg-yellow-500 me-2"></div> На модерации
+                                    </template>
+                                    <template v-else-if="merchant.banned_at">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-red-500 dark:bg-red-500 me-2"></div> Заблокирован
+                                    </template>
+                                    <template v-else-if="merchant.active">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-green-400 dark:bg-green-500 me-2"></div> Включен
+                                    </template>
+                                    <template v-else>
+                                        <div class="h-2.5 w-2.5 rounded-full bg-red-500 dark:bg-red-500 me-2"></div> Выключен
+                                    </template>
+                                </div>
+                            </td>
+                            <td class="px-6 py-3 text-right">
+                                <ShowAction :link="route('admin.merchants.show', merchant.id)"></ShowAction>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+<!--                    <HeadllesTable>
                         <HeadlessTableTr
                             v-for="merchant in merchants.data"
                             @click="router.visit(route('admin.merchants.show', merchant.id))"
@@ -63,7 +122,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 </div>
                             </HeadlessTableTd>
                         </HeadlessTableTr>
-                    </HeadllesTable>
+                    </HeadllesTable>-->
                 </div>
 
                 <section v-if="viewStore.isMerchantViewMode" class="antialiased dark:bg-gray-900">
