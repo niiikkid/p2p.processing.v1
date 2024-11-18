@@ -20,6 +20,7 @@ class SendTelegramNotificationJob implements ShouldQueue
         private Notification $notification,
     )
     {
+        $this->onQueue('notification');
         $this->afterCommit();
     }
 

@@ -20,6 +20,7 @@ class SendOrderCallbackJob implements ShouldQueue
         private Order $order,
     )
     {
+        $this->onQueue('callback');
         $this->afterCommit();
     }
 
