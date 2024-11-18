@@ -45,6 +45,8 @@ class PaymentDetailController extends Controller
 
     public function edit(PaymentDetail $paymentDetail)
     {
+        $paymentDetail->load(['user', 'paymentGateway']);
+
         Gate::authorize('access-to-payment-detail', $paymentDetail);
 
         $paymentDetail->load('paymentGateway');
