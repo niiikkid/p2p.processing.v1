@@ -13,8 +13,6 @@ import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import {useViewStore} from "@/store/view.js";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
-import DateTime from "@/Components/DateTime.vue";
-import OrderStatus from "@/Components/OrderStatus.vue";
 
 const viewStore = useViewStore();
 const payment_details = usePage().props.paymentDetails;
@@ -59,7 +57,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <th scope="col" class="px-6 py-3" v-if="viewStore.isAdminViewMode">
                                     Трейдер
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3 text-nowrap">
                                     Дневной лимит
                                 </th>
                                 <th scope="col" class="px-6 py-3">
@@ -77,7 +75,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                     <div class="text-nowrap text-gray-900 dark:text-gray-200">
                                         {{ payment_detail.name }}
                                     </div>
-                                    <div class="text-nowrap text-gray-500 dark:text-gray-500">
+                                    <div class="text-nowrap text-xs">
                                         {{ payment_detail.payment_gateway_name }}
                                     </div>
                                 </td>
@@ -86,7 +84,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 </td>
                                 <td
                                     v-if="viewStore.isAdminViewMode"
-                                    class="px-6 py-3 font-medium text-gray-900 dark:text-gray-200"
+                                    class="px-6 py-3"
                                 >
                                     {{ payment_detail.owner_email }}
                                 </td>

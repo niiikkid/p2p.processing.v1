@@ -112,11 +112,11 @@ defineOptions({ layout: AuthenticatedLayout })
                                         :copyable="false"
                                         class="text-gray-900 dark:text-gray-200"
                                     ></PaymentDetail>
-                                    <div class="text-nowrap text-gray-500 dark:text-gray-500 text-xs">{{ dispute.payment_detail.name }}</div>
+                                    <div class="text-nowrap text-xs">{{ dispute.payment_detail.name }}</div>
                                 </td>
                                 <td class="px-6 py-3">
                                     <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ dispute.order.amount }} {{dispute.order.currency.toUpperCase()}}</div>
-                                    <div class="text-nowrap text-gray-500 dark:text-gray-500 text-xs">{{ dispute.order.profit }} {{dispute.order.base_currency.toUpperCase()}}</div>
+                                    <div class="text-nowrap text-xs">{{ dispute.order.profit }} {{dispute.order.base_currency.toUpperCase()}}</div>
                                 </td>
                                 <td class="px-6 py-3" v-if="viewStore.isAdminViewMode">
                                     {{ dispute.user.email }}

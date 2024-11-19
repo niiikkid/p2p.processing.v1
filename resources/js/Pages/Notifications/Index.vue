@@ -10,13 +10,9 @@ import DateTime from "@/Components/DateTime.vue";
 import {useModalStore} from "@/store/modal.js";
 import NotificationModal from "@/Modals/NotificationModal.vue";
 import ProgressNumber from "@/Components/ProgressNumber.vue";
-import {computed, ref} from "vue";
+import {ref} from "vue";
 import {useViewStore} from "@/store/view.js";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
-import IsActiveStatus from "@/Components/IsActiveStatus.vue";
-import EditAction from "@/Components/Table/EditAction.vue";
-import PaymentDetailLimit from "@/Components/PaymentDetailLimit.vue";
-import PaymentDetail from "@/Components/PaymentDetail.vue";
 import Pagination from "@/Components/Pagination/Pagination.vue";
 
 const modalStore = useModalStore();
@@ -28,14 +24,6 @@ const notifications = usePage().props.notifications;
 const form = useForm({
     message: '',
 });
-
-const submit = () => {
-    form
-        .post(route('admin.notifications.store'), {
-            preserveScroll: true,
-            onSuccess: () => form.reset(),
-        });
-};
 
 const openPage = (page) => {
     router.visit(route(route().current()), { data: {
@@ -113,10 +101,10 @@ defineOptions({ layout: AuthenticatedLayout })
                             <th scope="col" class="px-6 py-3">
                                 Сообщение
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 text-nowrap">
                                 Прогресс доставки
                             </th>
-                            <th scope="col" class="px-6 py-3 text-right">
+                            <th scope="col" class="px-6 py-3 text-right text-nowrap">
                                 Дата отправки
                             </th>
                         </tr>

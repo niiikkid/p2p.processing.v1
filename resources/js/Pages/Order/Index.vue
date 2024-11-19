@@ -100,7 +100,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 {{ order.id }}
                             </th>
                             <td class="px-6 py-3">
-                                <div class="text-nowrap">{{ order.amount }} {{ order.currency.toUpperCase() }}</div>
+                                <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.amount }} {{ order.currency.toUpperCase() }}</div>
                                 <div class="text-nowrap text-xs">{{ order.profit }} {{ order.base_currency.toUpperCase() }}</div>
                             </td>
                             <td class="px-6 py-3">
@@ -108,6 +108,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                     :detail="order.payment_detail"
                                     :type="order.payment_detail_type"
                                     :copyable="false"
+                                    class="text-gray-900 dark:text-gray-200"
                                 ></PaymentDetail>
                                 <div class="text-xs">{{ order.payment_detail_name }}</div>
                             </td>

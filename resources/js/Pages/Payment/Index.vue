@@ -62,7 +62,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <th scope="col" class="px-6 py-3">
                                 Статус
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 text-center">
                                 Создан
                             </th>
                             <th scope="col" class="px-6 py-3 flex justify-center">
@@ -75,12 +75,12 @@ defineOptions({ layout: AuthenticatedLayout })
                             <th scope="row" class="px-6 py-3 font-medium whitespace-nowrap text-gray-900 dark:text-gray-200">#{{ order.id }}</th>
                             <td class="px-6 py-3">
                                 <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.amount }} {{ order.currency.toUpperCase() }}</div>
-                                <div class="text-nowrap text-sm text-gray-500 dark:text-gray-400">{{ order.profit }} {{ order.base_currency.toUpperCase() }}</div>
+                                <div class="text-nowrap text-xs">{{ order.profit }} {{ order.base_currency.toUpperCase() }}</div>
                             </td>
                             <td class="px-6 py-3">
-                                <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.merchant_profit }} {{ order.base_currency.toUpperCase() }}</div>
+                                <div class="text-nowrap">{{ order.merchant_profit }} {{ order.base_currency.toUpperCase() }}</div>
                             </td>
-                            <td class="px-6 py-3 font-medium text-gray-900 dark:text-gray-200">
+                            <td class="px-6 py-3">
                                 {{ order.service_commission_amount_total }} {{ order.base_currency.toUpperCase() }}
                             </td>
                             <td class="px-6 py-3">

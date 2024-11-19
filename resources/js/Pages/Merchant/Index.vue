@@ -69,14 +69,14 @@ defineOptions({ layout: AuthenticatedLayout })
                             </th>
                             <td class="px-6 py-3">
                                <div class="text-gray-900 dark:text-gray-200">{{merchant.name}}</div>
-                                <div class="text-gray-400 dark:text-gray-500 text-xs">{{merchant.domain}}</div>
+                                <div class="text-xs">{{merchant.domain}}</div>
                             </td>
-                            <td class="px-6 py-3 text-gray-900 dark:text-gray-200">
+                            <td class="px-6 py-3">
                                 {{merchant.owner.email}}
                             </td>
                             <td class="px-6 py-3">
-                                <div class="flex items-center text-nowrap text-gray-900 dark:text-gray-200">
-                                    <template v-if="! merchant.validated_at">
+                                <div class="flex items-center text-nowrap">
+                                    <template v-if="!merchant.validated_at">
                                         <div class="h-2.5 w-2.5 rounded-full bg-yellow-400 dark:bg-yellow-500 me-2"></div> На модерации
                                     </template>
                                     <template v-else-if="merchant.banned_at">
