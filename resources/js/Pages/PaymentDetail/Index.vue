@@ -1,9 +1,6 @@
 <script setup>
 import { Head, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import {
-    FwbButton,
-} from 'flowbite-vue'
 import { usePage } from '@inertiajs/vue3';
 import IsActiveStatus from "@/Components/IsActiveStatus.vue";
 import EditAction from "@/Components/Table/EditAction.vue";

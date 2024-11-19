@@ -1,14 +1,6 @@
 <script setup>
 import { Link, Head, router, usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import {
-    FwbTable,
-    FwbTableBody,
-    FwbTableCell,
-    FwbTableHead,
-    FwbTableHeadCell,
-    FwbTableRow
-} from 'flowbite-vue'
 import EditAction from "@/Components/Table/EditAction.vue";
 import MainTableSection from "@/Wrappers/MainTableSection.vue";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
@@ -39,21 +31,36 @@ defineOptions({ layout: AuthenticatedLayout })
                 />
             </template>
             <template v-slot:body>
-                <fwb-table>
-                    <fwb-table-head>
-                        <fwb-table-head-cell>ID</fwb-table-head-cell>
-                        <fwb-table-head-cell>Имя</fwb-table-head-cell>
-                        <fwb-table-head-cell>Почта</fwb-table-head-cell>
-                        <fwb-table-head-cell>Роль</fwb-table-head-cell>
-                        <fwb-table-head-cell>Создан</fwb-table-head-cell>
-                        <fwb-table-head-cell>
-                            <span class="sr-only">Действия</span>
-                        </fwb-table-head-cell>
-                    </fwb-table-head>
-                    <fwb-table-body>
-                        <fwb-table-row v-for="user in users.data">
-                            <fwb-table-cell>{{ user.id }}</fwb-table-cell>
-                            <fwb-table-cell>
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                ID
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Имя
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Почта
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Роль
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Создан
+                            </th>
+                            <th scope="col" class="px-6 py-3 flex justify-center">
+                                <span class="sr-only">Действия</span>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="user in users.data" class="bg-white border-b last:border-none dark:bg-gray-800 dark:border-gray-700">
+                            <th scope="row" class="px-6 py-3 font-medium whitespace-nowrap text-gray-900 dark:text-gray-200">
+                                {{ user.id }}
+                            </th>
+                            <td class="px-6 py-3 text-nowrap">
                                 <div class="inline-flex">
                                     <span>{{ user.name }}</span>
                                     <span
@@ -65,11 +72,17 @@ defineOptions({ layout: AuthenticatedLayout })
                                         </svg>
                                     </span>
                                 </div>
-                            </fwb-table-cell>
-                            <fwb-table-cell>{{ user.email }}</fwb-table-cell>
-                            <fwb-table-cell>{{ user.role.name }}</fwb-table-cell>
-                            <fwb-table-cell class="text-nowrap">{{ user.created_at }}</fwb-table-cell>
-                            <fwb-table-cell class="text-nowrap">
+                            </td>
+                            <td class="px-6 py-3">
+                                {{ user.email }}
+                            </td>
+                            <td class="px-6 py-3">
+                                {{ user.role.name }}
+                            </td>
+                            <td class="px-6 py-3 text-nowrap">
+                                {{ user.created_at }}
+                            </td>
+                            <td class="px-6 py-3 text-nowrap text-right">
                                 <Link
                                     :href="route('admin.users.wallet.index', user.id)"
                                     class="mr-2 px-0 py-0 text-yellow-400 hover:text-yellow-500 dark:text-yellow-500 dark:hover:text-yellow-600 inline-flex items-center hover:underline"
@@ -79,10 +92,11 @@ defineOptions({ layout: AuthenticatedLayout })
                                     </svg>
                                 </Link>
                                 <EditAction :link="route('admin.users.edit', user.id)"></EditAction>
-                            </fwb-table-cell>
-                        </fwb-table-row>
-                    </fwb-table-body>
-                </fwb-table>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </template>
         </MainTableSection>
     </div>
