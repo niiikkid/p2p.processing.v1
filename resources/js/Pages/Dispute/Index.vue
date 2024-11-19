@@ -80,11 +80,14 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <th scope="col" class="px-6 py-3">
                                     ID
                                 </th>
-                                <th scope="col" class="px-6 py-3">
-                                    Сумма
+                                <th scope="col" class="px-6 py-3 text-nowrap">
+                                    ID сделки
                                 </th>
                                 <th scope="col" class="px-6 py-3">
                                     Реквизит
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Сумма
                                 </th>
                                 <th scope="col" class="px-6 py-3" v-if="viewStore.isAdminViewMode">
                                     Трейдер
@@ -105,6 +108,9 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <th scope="row" class="px-6 py-3 font-medium whitespace-nowrap text-gray-900 dark:text-gray-200">
                                     {{ dispute.id }}
                                 </th>
+                                <td class="px-6 py-3">
+                                    {{ dispute.order.id }}
+                                </td>
                                 <td class="px-6 py-3">
                                     <PaymentDetail
                                         :detail="dispute.payment_detail.detail"
