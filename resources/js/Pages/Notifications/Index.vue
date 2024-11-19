@@ -7,7 +7,6 @@ import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import HeadlessTableTr from "@/Components/HeadlesTable/HeadlessTableTr.vue";
 import DateTime from "@/Components/DateTime.vue";
-import {FwbPagination} from "flowbite-vue";
 import {useModalStore} from "@/store/modal.js";
 import NotificationModal from "@/Modals/NotificationModal.vue";
 import ProgressNumber from "@/Components/ProgressNumber.vue";
@@ -18,6 +17,7 @@ import IsActiveStatus from "@/Components/IsActiveStatus.vue";
 import EditAction from "@/Components/Table/EditAction.vue";
 import PaymentDetailLimit from "@/Components/PaymentDetailLimit.vue";
 import PaymentDetail from "@/Components/PaymentDetail.vue";
+import Pagination from "@/Components/Pagination/Pagination.vue";
 
 const modalStore = useModalStore();
 const viewStore = useViewStore();
@@ -155,13 +155,13 @@ defineOptions({ layout: AuthenticatedLayout })
                     </HeadlessTableTr>
                 </HeadllesTable>
             </div>-->
-            <fwb-pagination
+            <Pagination
                 v-model="currentPage"
                 :total-items="notifications.meta.total"
                 previous-label="Назад" next-label="Вперед"
                 @page-changed="openPage"
                 :per-page="notifications.meta.per_page"
-            ></fwb-pagination>
+            ></Pagination>
         </div>
         <NotificationModal/>
     </div>

@@ -1,8 +1,8 @@
 <script setup>
-import {FwbPagination} from "flowbite-vue";
 import DateTime from "@/Components/DateTime.vue";
 import {usePage} from "@inertiajs/vue3";
 import {ref} from "vue";
+import Pagination from "@/Components/Pagination/Pagination.vue";
 
 const emit = defineEmits(['openPage']);
 
@@ -66,13 +66,13 @@ const currentPage = ref(orders?.meta?.current_page)
             </table>
         </div>
 
-        <fwb-pagination
+        <Pagination
             v-model="currentPage"
             :total-items="orders.meta.total"
             previous-label="Назад" next-label="Вперед"
             @page-changed="openPage"
             :per-page="orders.meta.per_page"
-        ></fwb-pagination>
+        ></Pagination>
     </div>
 </template>
 
