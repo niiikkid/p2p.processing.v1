@@ -2,7 +2,6 @@
 import {Head, router} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {
-    FwbButton,
     FwbTable,
     FwbTableBody,
     FwbTableCell,
@@ -30,11 +29,13 @@ defineOptions({ layout: AuthenticatedLayout })
             :data="payment_gateways"
         >
             <template v-slot:button>
-                <fwb-button
+                <button
                     @click="router.visit(route('admin.payment-gateways.create'))"
-                    color="default"
-                    class="hidden md:block"
-                >Создать метод</fwb-button>
+                    type="button"
+                    class="hidden md:block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                >
+                    Создать метод
+                </button>
                 <AddMobileIcon
                     @click="router.visit(route('admin.payment-gateways.create'))"
                 />

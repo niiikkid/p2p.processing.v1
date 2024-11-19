@@ -7,7 +7,7 @@ import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import HeadlessTableTr from "@/Components/HeadlesTable/HeadlessTableTr.vue";
 import DateTime from "@/Components/DateTime.vue";
-import {FwbButton, FwbPagination} from "flowbite-vue";
+import {FwbPagination} from "flowbite-vue";
 import {useModalStore} from "@/store/modal.js";
 import NotificationModal from "@/Modals/NotificationModal.vue";
 import ProgressNumber from "@/Components/ProgressNumber.vue";
@@ -91,10 +91,13 @@ defineOptions({ layout: AuthenticatedLayout })
             <div class="flex justify-between mb-3">
                 <h2 class="text:xl font-medium text-gray-900 dark:text-white sm:text-2xl">Отправленные уведомления</h2>
                 <div>
-                    <fwb-button
-                        @click="modalStore.openNotificationModal({})" color="default"
-                        class="hidden md:block"
-                    >Новое уведомление</fwb-button>
+                    <button
+                        @click="modalStore.openNotificationModal({})"
+                        type="button"
+                        class="hidden md:block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >
+                        Новое уведомление
+                    </button>
                     <AddMobileIcon
                         @click="modalStore.openNotificationModal({})" color="default"
                     />

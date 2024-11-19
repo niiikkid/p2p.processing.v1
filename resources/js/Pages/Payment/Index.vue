@@ -9,7 +9,6 @@ import OrderModal from "@/Modals/OrderModal.vue";
 import {useModalStore} from "@/store/modal.js";
 import DateTime from "@/Components/DateTime.vue";
 import {useViewStore} from "@/store/view.js";
-import {FwbButton} from "flowbite-vue";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
 
 const viewStore = useViewStore();
@@ -32,11 +31,13 @@ defineOptions({ layout: AuthenticatedLayout })
             :data="orders"
         >
             <template v-slot:button>
-                <fwb-button
+                <button
                     @click="router.visit(route('payments.create'))"
-                    color="default"
-                    class="hidden md:block"
-                >Создать платеж</fwb-button>
+                    type="button"
+                    class="hidden md:block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                >
+                    Создать платеж
+                </button>
                 <AddMobileIcon
                     @click="router.visit(route('payments.create'))"
                 />

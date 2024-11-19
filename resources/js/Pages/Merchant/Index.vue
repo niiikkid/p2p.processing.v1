@@ -1,9 +1,6 @@
 <script setup>
 import { Head, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import {
-    FwbButton,
-} from 'flowbite-vue'
 import { usePage } from '@inertiajs/vue3';
 import MainTableSection from "@/Wrappers/MainTableSection.vue";
 import HeadllesTable from "@/Components/HeadlesTable/HeadllesTable.vue";
@@ -34,7 +31,13 @@ defineOptions({ layout: AuthenticatedLayout })
         >
             <template v-slot:button>
                 <div v-if="viewStore.isMerchantViewMode">
-                    <fwb-button @click="router.visit(route('merchants.create'))" color="default">Создать мерчант</fwb-button>
+                    <button
+                        @click="router.visit(route('merchants.create'))"
+                        type="button"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >
+                        Создать мерчант
+                    </button>
                 </div>
             </template>
             <template v-slot:body>
