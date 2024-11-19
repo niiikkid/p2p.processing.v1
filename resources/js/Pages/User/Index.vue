@@ -76,7 +76,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <td class="px-6 py-3">
                                 {{ user.email }}
                             </td>
-                            <td class="px-6 py-3">
+                            <td class="px-6 py-3 text-nowrap">
                                 {{ user.role.name }}
                             </td>
                             <td class="px-6 py-3 text-nowrap">

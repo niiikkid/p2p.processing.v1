@@ -38,6 +38,9 @@ defineOptions({ layout: AuthenticatedLayout })
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-6 py-3">
+                                ID
+                            </th>
+                            <th scope="col" class="px-6 py-3">
                                 Название
                             </th>
                             <th scope="col" class="px-6 py-3">
@@ -46,10 +49,10 @@ defineOptions({ layout: AuthenticatedLayout })
                             <th scope="col" class="px-6 py-3">
                                 Валюта
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 text-nowrap">
                                 Мин/Макс лимит
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 text-nowrap">
                                 Комиссия %
                             </th>
                             <th scope="col" class="px-6 py-3">
@@ -66,8 +69,11 @@ defineOptions({ layout: AuthenticatedLayout })
                         <tbody>
                         <tr v-for="payment_gateway in payment_gateways.data" class="bg-white border-b last:border-none dark:bg-gray-800 dark:border-gray-700">
                             <th scope="row" class="px-6 py-3 font-medium whitespace-nowrap text-gray-900 dark:text-gray-200">
-                                {{ payment_gateway.name }}
+                                {{ payment_gateway.id }}
                             </th>
+                            <td class="px-6 py-3 text-nowrap">
+                                {{ payment_gateway.name }}
+                            </td>
                             <td class="px-6 py-3">
                                 {{ payment_gateway.code }}
                             </td>
