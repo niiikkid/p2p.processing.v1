@@ -199,7 +199,7 @@ defineOptions({ layout: AuthenticatedLayout })
                         v-model="form.daily_limit"
                         :form="form"
                         field="daily_limit"
-                        label="Лимит на объем операций в сутки"
+                        :label="'Лимит на объем операций в сутки (' +  currentPaymentGateway.currency?.toUpperCase() + ')'"
                     />
 
                     <InputBlock
