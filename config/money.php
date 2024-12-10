@@ -16,13 +16,6 @@ return [
             'symbol'              => '₸',
             'name'                => 'Казахстанский тенге',
         ],
-        'UZS' => [
-            'precision'           => 2,
-            'subunit'             => 100,
-            'base'                => false,
-            'symbol'              => 'Soʻm',
-            'name'                => 'Узбекский сум',
-        ],
         //base
         'USDT' => [
             'precision'           => 2,

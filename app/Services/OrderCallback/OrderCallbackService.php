@@ -18,11 +18,7 @@ class OrderCallbackService implements OrderCallbackServiceContract
             return;
         }
 
-        if ($order->is_h2h) {
-            $data = \App\Http\Resources\API\H2H\OrderResource::make($order)->resolve();
-        } else {
-            $data = \App\Http\Resources\API\Merchant\OrderResource::make($order)->resolve();
-        }
+        $data = \App\Http\Resources\API\Merchant\OrderResource::make($order)->resolve();
 
         $token = $order->merchant->user->api_access_token;
 

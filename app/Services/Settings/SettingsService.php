@@ -91,11 +91,6 @@ class SettingsService implements SettingsServiceContract
                     'payment_method' => null,
                     'ad_quantity' => 3,
                 ]))->toArray(),
-                Currency::UZS()->getCode() => (new CurrencyPriceParserSettings(...[
-                    'amount' => null,
-                    'payment_method' => null,
-                    'ad_quantity' => 3,
-                ]))->toArray(),
             ]),
         ]);
     }
