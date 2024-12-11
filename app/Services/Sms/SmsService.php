@@ -4,8 +4,10 @@ namespace App\Services\Sms;
 
 use App\Contracts\SmsServiceContract;
 use App\DTO\SMS\SmsDTO;
+use App\Enums\DetailType;
 use App\Enums\OrderStatus;
 use App\Exceptions\SmsServiceException;
+use App\Models\Order;
 use App\Models\SmsLog;
 use App\Services\Sms\Utils\Parser;
 
@@ -29,8 +31,17 @@ class SmsService implements SmsServiceContract
                 ->order()
                 ->findPendingMultiple($result->amount, $sms->user);
 
-            dump($result);
-            dd($orders->toArray());
+            if ($orders->count() <= 1) {
+                $order = $orders->first();
+            } else {
+                $orders = $orders->filter(function (Order $order) use ($result) {
+                    $lastDigits = substr($order->paymentDetail->detail, -4);
+
+                    return $lastDigits === $result->card_last_digits && $order->paymentDetail->detail_type->equals(DetailType::CARD);
+                });
+
+                $order = $orders->first();
+            }
         } else {
             $order = queries()
                 ->order()
