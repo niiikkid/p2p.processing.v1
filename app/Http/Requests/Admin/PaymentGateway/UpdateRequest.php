@@ -40,6 +40,7 @@ class UpdateRequest extends FormRequest
             'commission_rate' => ['required', 'numeric', 'min:0'],
             'service_commission_rate' => ['required', 'numeric', 'min:0'],
             'is_active' => ['required', 'boolean'],
+            'payment_confirmation_by_card_last_digits' => ['required', 'boolean'],
             'reservation_time' => ['required', 'integer', 'min:1'],
             'sms_senders' => ['nullable', 'array'],
             'sms_senders.*' => ['required', 'string'],
@@ -58,6 +59,7 @@ class UpdateRequest extends FormRequest
             'commission_rate' => __('комиссия трейдера'),
             'service_commission_rate' => __('комиссия сервиса'),
             'is_active' => __('активность'),
+            'payment_confirmation_by_card_last_digits' => __('подтверждение платежей по 4-м последним цифрам карты.'),
             'reservation_time' => __('время резервирования'),
             'sms_senders' => __('отправители смс/push'),
         ];

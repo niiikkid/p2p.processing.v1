@@ -22,7 +22,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property array $sms_senders
  * @property float $commission_rate
  * @property float $service_commission_rate
- * @property string $is_active
+ * @property boolean $is_active
+ * @property boolean $payment_confirmation_by_card_last_digits
  * @property int $reservation_time
  * @property array<int, DetailType> $detail_types
  * @property Collection<int, PaymentGateway> $sub_payment_gateways
@@ -45,6 +46,7 @@ class PaymentGateway extends Model
         'commission_rate',
         'service_commission_rate',
         'is_active',
+        'payment_confirmation_by_card_last_digits',
         'reservation_time',
         'detail_types',
         'sub_payment_gateways',

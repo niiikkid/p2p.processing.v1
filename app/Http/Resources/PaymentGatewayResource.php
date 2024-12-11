@@ -33,6 +33,7 @@ class PaymentGatewayResource extends JsonResource
             'commission_rate' => $this->commission_rate,
             'service_commission_rate' => $this->service_commission_rate,
             'is_active' => $this->is_active,
+            'payment_confirmation_by_card_last_digits' => $this->payment_confirmation_by_card_last_digits,
             'sms_parsers_count' => $this->whenHas('sms_parsers_count', $this->sms_parsers_count),
             'reservation_time' => $this->reservation_time,
         ];
