@@ -59,4 +59,21 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
             ->inRandomOrder()
             ->first();
     }
+
+    public function getCardConfirmableForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids): ?PaymentDetail
+    {
+        return PaymentDetail::query()
+            ->whereDoesntHave('orders', function (Builder $query) {
+                $query->where('status', OrderStatus::PENDING);
+            })
+            ->whereHas('user.wallet', function (Builder $query) use ($amount_usdt) {
+                $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
+            })
+            ->where('detail_type', DetailType::CARD)
+            ->whereIn('payment_gateway_id', $payment_gateway_ids)
+            ->active()
+            ->whereRaw("daily_limit - current_daily_limit >= {$amount->toUnits()}")
+            ->inRandomOrder()
+            ->first();
+    }
 }

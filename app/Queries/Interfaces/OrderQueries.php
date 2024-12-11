@@ -13,6 +13,11 @@ interface OrderQueries
 {
     public function findPending(Money $amount, User $user): ?Order;
 
+    /**
+     * @return Collection<int, Dispute>
+     */
+    public function findPendingMultiple(Money $amount, User $user): Collection;
+
     public function paginateForAdmin(): LengthAwarePaginator;
 
     public function paginateForUser(User $user): LengthAwarePaginator;

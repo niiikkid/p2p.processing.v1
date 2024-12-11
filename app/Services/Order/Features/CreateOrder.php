@@ -3,6 +3,7 @@
 namespace App\Services\Order\Features;
 
 use App\DTO\Order\OrderCreateDTO;
+use App\Enums\DetailType;
 use App\Enums\OrderStatus;
 use App\Enums\TransactionType;
 use App\Exceptions\OrderException;
@@ -138,14 +139,30 @@ class CreateOrder extends BaseFeature
         );
         $amount_usdt = $this->dto->amount->convert($base_conversion_price, Currency::USDT());
 
-        $paymentDetail = queries()
-            ->paymentDetail()
-            ->getForOrderCreate(
-                amount: $this->dto->amount,
-                amount_usdt: $amount_usdt,
-                payment_gateway_ids: $paymentGateways->pluck('id')->toArray(),
-                payment_detail_type: $this->dto->payment_detail_type
-            );
+        $lastDigitsProcessableGateways = $paymentGateways
+            ->filter(function (PaymentGateway $paymentGateway) {
+                return $paymentGateway->payment_confirmation_by_card_last_digits
+                    && in_array(DetailType::CARD, $paymentGateway->detail_types);
+            });
+
+        if ($this->dto->payment_detail_type?->equals(DetailType::CARD) && $lastDigitsProcessableGateways->isNotEmpty()) {
+            $paymentDetail = queries()
+                ->paymentDetail()
+                ->getCardConfirmableForOrderCreate(
+                    amount: $this->dto->amount,
+                    amount_usdt: $amount_usdt,
+                    payment_gateway_ids: $lastDigitsProcessableGateways->pluck('id')->toArray(),
+                );
+        } else {
+            $paymentDetail = queries()
+                ->paymentDetail()
+                ->getForOrderCreate(
+                    amount: $this->dto->amount,
+                    amount_usdt: $amount_usdt,
+                    payment_gateway_ids: $paymentGateways->pluck('id')->toArray(),
+                    payment_detail_type: $this->dto->payment_detail_type
+                );
+        }
 
         if (! $paymentDetail) {
             throw OrderException::make('Подходящие платежные реквизиты не найдены.');

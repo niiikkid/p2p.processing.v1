@@ -22,6 +22,18 @@ class OrderQueriesEloquent implements OrderQueries
             ->first();
     }
 
+    /**
+     * @return Collection<int, Dispute>
+     */
+    public function findPendingMultiple(Money $amount, User $user): Collection
+    {
+        return Order::where('amount', $amount->toUnits())
+            ->where('status', OrderStatus::PENDING)
+            ->where('currency', $amount->getCurrency()->getCode())
+            ->whereRelation('paymentDetail', 'user_id', $user->id)
+            ->get();
+    }
+
     public function paginateForAdmin(): LengthAwarePaginator
     {
         return Order::query()

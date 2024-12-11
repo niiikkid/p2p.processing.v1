@@ -12,6 +12,7 @@ use App\Models\Merchant;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Http as HttpClient;
 
 class OrderController extends Controller
 {
@@ -35,9 +36,12 @@ class OrderController extends Controller
         Gate::authorize('access-to-merchant', $merchant);
 
         try {
-            $order = make(OrderServiceContract::class)->create(
-                OrderCreateDTO::make($request->validated())
-            );
+            $order = cache()->lock('creating-order', 3)
+                ->block(5, function () use ($request) {
+                    return make(OrderServiceContract::class)->create(
+                        OrderCreateDTO::make($request->validated())
+                    );
+                });
 
             return response()->success(
                 OrderResource::make($order)

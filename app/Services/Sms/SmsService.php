@@ -24,9 +24,18 @@ class SmsService implements SmsServiceContract
             return;
         }
 
-        $order = queries()
-            ->order()
-            ->findPending($result->amount, $sms->user);
+        if ($result->paymentGateway->payment_confirmation_by_card_last_digits) {
+            $orders = queries()
+                ->order()
+                ->findPendingMultiple($result->amount, $sms->user);
+
+            dump($result);
+            dd($orders->toArray());
+        } else {
+            $order = queries()
+                ->order()
+                ->findPending($result->amount, $sms->user);
+        }
 
         if (! $order) {
             return;
