@@ -83,7 +83,7 @@ const orderPaymentLink = (payment_link) => {
                                     <p class="text-lg font-semibold text-gray-900 dark:text-gray-300 text-center">Платеж еще не поступил</p>
                                 </div>
                             </div>
-                            <div class="flex justify-end space-x-1.5 mb-3">
+                            <div v-if="viewStore.isAdminViewMode" class="flex justify-end space-x-1.5">
                                 <button
                                     @click.prevent="showUserSmsLogs(orderModal.params.order)"
                                     type="button"
@@ -94,6 +94,7 @@ const orderPaymentLink = (payment_link) => {
                                     </svg>
                                 </button>
                             </div>
+                            <div class="pb-3"></div>
                             <div class="space-y-4">
                                 <div class="space-y-2">
                                     <dl v-if="viewStore.isAdminViewMode" class="flex items-center justify-between gap-4">

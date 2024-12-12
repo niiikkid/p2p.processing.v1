@@ -1,5 +1,4 @@
 <script setup>
-
 import ModalBody from "@/Components/Modals/Components/ModalBody.vue";
 import Modal from "@/Components/Modals/Modal.vue";
 import ModalHeader from "@/Components/Modals/Components/ModalHeader.vue";
@@ -8,6 +7,9 @@ import { storeToRefs } from 'pinia'
 import { useModalStore } from "@/store/modal.js";
 import {ref, watch} from "vue";
 import Pagination from "@/Components/Pagination/Pagination.vue";
+import {useViewStore} from "@/store/view.js";
+
+const viewStore = useViewStore();
 
 const modalStore = useModalStore();
 const { userSmsLogsModal } = storeToRefs(modalStore);
@@ -57,7 +59,7 @@ const loadSmsLogs = (page) => {
             @close="close"
         />
         <ModalBody>
-            <div class="mx-auto space-y-6" v-if="smsLogs.data">
+            <div class="mx-auto space-y-6" v-if="smsLogs.data && viewStore.isAdminViewMode">
                 <div class="relative overflow-x-auto">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-separate border-spacing-y-3 rounded">
                         <tbody>
