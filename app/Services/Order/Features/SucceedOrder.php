@@ -22,11 +22,14 @@ class SucceedOrder extends BaseFeature
     {
         if ($this->order->status->equals(OrderStatus::PENDING)) {
             DB::transaction(function () {
+                $this->order->update([
+                    'status' => OrderStatus::SUCCESS,
+                    'finished_at' => now()
+                ]);
+
                 $current_daily_limit = $this->calcCurrentDailyLimit();
 
                 $this->order->paymentDetail->update([
-                    'status' => OrderStatus::SUCCESS,
-                    'finished_at' => now(),
                     'current_daily_limit' => $current_daily_limit
                 ]);
 
