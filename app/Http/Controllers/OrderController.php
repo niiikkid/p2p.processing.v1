@@ -17,7 +17,15 @@ class OrderController extends Controller
 
         $orders = OrderResource::collection($orders);
 
-        return Inertia::render('Order/Index', compact('orders'));
+        $orderStatuses = [];
+        foreach (OrderStatus::values() as $status) {
+            $orderStatuses[] = [
+                'name' => trans("order.status.{$status}"),
+                'value' => $status,
+            ];
+        }
+
+        return Inertia::render('Order/Index', compact('orders', 'orderStatuses'));
     }
 
     public function acceptOrder(Order $order)
