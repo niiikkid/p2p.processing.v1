@@ -21,7 +21,7 @@ interface OrderQueries
 
     public function paginateForAdmin(array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator;
 
-    public function paginateForUser(User $user): LengthAwarePaginator;
+    public function paginateForUser(User $user, array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator;
 
     public function paginateForMerchant(User $user): LengthAwarePaginator;
 

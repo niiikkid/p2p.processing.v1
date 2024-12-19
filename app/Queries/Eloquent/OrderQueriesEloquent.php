@@ -52,11 +52,20 @@ class OrderQueriesEloquent implements OrderQueries
             ->paginate(10);
     }
 
-    public function paginateForUser(User $user): LengthAwarePaginator
+    public function paginateForUser(User $user, array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator
     {
         return Order::query()
             ->whereRelation('paymentDetail', 'user_id', $user->id)
             ->with(['paymentDetail.subPaymentGateway', 'paymentGateway', 'smsLog', 'merchant', 'dispute'])
+            ->when(! empty($statuses), function ($query) use ($statuses) {
+                $query->whereIn('status', $statuses);
+            })
+            ->when($startDate, function ($query) use ($startDate) {
+                $query->whereDate('created_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query) use ($endDate) {
+                $query->whereDate('created_at', '<=', $endDate);
+            })
             ->orderByDesc('id')
             ->paginate(10);
     }
