@@ -11,7 +11,7 @@ import {useModalStore} from "@/store/modal.js";
 import DateTime from "@/Components/DateTime.vue";
 import {useViewStore} from "@/store/view.js";
 import ShowAction from "@/Components/Table/ShowAction.vue";
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {Datepicker} from 'flowbite-datepicker';
 
 const viewStore = useViewStore();
@@ -19,20 +19,17 @@ const modalStore = useModalStore();
 
 const orders = usePage().props.orders;
 const orderStatuses = ref(usePage().props.orderStatuses);
-const dateFilters = ref({
-    start: '',
-    end: '',
-});
+const currentFilters = ref(usePage().props.currentFilters);
 
 onMounted(() => {
     const startDateDatepickerElement = document.getElementById('start-date-datepicker')
     const endDateDatepickerElement = document.getElementById('end-date-datepicker')
 
     startDateDatepickerElement.addEventListener('changeDate', (e) => {
-        dateFilters.value.start = e.target.value;
+        currentFilters.value.startDate = e.target.value;
     });
     endDateDatepickerElement.addEventListener('changeDate', (e) => {
-        dateFilters.value.end = e.target.value;
+        currentFilters.value.endDate = e.target.value;
     });
 
     Datepicker.locales.ru = {
@@ -50,11 +47,19 @@ onMounted(() => {
 
     new Datepicker(startDateDatepickerElement, {
         language: 'ru',
-        format: 'dd/mm/yyyy'
+        format: 'dd/mm/yyyy',
     })
     new Datepicker(endDateDatepickerElement, {
         language: 'ru',
-        format: 'dd/mm/yyyy'
+        format: 'dd/mm/yyyy',
+    })
+})
+
+const orderStatusesSelected = computed(() => {
+    return orderStatuses.value.map(i => {
+        i.selected = currentFilters.value.statuses.includes(i.value);
+
+        return i;
     })
 })
 
@@ -63,8 +68,8 @@ const applyFilters = () => {
         data: {
             filters: {
                 statuses: orderStatuses.value.filter(o => o.selected).map(o => o.value).join(','),
-                start_date: dateFilters.value.start,
-                end_date: dateFilters.value.end,
+                start_date: currentFilters.value.startDate,
+                end_date: currentFilters.value.endDate,
             },
         },
         preserveScroll: true
@@ -82,7 +87,7 @@ defineOptions({ layout: AuthenticatedLayout })
             title="Сделки"
             :data="orders"
         >
-            <template v-slot:body>
+            <template v-slot:table-header>
                 <section class="bg-gray-50 dark:bg-gray-900 flex items-center mb-5">
                     <div class="mx-auto w-full">
                         <div class="relative bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
@@ -105,7 +110,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                             </h6>
                                             <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
                                                 <li
-                                                    v-for="orderStatus in orderStatuses"
+                                                    v-for="orderStatus in orderStatusesSelected"
                                                     class="flex items-center"
                                                 >
                                                     <input
@@ -135,6 +140,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                                 type="text"
                                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                 placeholder="Начальная дата"
+                                                :value="currentFilters.startDate"
                                             >
                                         </div>
                                         <span class="mx-4 text-gray-500">до</span>
@@ -150,6 +156,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                                 type="text"
                                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                 placeholder="Конечная дата"
+                                                :value="currentFilters.endDate"
                                             >
                                         </div>
                                     </div>
@@ -167,7 +174,8 @@ defineOptions({ layout: AuthenticatedLayout })
                         </div>
                     </div>
                 </section>
-
+            </template>
+            <template v-slot:body>
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

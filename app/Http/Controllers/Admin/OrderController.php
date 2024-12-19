@@ -5,14 +5,37 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
+use Carbon\Carbon;
 use Inertia\Inertia;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        dump(request()->all());
-        $orders = queries()->order()->paginateForAdmin();
+        $statuses = request()->input('filters.statuses', '');
+        $statuses = explode(',', $statuses);
+
+        foreach ($statuses as $key => $value) {
+            if (! OrderStatus::tryFrom($value)) {
+                unset($statuses[$key]);
+            }
+        }
+
+        $startDate = request()->input('filters.start_date');
+        if ($startDate) {
+            $startDate = Carbon::createFromFormat('d/m/Y', $startDate);
+        }
+
+        $endDate = request()->input('filters.end_date');
+        if ($endDate) {
+            $endDate = Carbon::createFromFormat('d/m/Y', $endDate);
+        }
+
+        if ($endDate?->lessThan($startDate)) {
+            $endDate = null;
+        }
+
+        $orders = queries()->order()->paginateForAdmin($statuses, $startDate, $endDate);
 
         $orders = OrderResource::collection($orders);
 
@@ -24,6 +47,12 @@ class OrderController extends Controller
             ];
         }
 
-        return Inertia::render('Order/Index', compact('orders', 'orderStatuses'));
+        $currentFilters = [
+            'statuses' => $statuses,
+            'startDate' => $startDate?->format('d/m/Y'),
+            'endDate' => $endDate?->format('d/m/Y'),
+        ];
+
+        return Inertia::render('Order/Index', compact('orders', 'orderStatuses', 'currentFilters'));
     }
 }

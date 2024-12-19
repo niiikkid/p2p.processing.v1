@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Queries\Interfaces\OrderQueries;
 use App\Services\Money\Money;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -34,10 +35,19 @@ class OrderQueriesEloquent implements OrderQueries
             ->get();
     }
 
-    public function paginateForAdmin(): LengthAwarePaginator
+    public function paginateForAdmin(array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator
     {
         return Order::query()
             ->with(['paymentDetail.subPaymentGateway', 'paymentGateway', 'smsLog', 'merchant', 'dispute'])
+            ->when(! empty($statuses), function ($query) use ($statuses) {
+                $query->whereIn('status', $statuses);
+            })
+            ->when($startDate, function ($query) use ($startDate) {
+                $query->whereDate('created_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query) use ($endDate) {
+                $query->whereDate('created_at', '<=', $endDate);
+            })
             ->orderByDesc('id')
             ->paginate(10);
     }
