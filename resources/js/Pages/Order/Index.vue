@@ -91,10 +91,10 @@ defineOptions({ layout: AuthenticatedLayout })
                 <section class="bg-gray-50 dark:bg-gray-900 flex items-center mb-5">
                     <div class="mx-auto w-full">
                         <div class="relative bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-                            <div class="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4">
-                                <div class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 gap-3 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
-                                    <div class="flex items-center w-full space-x-3 md:w-auto">
-                                        <button id="filterDropdownButton" data-dropdown-toggle="filterDropdown" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
+                            <div class="flex flex-col xl:items-center justify-between p-4 space-y-3 lg:flex-row lg:space-y-0 lg:space-x-4">
+                                <div class="xl:flex items-center gap-4 xl:space-y-0 space-y-3">
+                                    <div class="flex items-center w-full space-x-3 lg:w-auto">
+                                        <button id="filterDropdownButton" data-dropdown-toggle="filterDropdown" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg lg:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
                                             <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 h-4 mr-2 text-gray-400" viewbox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
                                             </svg>
@@ -127,8 +127,8 @@ defineOptions({ layout: AuthenticatedLayout })
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="flex items-center">
-                                        <div class="relative max-w-sm">
+                                    <div class="flex items-center gap-2">
+                                        <div class="relative lg:max-w-sm w-full">
                                             <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                                                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                                     <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
@@ -143,8 +143,8 @@ defineOptions({ layout: AuthenticatedLayout })
                                                 :value="currentFilters.startDate"
                                             >
                                         </div>
-                                        <span class="mx-4 text-gray-500">до</span>
-                                        <div class="relative max-w-sm">
+                                        <span class="hidden lg:block mx-4 text-gray-500">до</span>
+                                        <div class="relative lg:max-w-sm w-full">
                                             <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                                                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                                     <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
@@ -161,10 +161,10 @@ defineOptions({ layout: AuthenticatedLayout })
                                         </div>
                                     </div>
                                 </div>
-                                <div>
+                                <div class="flex items-center">
                                     <button
                                         type="button"
-                                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 h-[38px] dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                        class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 h-[38px] dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                                         @click.prevent="applyFilters"
                                     >
                                         Применить
