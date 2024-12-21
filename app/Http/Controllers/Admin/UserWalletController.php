@@ -16,8 +16,11 @@ use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Wallet;
 use App\Services\Money\Currency;
 use App\Services\Money\Money;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class UserWalletController extends Controller
@@ -54,7 +57,7 @@ class UserWalletController extends Controller
 
         $escrowOrders = Order::query()
             ->where('status', OrderStatus::PENDING)
-            ->whereRelation('paymentDetail', 'user_id', $wallet->user_id)
+            ->whereRelation('paymentDetail', 'user_id', $user->id)
             ->whereDoesntHave('dispute')
             ->get();
         $escrow_balance = Money::fromUnits(0, Currency::USDT());
@@ -74,7 +77,7 @@ class UserWalletController extends Controller
 
         $disputeOrders = Order::query()
             ->where('status', OrderStatus::PENDING)
-            ->whereRelation('paymentDetail', 'user_id', $wallet->user_id)
+            ->whereRelation('paymentDetail', 'user_id', $user->id)
             ->whereHas('dispute')
             ->get();
         $dispute_balance = Money::fromUnits(0, Currency::USDT());
@@ -134,5 +137,25 @@ class UserWalletController extends Controller
             amount: Money::fromPrecision($request->amount, Currency::USDT()),
             sourceType: InvoiceWithdrawalSourceType::from($request->source_type)
         );
+    }
+
+    public function resetTurnover(Request $request, User $user)
+    {
+        $request->validate([
+            'currency' => ['required', Rule::in(Currency::getAllCodes())],
+        ]);
+
+        $currency = $request->currency;
+
+        $payment_detail_turnovers = $user->meta->payment_detail_turnover;
+
+        $payment_detail_turnovers[$currency] = [
+            'primary' => 0,
+            'secondary' => 0,
+            'primary_currency' => Currency::USDT()->getCode(),
+            'secondary_currency' => $currency,
+        ];
+
+        $user->meta->update(['payment_detail_turnover' => $payment_detail_turnovers]);
     }
 }
