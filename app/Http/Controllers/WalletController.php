@@ -99,12 +99,29 @@ class WalletController extends Controller
         $dispute_balance_rub = $dispute_balance_rub->toBeauty();
         $disputes_count = $disputeOrders->count();
 
+        $user = $request->user();
+        $payment_detail_turnovers = $user->meta->payment_detail_turnover;
+
+        foreach (Currency::getAllCodes() as $currency) {
+            if (empty($payment_detail_turnovers[$currency])) {
+                $payment_detail_turnovers[$currency] = [
+                    'primary' => 0,
+                    'secondary' => 0,
+                    'primary_currency' => Currency::USDT()->getCode(),
+                    'secondary_currency' => $currency,
+                ];
+            }
+            $turn_over = $payment_detail_turnovers[$currency];
+            $payment_detail_turnovers[$currency]['primary'] = Money::fromUnits($turn_over['primary'], $turn_over['primary_currency'])->toBeauty();
+            $payment_detail_turnovers[$currency]['secondary'] = Money::fromUnits($turn_over['secondary'], $turn_over['secondary_currency'])->toBeauty();
+        }
+
         $wallet = WalletResource::make($wallet)->resolve();
         $invoices = InvoiceResource::collection($invoices);
         $transactions = TransactionResource::collection($transactions);
 
         $reserve_balance = services()->wallet()->getMaxReserveBalance();
 
-        return Inertia::render('Wallet/Index', compact('wallet', 'reserve_balance', 'invoices', 'transactions', 'total_trust_withdrawable_amount', 'total_merchant_withdrawable_amount', 'trust_locked_for_withdrawal', 'merchant_locked_for_withdrawal', 'escrow_balance', 'escrow_balance_rub', 'dispute_balance', 'dispute_balance_rub', 'orders_count', 'disputes_count'));
+        return Inertia::render('Wallet/Index', compact('wallet', 'reserve_balance', 'invoices', 'transactions', 'total_trust_withdrawable_amount', 'total_merchant_withdrawable_amount', 'trust_locked_for_withdrawal', 'merchant_locked_for_withdrawal', 'escrow_balance', 'escrow_balance_rub', 'dispute_balance', 'dispute_balance_rub', 'orders_count', 'disputes_count', 'payment_detail_turnovers'));
     }
 }
