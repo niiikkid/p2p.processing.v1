@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Enums\TransactionType;
 use App\Exceptions\OrderException;
 use App\Models\Order;
+use App\Services\Money\Money;
 
 class RollbackOrder extends BaseFeature
 {
@@ -33,6 +34,12 @@ class RollbackOrder extends BaseFeature
                     wallet: $this->order->merchant->user->wallet,
                     amount: $this->order->merchant_profit,
                 );
+
+                $current_daily_limit = $this->calcCurrentDailyLimit();
+
+                $this->order->paymentDetail->update([
+                    'current_daily_limit' => $current_daily_limit
+                ]);
             }
 
             $this->order->update([
@@ -44,5 +51,10 @@ class RollbackOrder extends BaseFeature
         }
 
         return true;
+    }
+
+    protected function calcCurrentDailyLimit(): Money
+    {
+        return $this->order->paymentDetail->current_daily_limit->sub($this->order->amount);
     }
 }

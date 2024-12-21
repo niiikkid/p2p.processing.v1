@@ -15,6 +15,7 @@ class UserObserver
         UserMeta::create([
             'service_commissions' => [],
             'user_id' => $user->id,
+            'payment_detail_turnover' => [],
         ]);
     }
 
