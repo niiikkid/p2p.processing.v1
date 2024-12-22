@@ -10,20 +10,33 @@ use App\Models\PaymentDetail;
 use App\Models\User;
 use App\Queries\Interfaces\PaymentDetailQueries;
 use App\Services\Money\Money;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class PaymentDetailQueriesEloquent implements PaymentDetailQueries
 {
-    public function paginateForAdmin(): LengthAwarePaginator
+    public function paginateForAdmin(?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator
     {
-        $res =  PaymentDetail::query()
+        return PaymentDetail::query()
             ->with(['paymentGateway', 'user'])
-            ->withSum(['orders as primary_turnover_amount' => function (Builder $query) {
+            ->withSum(['orders as primary_turnover_amount' => function (Builder $query)  use ($startDate, $endDate) {
                 $query->where('status', OrderStatus::SUCCESS);
+                $query->when($startDate, function ($query) use ($startDate) {
+                    $query->whereDate('created_at', '>=', $startDate);
+                });
+                $query->when($endDate, function ($query) use ($endDate) {
+                    $query->whereDate('created_at', '<=', $endDate);
+                });
             }], 'profit')
-            ->withSum(['orders as secondary_turnover_amount' => function (Builder $query) {
+            ->withSum(['orders as secondary_turnover_amount' => function (Builder $query) use ($startDate, $endDate) {
                 $query->where('status', OrderStatus::SUCCESS);
+                $query->when($startDate, function ($query) use ($startDate) {
+                    $query->whereDate('created_at', '>=', $startDate);
+                });
+                $query->when($endDate, function ($query) use ($endDate) {
+                    $query->whereDate('created_at', '<=', $endDate);
+                });
             }], 'amount')
             ->orderByDesc('id')
             ->withCasts([
@@ -31,20 +44,36 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
                 'secondary_turnover_amount' => BaseCurrencyMoneyCast::class
             ])
             ->paginate(10);
-            /*->get()
-            ->toArray();
-        dd($res);*/
-            //
-
-        return $res;
     }
 
-    public function paginateForUser(User $user): LengthAwarePaginator
+    public function paginateForUser(User $user, ?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator
     {
         return PaymentDetail::query()
             ->where('user_id', $user->id)
             ->with(['paymentGateway'])
+            ->withSum(['orders as primary_turnover_amount' => function (Builder $query)  use ($startDate, $endDate) {
+                $query->where('status', OrderStatus::SUCCESS);
+                $query->when($startDate, function ($query) use ($startDate) {
+                    $query->whereDate('created_at', '>=', $startDate);
+                });
+                $query->when($endDate, function ($query) use ($endDate) {
+                    $query->whereDate('created_at', '<=', $endDate);
+                });
+            }], 'profit')
+            ->withSum(['orders as secondary_turnover_amount' => function (Builder $query) use ($startDate, $endDate) {
+                $query->where('status', OrderStatus::SUCCESS);
+                $query->when($startDate, function ($query) use ($startDate) {
+                    $query->whereDate('created_at', '>=', $startDate);
+                });
+                $query->when($endDate, function ($query) use ($endDate) {
+                    $query->whereDate('created_at', '<=', $endDate);
+                });
+            }], 'amount')
             ->orderByDesc('id')
+            ->withCasts([
+                'primary_turnover_amount' => BaseCurrencyMoneyCast::class,
+                'secondary_turnover_amount' => BaseCurrencyMoneyCast::class
+            ])
             ->paginate(10);
     }
 

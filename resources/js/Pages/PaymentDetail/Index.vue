@@ -13,9 +13,58 @@ import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import {useViewStore} from "@/store/view.js";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
+import {onMounted, ref} from "vue";
+import {Datepicker} from "flowbite-datepicker";
 
 const viewStore = useViewStore();
 const payment_details = usePage().props.paymentDetails;
+const currentFilters = ref(usePage().props.currentFilters);
+
+onMounted(() => {
+    const startDateDatepickerElement = document.getElementById('start-date-datepicker')
+    const endDateDatepickerElement = document.getElementById('end-date-datepicker')
+
+    startDateDatepickerElement.addEventListener('changeDate', (e) => {
+        currentFilters.value.startDate = e.target.value;
+    });
+    endDateDatepickerElement.addEventListener('changeDate', (e) => {
+        currentFilters.value.endDate = e.target.value;
+    });
+
+    Datepicker.locales.ru = {
+        days: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
+        daysShort: ["Вск", "Пнд", "Втр", "Срд", "Чтв", "Птн", "Суб"],
+        daysMin: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+        months: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+        monthsShort: ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"],
+        today: "Сегодня",
+        clear: "Очистить",
+        format: "dd.mm.yyyy",
+        weekStart: 1,
+        monthsTitle: 'Месяцы'
+    };
+
+    new Datepicker(startDateDatepickerElement, {
+        language: 'ru',
+        format: 'dd/mm/yyyy',
+    })
+    new Datepicker(endDateDatepickerElement, {
+        language: 'ru',
+        format: 'dd/mm/yyyy',
+    })
+})
+
+const applyFilters = () => {
+    router.visit(route(route().current()), {
+        data: {
+            filters: {
+                start_date: currentFilters.value.startDate,
+                end_date: currentFilters.value.endDate,
+            },
+        },
+        preserveScroll: true
+    })
+}
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
@@ -39,6 +88,61 @@ defineOptions({ layout: AuthenticatedLayout })
                 <AddMobileIcon
                     @click="router.visit(route(viewStore.adminPrefix + 'payment-details.create'))"
                 />
+            </template>
+            <template v-slot:table-header>
+                <section class="bg-gray-50 dark:bg-gray-900 flex items-center mb-5">
+                    <div class="mx-auto w-full">
+                        <div class="relative bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+                            <div class="flex flex-col xl:items-center justify-between p-4 space-y-3 lg:flex-row lg:space-y-0 lg:space-x-4">
+                                <div class="xl:flex items-center gap-4 xl:space-y-0 space-y-3">
+                                    <div class="md:flex md:space-y-0 space-y-2 items-center gap-2">
+                                        <span class="md:mx-4 mx-0 text-gray-500 text-nowrap">Оборот за</span>
+                                        <div class="relative lg:max-w-sm w-full">
+                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                                                </svg>
+                                            </div>
+                                            <input
+                                                datepicker
+                                                id="start-date-datepicker"
+                                                type="text"
+                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                placeholder="Начальная дата"
+                                                :value="currentFilters.startDate"
+                                            >
+                                        </div>
+                                        <span class="hidden lg:block mx-4 text-gray-500">до</span>
+                                        <div class="relative lg:max-w-sm w-full">
+                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                                                </svg>
+                                            </div>
+                                            <input
+                                                datepicker
+                                                id="end-date-datepicker"
+                                                type="text"
+                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                placeholder="Конечная дата"
+                                                :value="currentFilters.endDate"
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <button
+                                        type="button"
+                                        class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 h-[38px] dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                        @click.prevent="applyFilters"
+                                    >
+                                        Применить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </template>
             <template v-slot:body>
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">

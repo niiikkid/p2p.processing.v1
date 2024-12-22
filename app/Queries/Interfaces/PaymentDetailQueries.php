@@ -6,13 +6,14 @@ use App\Enums\DetailType;
 use App\Models\PaymentDetail;
 use App\Models\User;
 use App\Services\Money\Money;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface PaymentDetailQueries
 {
-    public function paginateForAdmin(): LengthAwarePaginator;
+    public function paginateForAdmin(?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator;
 
-    public function paginateForUser(User $user): LengthAwarePaginator;
+    public function paginateForUser(User $user, ?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator;
 
     public function getForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids, ?DetailType $payment_detail_type = null): ?PaymentDetail;
 

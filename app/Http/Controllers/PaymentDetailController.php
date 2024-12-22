@@ -10,6 +10,7 @@ use App\Http\Resources\PaymentGatewayResource;
 use App\Models\PaymentDetail;
 use App\Models\PaymentGateway;
 use App\Services\Money\Money;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
@@ -17,11 +18,30 @@ class PaymentDetailController extends Controller
 {
     public function index()
     {
-        $paymentDetails = queries()->paymentDetail()->paginateForUser(auth()->user());
+        $startDate = request()->input('filters.start_date');
+        if ($startDate) {
+            $startDate = Carbon::createFromFormat('d/m/Y', $startDate);
+        }
+
+        $endDate = request()->input('filters.end_date');
+        if ($endDate) {
+            $endDate = Carbon::createFromFormat('d/m/Y', $endDate);
+        }
+
+        if ($endDate?->lessThan($startDate)) {
+            $endDate = null;
+        }
+
+        $currentFilters = [
+            'startDate' => $startDate?->format('d/m/Y'),
+            'endDate' => $endDate?->format('d/m/Y'),
+        ];
+
+        $paymentDetails = queries()->paymentDetail()->paginateForUser(auth()->user(), $startDate, $endDate);
 
         $paymentDetails = PaymentDetailResource::collection($paymentDetails);
 
-        return Inertia::render('PaymentDetail/Index', compact('paymentDetails'));
+        return Inertia::render('PaymentDetail/Index', compact('paymentDetails', 'currentFilters'));
     }
 
     public function create()
