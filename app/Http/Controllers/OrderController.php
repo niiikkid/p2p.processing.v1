@@ -33,7 +33,7 @@ class OrderController extends Controller
             $endDate = Carbon::createFromFormat('d/m/Y', $endDate);
         }
 
-        if ($endDate?->lessThan($startDate)) {
+        if ($startDate && $endDate?->lessThan($startDate)) {
             $endDate = null;
         }
 
