@@ -13,7 +13,7 @@ import HeadlessTableTh from "@/Components/HeadlesTable/HeadlessTableTh.vue";
 import HeadlessTableTd from "@/Components/HeadlesTable/HeadlessTableTd.vue";
 import {useViewStore} from "@/store/view.js";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {Datepicker} from "flowbite-datepicker";
 
 const viewStore = useViewStore();
@@ -54,6 +54,13 @@ onMounted(() => {
     })
 })
 
+const filters = computed(() => {
+    return {
+        start_date: currentFilters.value.startDate,
+        end_date: currentFilters.value.endDate,
+    }
+})
+
 const applyFilters = () => {
     router.visit(route(route().current()), {
         data: {
@@ -76,6 +83,7 @@ defineOptions({ layout: AuthenticatedLayout })
         <MainTableSection
             title="Реквизиты"
             :data="payment_details"
+            :query-date="{filters}"
         >
             <template v-slot:button>
                 <button

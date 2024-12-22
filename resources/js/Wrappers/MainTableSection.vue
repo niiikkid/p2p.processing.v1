@@ -11,6 +11,10 @@ const props = defineProps({
         type: Object,
         default: {}
     },
+    queryDate: {
+        type: Object,
+        default: {}
+    },
     paginate: {
         type: Boolean,
         default: true
@@ -18,9 +22,13 @@ const props = defineProps({
 });
 
 const openPage = (page) => {
-    router.visit(route(route().current()), { data: {
-            page
-        } })
+    console.log(props.queryDate);
+    router.visit(route(route().current()), {
+        data: {
+            page,
+            ...props.queryDate
+        }
+    })
 }
 
 const items = computed(() => {

@@ -63,14 +63,19 @@ const orderStatusesSelected = computed(() => {
     })
 })
 
+const filters = computed(() => {
+    return {
+        statuses: orderStatuses.value.filter(o => o.selected).map(o => o.value).join(','),
+        start_date: currentFilters.value.startDate,
+        end_date: currentFilters.value.endDate,
+    }
+})
+
 const applyFilters = () => {
     router.visit(route(route().current()), {
         data: {
-            filters: {
-                statuses: orderStatuses.value.filter(o => o.selected).map(o => o.value).join(','),
-                start_date: currentFilters.value.startDate,
-                end_date: currentFilters.value.endDate,
-            },
+            filters: filters.value,
+            page: 1
         },
         preserveScroll: true
     })
@@ -86,6 +91,7 @@ defineOptions({ layout: AuthenticatedLayout })
         <MainTableSection
             title="Сделки"
             :data="orders"
+            :query-date="{filters}"
         >
             <template v-slot:table-header>
                 <section class="bg-gray-50 dark:bg-gray-900 flex items-center mb-5">
