@@ -2,6 +2,8 @@
 
 namespace App\Queries\Eloquent;
 
+use App\Casts\BaseCurrencyMoneyCast;
+use App\Casts\MoneyCast;
 use App\Enums\DetailType;
 use App\Enums\OrderStatus;
 use App\Models\PaymentDetail;
@@ -15,10 +17,26 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
 {
     public function paginateForAdmin(): LengthAwarePaginator
     {
-        return PaymentDetail::query()
+        $res =  PaymentDetail::query()
             ->with(['paymentGateway', 'user'])
+            ->withSum(['orders as primary_turnover_amount' => function (Builder $query) {
+                $query->where('status', OrderStatus::SUCCESS);
+            }], 'profit')
+            ->withSum(['orders as secondary_turnover_amount' => function (Builder $query) {
+                $query->where('status', OrderStatus::SUCCESS);
+            }], 'amount')
             ->orderByDesc('id')
+            ->withCasts([
+                'primary_turnover_amount' => BaseCurrencyMoneyCast::class,
+                'secondary_turnover_amount' => BaseCurrencyMoneyCast::class
+            ])
             ->paginate(10);
+            /*->get()
+            ->toArray();
+        dd($res);*/
+            //
+
+        return $res;
     }
 
     public function paginateForUser(User $user): LengthAwarePaginator

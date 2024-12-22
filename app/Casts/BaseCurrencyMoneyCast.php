@@ -16,6 +16,9 @@ class BaseCurrencyMoneyCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
+        if ($value === null) {
+            $value = 0;
+        }
         return Money::fromUnits($value, Currency::USDT());
     }
 

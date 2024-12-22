@@ -60,6 +60,9 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <th scope="col" class="px-6 py-3 text-nowrap">
                                     Дневной лимит
                                 </th>
+                                <th scope="col" class="px-6 py-3 text-nowrap">
+                                    Оборот
+                                </th>
                                 <th scope="col" class="px-6 py-3">
                                     Статус
                                 </th>
@@ -90,6 +93,14 @@ defineOptions({ layout: AuthenticatedLayout })
                                 </td>
                                 <td class="px-6 py-3">
                                     <PaymentDetailLimit :current_daily_limit="payment_detail.current_daily_limit" :daily_limit="payment_detail.daily_limit"></PaymentDetailLimit>
+                                </td>
+                                <td class="px-6 py-3">
+                                    <div class="text-nowrap text-gray-900 dark:text-gray-200">
+                                        {{ payment_detail.secondary_turnover_amount }} {{ payment_detail.currency.toUpperCase() }}
+                                    </div>
+                                    <div class="text-nowrap text-xs">
+                                        {{ payment_detail.primary_turnover_amount }} {{ payment_detail.primary_currency.toUpperCase() }}
+                                    </div>
                                 </td>
                                 <td class="px-6 py-3">
                                     <IsActiveStatus :is_active="payment_detail.is_active"></IsActiveStatus>

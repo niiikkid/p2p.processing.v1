@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\PaymentDetail;
+use App\Services\Money\Currency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,6 +29,7 @@ class PaymentDetailResource extends JsonResource
             'daily_limit' => $this->daily_limit->toBeauty(),
             'current_daily_limit' => $this->current_daily_limit->toBeauty(),
             'currency' => $this->currency->getCode(),
+            'primary_currency' => Currency::USDT()->getCode(),
             'payment_gateway_id' => $this->payment_gateway_id,
             'sub_payment_gateway_id' => $this->sub_payment_gateway_id,
             'created_at' => $this->created_at->toDateString(),
@@ -42,6 +44,8 @@ class PaymentDetailResource extends JsonResource
                     'payment_gateway_name' => $this->paymentGateway->name_with_currency,
                 ];
             }),
+            'primary_turnover_amount' => $this->when($this->primary_turnover_amount, $this->primary_turnover_amount?->toBeauty()),
+            'secondary_turnover_amount' => $this->when($this->secondary_turnover_amount, $this->secondary_turnover_amount?->toBeauty()),
         ];
     }
 }
