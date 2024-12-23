@@ -8,7 +8,7 @@ import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
 const viewStore = useViewStore();
 const modalStore = useModalStore();
 
-const user = usePage().props.auth.user;
+const user = usePage().props.user;
 const turnovers = usePage().props.payment_detail_turnovers;
 const selectedTurnover = ref(Object.keys(turnovers)[0]);
 
