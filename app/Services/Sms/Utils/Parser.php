@@ -13,6 +13,8 @@ class Parser
 {
     public function parse(string $sender, string $message): ?ParserResultValue
     {
+        $message = str_replace("\u{A0}", ' ', $message);
+
         $smsParsers = $this->getParsers();
 
         $result = null;
