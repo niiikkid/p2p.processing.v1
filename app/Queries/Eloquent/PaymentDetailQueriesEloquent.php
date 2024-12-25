@@ -6,6 +6,7 @@ use App\Casts\BaseCurrencyMoneyCast;
 use App\Casts\MoneyCast;
 use App\Enums\DetailType;
 use App\Enums\OrderStatus;
+use App\Models\Merchant;
 use App\Models\PaymentDetail;
 use App\Models\User;
 use App\Queries\Interfaces\PaymentDetailQueries;
@@ -77,7 +78,7 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
             ->paginate(10);
     }
 
-    public function getForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids, ?DetailType $payment_detail_type = null): ?PaymentDetail
+    public function getForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids, ?DetailType $payment_detail_type = null, ?Merchant $merchant = null): ?PaymentDetail
     {
         $users_ids = PaymentDetail::whereHas('orders', function (Builder $query) use ($amount) {
             $query->where('status', OrderStatus::PENDING);
@@ -99,6 +100,10 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
             ->when($payment_detail_type, function (Builder $query) use ($payment_detail_type) {
                 $query->where('detail_type', $payment_detail_type);
             })
+            ->when($merchant, function (Builder $query) use ($merchant) {
+                $query->whereDoesntHave('user.personalMerchants');
+                $query->orWhereRelation('user.personalMerchants', 'id', $merchant->id);
+            })
             ->whereIn('payment_gateway_id', $payment_gateway_ids)
             ->active()
             ->whereRaw("daily_limit - current_daily_limit >= {$amount->toUnits()}")
@@ -107,7 +112,7 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
             ->first();
     }
 
-    public function getCardConfirmableForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids): ?PaymentDetail
+    public function getCardConfirmableForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids, ?Merchant $merchant = null): ?PaymentDetail
     {
         $users_ids = PaymentDetail::whereHas('orders', function (Builder $query) use ($amount) {
             $query->where('status', OrderStatus::PENDING);
@@ -124,6 +129,10 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
             })
             ->whereHas('user.wallet', function (Builder $query) use ($amount_usdt) {
                 $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
+            })
+            ->when($merchant, function (Builder $query) use ($merchant) {
+                $query->whereDoesntHave('user.personalMerchants');
+                $query->orWhereRelation('user.personalMerchants', 'id', $merchant->id);
             })
             ->where('detail_type', DetailType::CARD)
             ->whereIn('payment_gateway_id', $payment_gateway_ids)

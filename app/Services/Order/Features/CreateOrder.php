@@ -38,7 +38,7 @@ class CreateOrder extends BaseFeature
          * @var PaymentGateway $paymentGateway
          * @var PaymentDetail $paymentDetail
          */
-        list($paymentGateway, $paymentDetail) = $this->getPaymentGatewayAndDetail();
+        list($paymentGateway, $paymentDetail) = $this->getPaymentGatewayAndDetail($merchant);
 
         //
 
@@ -116,7 +116,7 @@ class CreateOrder extends BaseFeature
     /**
      * @throws OrderException
      */
-    protected function getPaymentGatewayAndDetail(): array
+    protected function getPaymentGatewayAndDetail(Merchant $merchant): array
     {
         if ($this->dto->payment_gateway) {
             $paymentGateways = queries()
@@ -152,6 +152,7 @@ class CreateOrder extends BaseFeature
                     amount: $this->dto->amount,
                     amount_usdt: $amount_usdt,
                     payment_gateway_ids: $lastDigitsProcessableGateways->pluck('id')->toArray(),
+                    merchant: $merchant,
                 );
         } else {
             $paymentDetail = queries()
@@ -160,7 +161,8 @@ class CreateOrder extends BaseFeature
                     amount: $this->dto->amount,
                     amount_usdt: $amount_usdt,
                     payment_gateway_ids: $paymentGateways->pluck('id')->toArray(),
-                    payment_detail_type: $this->dto->payment_detail_type
+                    payment_detail_type: $this->dto->payment_detail_type,
+                    merchant: $merchant,
                 );
         }
 
