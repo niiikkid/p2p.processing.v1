@@ -29,6 +29,11 @@ class UserResource extends JsonResource
                     'role' => RoleResource::make($this->roles[0])->resolve()
                 ];
             }),
+            $this->mergeWhen($this->resource->relationLoaded('personalMerchants'), function () {
+                return [
+                    'personal_merchants' => $this->personalMerchants?->pluck('id')?->toArray()
+                ];
+            }),
         ];
     }
 }

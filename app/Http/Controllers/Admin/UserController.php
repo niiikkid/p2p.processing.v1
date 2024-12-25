@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\StoreRequest;
 use App\Http\Requests\Admin\User\UpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Merchant;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -52,12 +53,16 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $user->load('roles');
+        $user->load('roles', 'personalMerchants');
         $roles = Role::all();
 
         $user = UserResource::make($user)->resolve();
 
-        return Inertia::render('User/Edit', compact('user', 'roles'));
+        $merchants = Merchant::with('user')->get()->transform(function ($merchant) {
+            return ['id' => $merchant->id, 'name' => $merchant->name.' ('.$merchant->user->email.')'];
+        });
+
+        return Inertia::render('User/Edit', compact('user', 'roles', 'merchants'));
     }
 
     public function update(UpdateRequest $request, User $user)
@@ -76,6 +81,8 @@ class UserController extends Controller
                 'is_active' => false
             ]);
         }
+
+        $user->personalMerchants()->sync($request->personal_merchants);
 
         return redirect()->route('admin.users.index');
     }

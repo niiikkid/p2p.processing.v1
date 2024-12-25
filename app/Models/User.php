@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -22,6 +23,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $api_access_token
  * @property Collection<int, PaymentDetail> $paymentDetails
  * @property Collection<int, SmsLog> $smsLogs
+ * @property Collection<int, Merchant> $personalMerchants
  * @property Wallet $wallet
  * @property Telegram $telegram
  * @property UserMeta $meta
@@ -95,5 +97,10 @@ class User extends Authenticatable
     public function meta(): HasOne
     {
         return $this->hasOne(UserMeta::class);
+    }
+
+    public function personalMerchants(): BelongsToMany
+    {
+        return $this->belongsToMany(Merchant::class, 'merchant_user', 'user_id', 'merchant_id');
     }
 }

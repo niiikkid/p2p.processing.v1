@@ -30,6 +30,8 @@ class UpdateRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'role_id' => ['required', 'integer', 'exists:roles,id'],
             'banned' => ['required', 'boolean'],
+            'personal_merchants' => ['nullable', 'array'],
+            'personal_merchants.*' => ['nullable', 'integer', 'exists:merchants,id'],
         ];
     }
 
@@ -37,6 +39,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'role_id' => __('роль'),
+            'personal_merchants' => __('мерчанты'),
         ];
     }
 }

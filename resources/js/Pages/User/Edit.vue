@@ -7,22 +7,59 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TextInput from "@/Components/TextInput.vue";
 import GoBackButton from "@/Components/GoBackButton.vue";
 import Select from "@/Components/Select.vue";
+import {computed, onMounted, ref} from "vue";
 
 const user = usePage().props.user;
 const roles = usePage().props.roles;
+const merchants = usePage().props.merchants;
 
 const form = useForm({
     name: user.name,
     email: user.email,
     role_id: user.role.id,
     banned: user.banned_at ? true : false,
+    personal_merchants: user.personal_merchants ?? [],
 });
+
+const selectedMerchant = ref(0);
+
 const submit = () => {
     form.patch(route('admin.users.update', user.id), {
         preserveScroll: true,
         onSuccess: () => form.reset(),
     });
 };
+
+const addMerchant = (merchant) => {
+    if (merchant === 0 || merchant === '0' || !merchant) {
+        return;
+    }
+
+    form.clearErrors('personal_merchants');
+
+    form.personal_merchants = form.personal_merchants.filter(m => {
+        return m !== merchant;
+    });
+    form.personal_merchants.push(merchant);
+}
+
+const removeMerchant = (merchant) => {
+    form.personal_merchants = form.personal_merchants.filter(m => {
+        return m !== merchant.id;
+    });
+}
+
+const selectedMerchants = computed(() => {
+    return merchants.filter(m => {
+        return form.personal_merchants.includes(m.id);
+    })
+});
+
+onMounted(() => {
+    form.personal_merchants.map((m) => {
+        addMerchant(m.id)
+    })
+})
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
@@ -118,6 +155,48 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                                 <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Заблокирован</span>
                             </label>
+                        </div>
+
+                        <div v-if="user.role.name === 'Trader' || user.role.name === 'Super Admin'">
+                            <InputLabel
+                                for="personal_merchants"
+                                value="Мерчанты"
+                                :error="!!form.errors.personal_merchants"
+                                class="mb-1"
+                            />
+
+                            <div class="flex justify-between gap-3">
+                                <Select
+                                    v-model="selectedMerchant"
+                                    :error="!!form.errors.personal_merchants"
+                                    :items="merchants"
+                                    key="id"
+                                    value="id"
+                                    name="name"
+                                    default_title="Выберите мерчант"
+                                    @change="form.clearErrors('personal_merchants')"
+                                ></Select>
+                                <button
+                                    @click.prevent="addMerchant(selectedMerchant)"
+                                    type="button"
+                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                >
+                                    Добавить
+                                </button>
+                            </div>
+
+                            <InputError class="mt-2" :message="form.errors.personal_merchants" />
+                            <div class="flex flex-wrap gap-3 mt-3">
+                                <span
+                                    v-for="merchant in selectedMerchants"
+                                    class="inline-flex items-center bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded-lg dark:bg-indigo-900 dark:text-indigo-300"
+                                >
+                                    {{ merchant.name }}
+                                    <svg @click="removeMerchant(merchant)" class="w-2.5 h-2.5 ml-1.5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                                    </svg>
+                                </span>
+                            </div>
                         </div>
 
 
