@@ -11,6 +11,7 @@ use App\Models\Merchant;
 use App\Models\Order;
 use App\Models\PaymentDetail;
 use App\Models\PaymentGateway;
+use App\Models\User;
 use App\Services\Money\Currency;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -31,8 +32,6 @@ class CreateOrder extends BaseFeature
         $merchant = queries()->merchant()->findByUUID($this->dto->merchant_uuid);
 
         $this->validateMerchant($merchant);
-
-
 
         /**
          * @var PaymentGateway $paymentGateway
@@ -65,7 +64,7 @@ class CreateOrder extends BaseFeature
 
         $expires_at = $this->getExpirationTime($paymentGateway);
 
-        $trader_commission_rate = $this->commissionRateBonus($paymentGateway->commission_rate);
+        $trader_commission_rate = $this->commissionRateBonus($paymentGateway, $paymentDetail->user);
 
         list($base_conversion_price, $conversion_price)
             = $this->calcConversionPrices($paymentGateway->currency, $trader_commission_rate);
@@ -189,8 +188,20 @@ class CreateOrder extends BaseFeature
     }
 
     //TODO refactoring
-    protected function commissionRateBonus(float $commission_rate): float
+    protected function commissionRateBonus(PaymentGateway $paymentGateway, User $trader): float
     {
+        $commission_rate = $paymentGateway->commission_rate;
+
+        $personalMarkup = array_filter($trader->meta->exchange_markup_rates, function ($value) use ($paymentGateway) {
+            return $value['id'] === $paymentGateway->id;
+        });
+
+        $personalMarkup = array_values($personalMarkup);
+
+        if (! empty($personalMarkup[0]['markup_rate'])) {
+            $commission_rate = (float)$personalMarkup[0]['markup_rate'];
+        }
+
         $primeTimeBonus = services()->settings()->getPrimeTimeBonus();
         $start = Carbon::createFromTimeString($primeTimeBonus->starts);
         $end = Carbon::createFromTimeString($primeTimeBonus->ends);
