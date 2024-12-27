@@ -34,6 +34,11 @@ class UserResource extends JsonResource
                     'personal_merchants' => $this->personalMerchants?->pluck('id')?->toArray()
                 ];
             }),
+            $this->mergeWhen($this->resource->relationLoaded('meta'), function () {
+                return [
+                    'exchange_markup_rates' => $this->meta->exchange_markup_rates
+                ];
+            }),
         ];
     }
 }

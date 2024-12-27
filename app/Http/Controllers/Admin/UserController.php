@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\User\StoreRequest;
 use App\Http\Requests\Admin\User\UpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Merchant;
+use App\Models\PaymentGateway;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -53,7 +54,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $user->load('roles', 'personalMerchants');
+        $user->load('roles', 'personalMerchants', 'meta');
         $roles = Role::all();
 
         $user = UserResource::make($user)->resolve();
@@ -62,7 +63,16 @@ class UserController extends Controller
             return ['id' => $merchant->id, 'name' => $merchant->name.' ('.$merchant->user->email.')'];
         });
 
-        return Inertia::render('User/Edit', compact('user', 'roles', 'merchants'));
+        $payoutGateways = PaymentGateway::all()
+            ->transform(function (PaymentGateway $gateway) {
+                return [
+                    'id' => $gateway->id,
+                    'name' => $gateway->name_with_currency,
+                    'markup_rate' => $gateway->commission_rate,
+                ];
+            })->toArray();
+
+        return Inertia::render('User/Edit', compact('user', 'roles', 'merchants', 'payoutGateways'));
     }
 
     public function update(UpdateRequest $request, User $user)
@@ -83,6 +93,10 @@ class UserController extends Controller
         }
 
         $user->personalMerchants()->sync($request->personal_merchants);
+
+        $user->meta->update([
+            'exchange_markup_rates' => $request->get('exchange_markup_rates', [])
+        ]);
 
         return redirect()->route('admin.users.index');
     }

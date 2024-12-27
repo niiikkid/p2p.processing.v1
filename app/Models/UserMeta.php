@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array $service_commissions
  * @property int $user_id
  * @property array $payment_detail_turnover
+ * @property array $exchange_markup_rates
  * @property User $user
  */
 class UserMeta extends Model
@@ -21,6 +22,7 @@ class UserMeta extends Model
         'service_commissions',
         'user_id',
         'payment_detail_turnover',
+        'exchange_markup_rates',
     ];
 
     public $timestamps = false;
@@ -28,6 +30,7 @@ class UserMeta extends Model
     protected $casts = [
         'service_commissions' => 'array',
         'payment_detail_turnover' => 'array',
+        'exchange_markup_rates' => 'array',
     ];
 
     public function user(): BelongsTo

@@ -32,6 +32,9 @@ class UpdateRequest extends FormRequest
             'banned' => ['required', 'boolean'],
             'personal_merchants' => ['nullable', 'array'],
             'personal_merchants.*' => ['nullable', 'integer', 'exists:merchants,id'],
+            'exchange_markup_rates' => ['nullable', 'array'],
+            'exchange_markup_rates.*.id' => ['required', 'integer', 'exists:payment_gateways,id'],
+            'exchange_markup_rates.*.markup_rate' => ['required', 'numeric', 'min:0', 'max:99'],
         ];
     }
 
@@ -40,6 +43,9 @@ class UpdateRequest extends FormRequest
         return [
             'role_id' => __('роль'),
             'personal_merchants' => __('мерчанты'),
+            'exchange_markup_rates' => __('персональная комиссия трейдера'),
+            'exchange_markup_rates.*.id' => __('комиссия'),
+            'exchange_markup_rates.*.markup_rate' => __('комиссия'),
         ];
     }
 }

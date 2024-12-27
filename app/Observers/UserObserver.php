@@ -16,6 +16,7 @@ class UserObserver
             'service_commissions' => [],
             'user_id' => $user->id,
             'payment_detail_turnover' => [],
+            'exchange_markup_rates' => [],
         ]);
     }
 

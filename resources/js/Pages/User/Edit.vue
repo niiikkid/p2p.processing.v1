@@ -12,6 +12,7 @@ import {computed, onMounted, ref} from "vue";
 const user = usePage().props.user;
 const roles = usePage().props.roles;
 const merchants = usePage().props.merchants;
+const payoutGateways = usePage().props.payoutGateways;
 
 const form = useForm({
     name: user.name,
@@ -19,15 +20,18 @@ const form = useForm({
     role_id: user.role.id,
     banned: user.banned_at ? true : false,
     personal_merchants: user.personal_merchants ?? [],
+    exchange_markup_rates: user.exchange_markup_rates ?? [],
 });
 
 const selectedMerchant = ref(0);
+const selectedGateway = ref(0);
 
 const submit = () => {
-    form.patch(route('admin.users.update', user.id), {
-        preserveScroll: true,
-        onSuccess: () => form.reset(),
-    });
+    form
+        .patch(route('admin.users.update', user.id), {
+            preserveScroll: true,
+            onSuccess: () => form.reset(),
+        });
 };
 
 const addMerchant = (merchant) => {
@@ -52,6 +56,40 @@ const removeMerchant = (merchant) => {
 const selectedMerchants = computed(() => {
     return merchants.filter(m => {
         return form.personal_merchants.includes(m.id);
+    })
+});
+
+const addGateway = (gateway) => {
+    if (gateway === 0 || gateway === '0' || !gateway) {
+        return;
+    }
+
+    form.clearErrors('exchange_markup_rates');
+
+    form.exchange_markup_rates = form.exchange_markup_rates.filter(g => {
+        return g.id !== gateway;
+    });
+    var g = payoutGateways.filter(g => {
+        return g.id === gateway;
+    })[0]
+
+    form.exchange_markup_rates.push({
+        'id': g.id,
+        'markup_rate': g.markup_rate,
+    });
+}
+
+const removeGateway = (gateway) => {
+    form.exchange_markup_rates = form.exchange_markup_rates.filter(g => {
+        return g.id !== gateway;
+    });
+}
+
+const selectedGateways = computed(() => {
+    return payoutGateways.filter(g => {
+        return form.exchange_markup_rates.map(g => {
+            return g.id;
+        }).includes(g.id);
     })
 });
 
@@ -196,6 +234,65 @@ defineOptions({ layout: AuthenticatedLayout })
                                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
                                     </svg>
                                 </span>
+                            </div>
+                        </div>
+
+                        <div v-if="user.role.name === 'Trader' || user.role.name === 'Super Admin'">
+                            <InputLabel
+                                for="exchange_markup_rates"
+                                value="Персональная комиссия трейдера %"
+                                :error="!!form.errors.exchange_markup_rates"
+                                class="mb-1"
+                            />
+
+                            <div class="flex justify-between gap-3">
+                                <Select
+                                    v-model="selectedGateway"
+                                    :error="!!form.errors.exchange_markup_rates"
+                                    :items="payoutGateways"
+                                    key="id"
+                                    value="id"
+                                    name="name"
+                                    default_title="Выберите метод"
+                                    @change="form.clearErrors('exchange_markup_rates')"
+                                ></Select>
+
+                                <button
+                                    @click.prevent="addGateway(selectedGateway)"
+                                    type="button"
+                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                >
+                                    Добавить
+                                </button>
+                            </div>
+
+                            <InputError class="mt-2" :message="form.errors.exchange_markup_rates" />
+                            <div class="flex flex-wrap gap-3 mt-3">
+                                <div class="grid md:grid-cols-2 grid-cols-1 gap-4 w-full">
+                                    <div
+                                        v-for="(gateway, index) in selectedGateways"
+                                    >
+                                        <label :for="`gateway-${gateway.id}`" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ gateway.name }}</label>
+                                        <div class="flex justify-between gap-3">
+                                            <input
+                                                :type="`gateway-${gateway.id}`"
+                                                id="small-input"
+                                                v-model="form.exchange_markup_rates[index].markup_rate"
+                                                class="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            >
+                                            <button
+                                                @click.prevent="removeGateway(gateway.id)"
+                                                type="button"
+                                                class="px-3 py-2 text-xs font-medium focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 rounded-lg dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                            >
+                                                <svg class="w-3 h-3 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <InputError class="mt-2" :message="form.errors[`exchange_markup_rates.${index}.markup_rate`]" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
