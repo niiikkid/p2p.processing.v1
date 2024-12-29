@@ -167,7 +167,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                             >
                                         </div>
                                     </div>
-                                    <div>
+                                    <div v-if="viewStore.isAdminViewMode">
                                         <input
                                             type="text"
                                             id="external_id"
@@ -211,10 +211,10 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <th scope="col" class="px-6 py-3">
                                     Статус
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-nowrap">
+                                <th scope="col" class="px-6 py-3 text-nowrap" v-if="viewStore.isAdminViewMode">
                                     Внешний ID
                                 </th>
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col" class="px-6 py-3 text-center">
                                     Создан
                                 </th>
                                 <th scope="col" class="px-6 py-3 flex justify-center">
@@ -246,7 +246,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <td class="px-6 py-3">
                                 <OrderStatus :status="order.status" :status_name="order.status_name"></OrderStatus>
                             </td>
-                            <td class="px-6 py-3">
+                            <td class="px-6 py-3" v-if="viewStore.isAdminViewMode">
                                 {{ order.external_id_trimmed  }}
                             </td>
                             <td class="px-6 py-3">
