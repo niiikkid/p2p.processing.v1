@@ -19,6 +19,13 @@ class OrderResource extends JsonResource
         /**
          * @var Order $this
          */
+
+        $external_id_trimmed = $this->external_id;
+        $parts = explode('-', $this->external_id);
+        if (count($parts) === 2) {
+            $external_id_trimmed = $parts[1];
+        }
+
         return [
             'id' => $this->id,
             'uuid' => $this->uuid,
@@ -42,6 +49,7 @@ class OrderResource extends JsonResource
             'base_currency' => Currency::USDT()->getCode(),
             'status' => $this->status->value,
             'status_name' => $this->status_name,
+            'external_id_trimmed' => $external_id_trimmed,
             'callback_url' => $this->callback_url,
             'is_h2h' => $this->is_h2h,
             'payment_gateway_code' => $this->paymentGateway->code,

@@ -68,6 +68,7 @@ const filters = computed(() => {
         statuses: orderStatuses.value.filter(o => o.selected).map(o => o.value).join(','),
         start_date: currentFilters.value.startDate,
         end_date: currentFilters.value.endDate,
+        external_id: currentFilters.value.externalID,
     }
 })
 
@@ -166,6 +167,15 @@ defineOptions({ layout: AuthenticatedLayout })
                                             >
                                         </div>
                                     </div>
+                                    <div>
+                                        <input
+                                            type="text"
+                                            id="external_id"
+                                            v-model="currentFilters.externalID"
+                                            placeholder="Внешний ID"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-[38px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        >
+                                    </div>
                                 </div>
                                 <div class="flex items-center">
                                     <button
@@ -201,6 +211,9 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <th scope="col" class="px-6 py-3">
                                     Статус
                                 </th>
+                                <th scope="col" class="px-6 py-3 text-nowrap">
+                                    Внешний ID
+                                </th>
                                 <th scope="col" class="px-6 py-3">
                                     Создан
                                 </th>
@@ -232,6 +245,9 @@ defineOptions({ layout: AuthenticatedLayout })
                             </td>
                             <td class="px-6 py-3">
                                 <OrderStatus :status="order.status" :status_name="order.status_name"></OrderStatus>
+                            </td>
+                            <td class="px-6 py-3">
+                                {{ order.external_id_trimmed  }}
                             </td>
                             <td class="px-6 py-3">
                                 <DateTime class="justify-center" :data="order.created_at"/>

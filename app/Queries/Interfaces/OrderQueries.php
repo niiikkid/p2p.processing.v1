@@ -19,7 +19,7 @@ interface OrderQueries
      */
     public function findPendingMultiple(Money $amount, User $user): Collection;
 
-    public function paginateForAdmin(array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator;
+    public function paginateForAdmin(array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null, ?string $externalID = null): LengthAwarePaginator;
 
     public function paginateForUser(User $user, array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator;
 
