@@ -8,6 +8,7 @@ import SuccessAction from "@/Components/Table/SuccessAction.vue";
 import FailAction from "@/Components/Table/FailAction.vue";
 import {useModalStore} from "@/store/modal.js";
 import ConfirmModal from "@/Components/Modals/ConfirmModal.vue";
+import CopyAddress from "@/Components/CopyAddress.vue";
 
 const modalStore = useModalStore();
 
@@ -69,6 +70,9 @@ defineOptions({ layout: AuthenticatedLayout })
                                 Пользователь
                             </th>
                             <th scope="col" class="px-6 py-3">
+                                Адрес
+                            </th>
+                            <th scope="col" class="px-6 py-3">
                                 Баланс
                             </th>
                             <th scope="col" class="px-6 py-3">
@@ -92,6 +96,9 @@ defineOptions({ layout: AuthenticatedLayout })
                             </td>
                             <td class="px-6 py-3">
                                 {{ invoice.user.email }}
+                            </td>
+                            <td class="px-6 py-3">
+                                <CopyAddress v-if="invoice.address" :text="invoice.address"></CopyAddress>
                             </td>
                             <td class="px-6 py-3">
                                 <span v-show="invoice.source_type === 'trust'">
