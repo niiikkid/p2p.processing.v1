@@ -19,8 +19,15 @@ const openPage = (page) => {
                 tab: activeTab.value
             },
         })
-    } else {
+    } else if (viewStore.isTraderViewMode) {
         router.visit(route('wallet.index'), {
+            data: {
+                page,
+                tab: activeTab.value
+            },
+        })
+    } else if (viewStore.isMerchantViewMode) {
+        router.visit(route('merchant.finances.index'), {
             data: {
                 page,
                 tab: activeTab.value

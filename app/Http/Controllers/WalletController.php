@@ -36,7 +36,7 @@ class WalletController extends Controller
             ->where('wallet_id', $wallet->id)
             ->where('source_type', $sourceType)
             ->orderByDesc('id')
-            ->paginate(10);
+            ->paginate(1);
         $transactions = Transaction::query()
             ->where('wallet_id', $wallet->id)
             ->orderByDesc('id')
