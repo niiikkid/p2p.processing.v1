@@ -16,7 +16,6 @@ use App\Services\Money\Money;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Http as HttpClient;
 
 class OrderController extends Controller
 {
@@ -48,8 +47,8 @@ class OrderController extends Controller
                     $paymentGateway = queries()->paymentGateway()->getByCode($request->payment_gateway);
 
                     $amount = Money::fromPrecision($request->amount, $paymentGateway->currency);
-                } else if (! empty($data['currency'])) {
-                    $amount = Money::fromPrecision($request->amount, $data['currency']);
+                } else if (! empty($request->currency)) {
+                    $amount = Money::fromPrecision($request->amount, $request->currency);
                 }
 
                 if (isset($amount)) {
