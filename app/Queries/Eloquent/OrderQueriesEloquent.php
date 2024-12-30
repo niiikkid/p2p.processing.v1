@@ -79,11 +79,14 @@ class OrderQueriesEloquent implements OrderQueries
             ->paginate(10);
     }
 
-    public function paginateForMerchant(User $user): LengthAwarePaginator
+    public function paginateForMerchant(User $user, ?string $uuid = null): LengthAwarePaginator
     {
         return Order::query()
             ->with(['paymentDetail.subPaymentGateway', 'paymentGateway', 'smsLog', 'merchant', 'dispute'])
             ->whereRelation('merchant', 'user_id', $user->id)
+            ->when($uuid, function ($query) use ($uuid) {
+                $query->where('uuid', 'LIKE', '%' . $uuid . '%');
+            })
             ->orderByDesc('id')
             ->paginate(10);
     }

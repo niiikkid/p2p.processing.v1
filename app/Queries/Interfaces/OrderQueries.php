@@ -23,7 +23,7 @@ interface OrderQueries
 
     public function paginateForUser(User $user, array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null, ?string $uuid = null): LengthAwarePaginator;
 
-    public function paginateForMerchant(User $user): LengthAwarePaginator;
+    public function paginateForMerchant(User $user, ?string $uuid = null): LengthAwarePaginator;
 
     /**
      * @return Collection<int, Dispute>

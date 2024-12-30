@@ -18,11 +18,16 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        $orders = queries()->order()->paginateForMerchant(auth()->user());
+        $uuid = request()->input('filters.uuid');
+        $orders = queries()->order()->paginateForMerchant(auth()->user(), $uuid);
 
         $orders = OrderResource::collection($orders);
 
-        return Inertia::render('Payment/Index', compact('orders'));
+        $currentFilters = [
+            'uuid' => $uuid,
+        ];
+
+        return Inertia::render('Payment/Index', compact('orders', 'currentFilters'));
     }
 
     public function create()

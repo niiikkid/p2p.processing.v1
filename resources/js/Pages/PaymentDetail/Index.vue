@@ -98,7 +98,7 @@ defineOptions({ layout: AuthenticatedLayout })
                 />
             </template>
             <template v-slot:table-header>
-                <section class="bg-gray-50 dark:bg-gray-900 flex items-center mb-5">
+                <section class="flex items-center mb-5">
                     <div class="mx-auto w-full">
                         <div class="relative bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
                             <div class="flex flex-col xl:items-center justify-between p-4 space-y-3 lg:flex-row lg:space-y-0 lg:space-x-4">

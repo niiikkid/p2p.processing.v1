@@ -10,13 +10,31 @@ import {useModalStore} from "@/store/modal.js";
 import DateTime from "@/Components/DateTime.vue";
 import {useViewStore} from "@/store/view.js";
 import AddMobileIcon from "@/Components/AddMobileIcon.vue";
+import {computed, ref} from "vue";
 
 const viewStore = useViewStore();
 const orders = usePage().props.orders;
 const modalStore = useModalStore();
+const currentFilters = ref(usePage().props.currentFilters);
 
 const orderPaymentLink = (payment_link) => {
     window.open(payment_link, '_blank')
+}
+
+const filters = computed(() => {
+    return {
+        uuid: currentFilters.value.uuid,
+    }
+})
+
+const applyFilters = () => {
+    router.visit(route(route().current()), {
+        data: {
+            filters: filters.value,
+            page: 1
+        },
+        preserveScroll: true
+    })
 }
 
 defineOptions({ layout: AuthenticatedLayout })
@@ -29,7 +47,38 @@ defineOptions({ layout: AuthenticatedLayout })
         <MainTableSection
             title="Платежи"
             :data="orders"
+            :query-date="{filters}"
         >
+            <template v-slot:table-header>
+                <section class="flex items-center mb-5">
+                    <div class="mx-auto w-full">
+                        <div class="relative bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+                            <div class="flex flex-col xl:items-center justify-between p-4 space-y-3 lg:flex-row lg:space-y-0 lg:space-x-4">
+                                <div class="xl:flex items-center gap-4 xl:space-y-0 space-y-3">
+                                    <div >
+                                        <input
+                                            type="text"
+                                            id="uuid"
+                                            v-model="currentFilters.uuid"
+                                            placeholder="UUID"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-[38px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        >
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <button
+                                        type="button"
+                                        class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 h-[38px] dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                        @click.prevent="applyFilters"
+                                    >
+                                        Применить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </template>
             <template v-slot:button>
                 <button
                     @click="router.visit(route('payments.create'))"
@@ -60,6 +109,9 @@ defineOptions({ layout: AuthenticatedLayout })
                                 Комиссия
                             </th>
                             <th scope="col" class="px-6 py-3">
+                                UUID
+                            </th>
+                            <th scope="col" class="px-6 py-3">
                                 Статус
                             </th>
                             <th scope="col" class="px-6 py-3 text-center">
@@ -82,6 +134,9 @@ defineOptions({ layout: AuthenticatedLayout })
                             </td>
                             <td class="px-6 py-3">
                                 {{ order.service_commission_amount_total }} {{ order.base_currency.toUpperCase() }}
+                            </td>
+                            <td class="px-6 py-3">
+                                {{ order.uuid }}
                             </td>
                             <td class="px-6 py-3">
                                 <OrderStatus :status="order.status" :status_name="order.status_name"></OrderStatus>
