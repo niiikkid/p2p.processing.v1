@@ -69,6 +69,7 @@ const filters = computed(() => {
         start_date: currentFilters.value.startDate,
         end_date: currentFilters.value.endDate,
         external_id: currentFilters.value.externalID,
+        uuid: currentFilters.value.uuid,
     }
 })
 
@@ -176,6 +177,15 @@ defineOptions({ layout: AuthenticatedLayout })
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-[38px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         >
                                     </div>
+                                    <div >
+                                        <input
+                                            type="text"
+                                            id="uuid"
+                                            v-model="currentFilters.uuid"
+                                            placeholder="UUID"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-[38px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        >
+                                    </div>
                                 </div>
                                 <div class="flex items-center">
                                     <button
@@ -214,6 +224,9 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <th scope="col" class="px-6 py-3 text-nowrap" v-if="viewStore.isAdminViewMode">
                                     Внешний ID
                                 </th>
+                                <th scope="col" class="px-6 py-3 text-nowrap">
+                                    UUID
+                                </th>
                                 <th scope="col" class="px-6 py-3 text-center">
                                     Создан
                                 </th>
@@ -249,6 +262,9 @@ defineOptions({ layout: AuthenticatedLayout })
                             <td class="px-6 py-3" v-if="viewStore.isAdminViewMode">
                                 {{ order.external_id_trimmed  }}
                             </td>
+                                <td class="px-6 py-3">
+                                    {{ order.uuid  }}
+                                </td>
                             <td class="px-6 py-3">
                                 <DateTime class="justify-center" :data="order.created_at"/>
                             </td>

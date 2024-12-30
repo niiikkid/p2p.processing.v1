@@ -35,7 +35,7 @@ class OrderQueriesEloquent implements OrderQueries
             ->get();
     }
 
-    public function paginateForAdmin(array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null, ?string $externalID = null): LengthAwarePaginator
+    public function paginateForAdmin(array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null, ?string $externalID = null, ?string $uuid = null): LengthAwarePaginator
     {
         return Order::query()
             ->with(['paymentDetail.subPaymentGateway', 'paymentGateway', 'smsLog', 'merchant', 'dispute'])
@@ -51,11 +51,14 @@ class OrderQueriesEloquent implements OrderQueries
             ->when($externalID, function ($query) use ($externalID) {
                 $query->where('external_id', 'LIKE', '%' . $externalID . '%');
             })
+            ->when($uuid, function ($query) use ($uuid) {
+                $query->where('uuid', 'LIKE', '%' . $uuid . '%');
+            })
             ->orderByDesc('id')
             ->paginate(10);
     }
 
-    public function paginateForUser(User $user, array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null): LengthAwarePaginator
+    public function paginateForUser(User $user, array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null, ?string $uuid = null): LengthAwarePaginator
     {
         return Order::query()
             ->whereRelation('paymentDetail', 'user_id', $user->id)
@@ -68,6 +71,9 @@ class OrderQueriesEloquent implements OrderQueries
             })
             ->when($endDate, function ($query) use ($endDate) {
                 $query->whereDate('created_at', '<=', $endDate);
+            })
+            ->when($uuid, function ($query) use ($uuid) {
+                $query->where('uuid', 'LIKE', '%' . $uuid . '%');
             })
             ->orderByDesc('id')
             ->paginate(10);

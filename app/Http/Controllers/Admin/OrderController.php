@@ -36,8 +36,9 @@ class OrderController extends Controller
         }
 
         $externalID = request()->input('filters.external_id');
+        $uuid = request()->input('filters.uuid');
 
-        $orders = queries()->order()->paginateForAdmin($statuses, $startDate, $endDate, $externalID);
+        $orders = queries()->order()->paginateForAdmin($statuses, $startDate, $endDate, $externalID, $uuid);
 
         $orders = OrderResource::collection($orders);
 
@@ -54,6 +55,7 @@ class OrderController extends Controller
             'startDate' => $startDate?->format('d/m/Y'),
             'endDate' => $endDate?->format('d/m/Y'),
             'externalID' => $externalID,
+            'uuid' => $uuid,
         ];
 
         return Inertia::render('Order/Index', compact('orders', 'orderStatuses', 'currentFilters'));

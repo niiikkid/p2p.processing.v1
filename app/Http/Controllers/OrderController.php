@@ -37,7 +37,9 @@ class OrderController extends Controller
             $endDate = null;
         }
 
-        $orders = queries()->order()->paginateForUser(auth()->user(), $statuses, $startDate, $endDate);
+        $uuid = request()->input('filters.uuid');
+
+        $orders = queries()->order()->paginateForUser(auth()->user(), $statuses, $startDate, $endDate, $uuid);
 
         $orders = OrderResource::collection($orders);
 
@@ -53,6 +55,7 @@ class OrderController extends Controller
             'statuses' => $statuses,
             'startDate' => $startDate?->format('d/m/Y'),
             'endDate' => $endDate?->format('d/m/Y'),
+            'uuid' => $uuid,
         ];
 
         return Inertia::render('Order/Index', compact('orders', 'orderStatuses', 'currentFilters'));
