@@ -22,7 +22,6 @@ const props = defineProps({
 });
 
 const openPage = (page) => {
-    console.log(props.queryDate);
     router.visit(route(route().current()), {
         data: {
             page,
