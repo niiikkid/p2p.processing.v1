@@ -74,6 +74,10 @@ const setCustomCommission = (commissionSettings, commission) => {
     if (! commission) {
         return;
     }
+
+    if (parseFloat(commission) > 100) {
+        commissionSettings['gateway_total_commission'] = 100;
+    }
     if (commissionSettings['merchant_commission'] > commissionSettings['gateway_total_commission']) {
         commissionSettings['merchant_commission'] = commissionSettings['gateway_total_commission'];
     }
@@ -294,7 +298,7 @@ onMounted(() => {
                                         step="0.1"
                                         min="0"
                                         max="100"
-                                        class="w-16 p-0 m-0 text-xl focus:ring-0 border-0 border-b border-gray-400"
+                                        class="w-16 p-0 m-0 bg-transparent text-center dark:text-gray-200 text-xl focus:ring-0 border-0 border-b border-gray-400"
                                         @input="setCustomCommission(commissionSettings[gateway.id], $event.target.value)"
                                     />
                                 </div>
