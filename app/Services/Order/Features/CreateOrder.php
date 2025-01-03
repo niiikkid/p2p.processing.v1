@@ -48,10 +48,25 @@ class CreateOrder extends BaseFeature
         $service_commission_rate_client = 0;
 
         if (isset($service_commissions[$merchant->id][$paymentGateway->id])) {
-            $service_commission_rate_merchant = $service_commissions[$merchant->id][$paymentGateway->id];
-            $service_commission_rate_client = $service_commission_rate_total - $service_commission_rate_merchant;
-        }
+            if ($service_commissions[$merchant->id][$paymentGateway->id]['gateway_total_commission'] > 0) {
+                $service_commission_rate_total = $service_commissions[$merchant->id][$paymentGateway->id]['gateway_total_commission'];
+            }
 
+            $service_commission_rate_merchant = $service_commissions[$merchant->id][$paymentGateway->id]['merchant_commission'];
+            $service_commission_rate_client = $service_commission_rate_total - $service_commission_rate_merchant;
+
+            if ($service_commissions[$merchant->id][$paymentGateway->id]['gateway_total_commission'] === 0) {
+                $service_commission_rate_total = 0;
+                $service_commission_rate_merchant = 0;
+                $service_commission_rate_client = 0;
+            }
+        }
+dd([
+    $service_commission_rate_total,
+    $service_commission_rate_merchant,
+    $service_commission_rate_client,
+    $service_commissions
+]);
         $client_commission_amount = 0;
         if ($service_commission_rate_client > 0) {
             $client_commission_amount = $this->dto

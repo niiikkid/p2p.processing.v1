@@ -71,8 +71,14 @@ const submitValidated = () => {
 };
 
 const setCustomCommission = (commissionSettings, commission) => {
+    if (! commission) {
+        return;
+    }
     if (commissionSettings['merchant_commission'] > commissionSettings['gateway_total_commission']) {
         commissionSettings['merchant_commission'] = commissionSettings['gateway_total_commission'];
+    }
+    if (commissionSettings['merchant_commission'] === null) {
+        commissionSettings['merchant_commission'] = 0;
     }
 }
 
