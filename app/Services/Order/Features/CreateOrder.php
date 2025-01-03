@@ -67,8 +67,10 @@ class CreateOrder extends BaseFeature
             $client_commission_amount = $this->dto
                 ->amount
                 ->mul($service_commission_rate_client / 100);
+
+            $client_commission_amount = intval(round($client_commission_amount->toBeauty()));
         }
-        $client_commission_amount = intval(round($client_commission_amount->toBeauty()));
+
         $amount = $this->dto->amount->add($client_commission_amount);
 
         //
