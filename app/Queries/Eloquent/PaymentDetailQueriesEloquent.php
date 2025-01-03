@@ -101,8 +101,10 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
                 $query->where('detail_type', $payment_detail_type);
             })
             ->when($merchant, function (Builder $query) use ($merchant) {
-                $query->whereDoesntHave('user.personalMerchants');
-                $query->orWhereRelation('user.personalMerchants', 'id', $merchant->id);
+                $query->where(function (Builder $query) use ($merchant) {
+                    $query->whereDoesntHave('user.personalMerchants');
+                    $query->orWhereRelation('user.personalMerchants', 'id', $merchant->id);
+                });
             })
             ->whereIn('payment_gateway_id', $payment_gateway_ids)
             ->active()
@@ -131,8 +133,10 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
                 $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
             })
             ->when($merchant, function (Builder $query) use ($merchant) {
-                $query->whereDoesntHave('user.personalMerchants');
-                $query->orWhereRelation('user.personalMerchants', 'id', $merchant->id);
+                $query->where(function (Builder $query) use ($merchant) {
+                    $query->whereDoesntHave('user.personalMerchants');
+                    $query->orWhereRelation('user.personalMerchants', 'id', $merchant->id);
+                });
             })
             ->where('detail_type', DetailType::CARD)
             ->whereIn('payment_gateway_id', $payment_gateway_ids)
