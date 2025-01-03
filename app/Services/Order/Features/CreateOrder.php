@@ -61,12 +61,7 @@ class CreateOrder extends BaseFeature
                 $service_commission_rate_client = 0;
             }
         }
-dd([
-    $service_commission_rate_total,
-    $service_commission_rate_merchant,
-    $service_commission_rate_client,
-    $service_commissions
-]);
+
         $client_commission_amount = 0;
         if ($service_commission_rate_client > 0) {
             $client_commission_amount = $this->dto
