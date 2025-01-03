@@ -35,10 +35,7 @@ const currentPage = ref(orders?.meta?.current_page)
                         Сумма
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Прибыль
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Комиссия
+                        UUID
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
                         Создан
@@ -50,13 +47,10 @@ const currentPage = ref(orders?.meta?.current_page)
                     <th scope="row" class="px-6 py-3 font-medium whitespace-nowrap text-gray-900 dark:text-gray-200">#{{ order.id }}</th>
                     <td class="px-6 py-3">
                         <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ order.amount }} {{ order.currency.toUpperCase() }}</div>
-                        <div class="text-nowrap text-xs">{{ order.profit }} {{ order.base_currency.toUpperCase() }}</div>
+                        <div class="text-nowrap text-xs">{{ order.merchant_profit }} {{ order.base_currency.toUpperCase() }}</div>
                     </td>
                     <td class="px-6 py-3">
-                        <div class="text-nowrap">{{ order.merchant_profit }} {{ order.base_currency.toUpperCase() }}</div>
-                    </td>
-                    <td class="px-6 py-3">
-                        {{ order.service_commission_amount_total }} {{ order.base_currency.toUpperCase() }}
+                        {{ order.uuid }}
                     </td>
                     <td class="px-6 py-3">
                         <DateTime class="justify-center" :data="order.created_at"/>
