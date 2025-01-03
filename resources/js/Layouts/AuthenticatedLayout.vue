@@ -88,7 +88,7 @@ const openDocs = () => {
                         </ul>
                     </div>-->
                     <div
-                        v-show="! viewStore.isAdminViewMode"
+                        v-show="! viewStore.isMerchantViewMode"
                         class="p-4 mt-6 rounded-lg border border-gray-500/25 bg-gray-200/10 dark:border-gray-400/25 dark:bg-gray-400/10"
                     >
                         <div class="flex items-center mb-1">
