@@ -59,7 +59,10 @@ class MerchantController extends Controller
             $commissionSettings = [];
 
             $paymentGateways->each(function ($paymentGateway) use (&$commissionSettings) {
-                $commissionSettings[$paymentGateway->id] = $paymentGateway->service_commission_rate;
+                $commissionSettings[$paymentGateway->id] = [
+                    'gateway_total_commission' => null,
+                    'merchant_commission' => $paymentGateway->service_commission_rate,
+                ];
             });
         } else {
             $commissionSettings = $commissionSettings[$merchant->id];
@@ -143,10 +146,6 @@ class MerchantController extends Controller
         ]);
 
         $commissionSettings = $merchant->user->meta->service_commissions;
-
-        if (empty($commissionSettings[$merchant->id])) {
-            $commissionSettings = [];
-        }
 
         $commissionSettings[$merchant->id] = $request->commission_settings;
 
