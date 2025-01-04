@@ -89,8 +89,8 @@ class OrderController extends Controller
                 }
             }
 
-            $order = cache()->lock('creating-order', 3)
-                ->block(5, function () use ($request) {
+            $order = cache()->lock('creating-order', 5)
+                ->block(7, function () use ($request) {
                     return make(OrderServiceContract::class)->create(
                         OrderCreateDTO::make($request->validated())
                     );
