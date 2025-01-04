@@ -163,7 +163,8 @@ class CreateOrder extends BaseFeature
                 ->getCardConfirmableForOrderCreate(
                     amount: $this->dto->amount,
                     amount_usdt: $amount_usdt,
-                    payment_gateway_ids: $lastDigitsProcessableGateways->pluck('id')->toArray(),
+                    payment_gateway_ids: $paymentGateways->pluck('id')->toArray(),
+                    card_payment_gateway_ids: $lastDigitsProcessableGateways->pluck('id')->toArray(),
                     merchant: $merchant,
                 );
         } else {

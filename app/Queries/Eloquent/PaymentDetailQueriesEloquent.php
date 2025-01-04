@@ -114,18 +114,9 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
             ->first();
     }
 
-    public function getCardConfirmableForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids, ?Merchant $merchant = null): ?PaymentDetail
+    public function getCardConfirmableForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids, array $card_payment_gateway_ids, ?Merchant $merchant = null): ?PaymentDetail
     {
-        $users_ids = PaymentDetail::whereHas('orders', function (Builder $query) use ($amount) {
-            $query->where('status', OrderStatus::PENDING);
-            $query->where('amount', $amount->toUnits());
-        })
-            ->where('detail_type', '<>', DetailType::CARD)
-            ->select('user_id')
-            ->pluck('user_id')
-            ->toArray();
-
-        return PaymentDetail::query()
+        $query = PaymentDetail::query()
             ->whereDoesntHave('orders', function (Builder $query) {
                 $query->where('status', OrderStatus::PENDING);
             })
@@ -139,11 +130,48 @@ class PaymentDetailQueriesEloquent implements PaymentDetailQueries
                 });
             })
             ->where('detail_type', DetailType::CARD)
-            ->whereIn('payment_gateway_id', $payment_gateway_ids)
             ->active()
-            ->whereRaw("daily_limit - current_daily_limit >= {$amount->toUnits()}")
+            ->whereRaw("daily_limit - current_daily_limit >= {$amount->toUnits()}");
+
+        //по номеру карты
+        $users_ids = PaymentDetail::whereHas('orders', function (Builder $query) use ($amount) {
+            $query->where('status', OrderStatus::PENDING);
+            $query->where('amount', $amount->toUnits());
+        })
+            ->whereRelation('paymentGateway', 'payment_confirmation_by_card_last_digits', false)
+            ->select('user_id')
+            ->pluck('user_id')
+            ->toArray();
+        $users_ids = array_unique($users_ids);
+
+        $cardDetails = $query->clone()
             ->whereNotIn('user_id', $users_ids)
-            ->inRandomOrder()
-            ->first();
+            ->whereIn('payment_gateway_id', $card_payment_gateway_ids)
+            ->get();
+
+        //остальные карты
+        $users_ids = PaymentDetail::whereHas('orders', function (Builder $query) use ($amount) {
+            $query->where('status', OrderStatus::PENDING);
+            $query->where('amount', $amount->toUnits());
+        })
+            ->select('user_id')
+            ->pluck('user_id')
+            ->toArray();
+        $users_ids = array_unique($users_ids);
+
+        $simpleDetails = $query->clone()
+            ->whereNotIn('user_id', $users_ids)
+            ->whereIn('payment_gateway_id', $payment_gateway_ids)
+            ->whereNotIn('id', $cardDetails->pluck('id')->toArray())
+            ->get();
+
+        $details = $simpleDetails->merge($cardDetails);
+        $details = $details->unique('id');
+
+        if ($details->isEmpty()) {
+            return null;
+        }
+
+        return $details->random();
     }
 }

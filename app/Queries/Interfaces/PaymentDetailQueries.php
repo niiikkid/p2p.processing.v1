@@ -18,5 +18,5 @@ interface PaymentDetailQueries
 
     public function getForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids, ?DetailType $payment_detail_type = null, ?Merchant $merchant = null): ?PaymentDetail;
 
-    public function getCardConfirmableForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids, ?Merchant $merchant = null): ?PaymentDetail;
+    public function getCardConfirmableForOrderCreate(Money $amount, Money $amount_usdt, array $payment_gateway_ids, array $card_payment_gateway_ids, ?Merchant $merchant = null): ?PaymentDetail;
 }
