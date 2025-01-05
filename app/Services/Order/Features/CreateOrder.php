@@ -13,6 +13,9 @@ use App\Models\PaymentDetail;
 use App\Models\PaymentGateway;
 use App\Models\User;
 use App\Services\Money\Currency;
+use App\Services\Money\Money;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -157,6 +160,69 @@ class CreateOrder extends BaseFeature
                     && in_array(DetailType::CARD, $paymentGateway->detail_types);
             });
 
+
+        //====
+
+        $amount = $this->dto->amount;
+
+        $paymentGateways->each(function (PaymentGateway $paymentGateway) use ($amount, $amount_usdt, $merchant) {
+            $paymentDetails = PaymentDetail::query()
+                ->whereHas('user.wallet', function (Builder $query) use ($amount_usdt) {
+                    $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
+                })
+                ->when($merchant, function (Builder $query) use ($merchant) {
+                    $query->where(function (Builder $query) use ($merchant) {
+                        $query->whereDoesntHave('user.personalMerchants');
+                        $query->orWhereRelation('user.personalMerchants', 'id', $merchant->id);
+                    });
+                })
+                ->active()
+                ->where('payment_gateway_id', $paymentGateway->id)
+                ->with(['paymentGateway', 'orders' => function (HasMany $query) {
+                    $query->where('status', OrderStatus::PENDING);
+                }])
+                ->get();
+
+            $commission = $this->calcCommission($amount, $merchant, $paymentGateway);
+
+            $uniqueBy = $paymentGateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
+
+            $availablePaymentDetails = $paymentDetails->filter(function (PaymentDetail $paymentDetail) {
+                return $paymentDetail->orders->count() === 0;
+            });
+
+            if ($uniqueBy === 'card') {
+                //то бери любую карту и используй
+            }
+
+            if ($uniqueBy === 'amount') {
+                $result = $paymentDetails->filter(function (PaymentDetail $paymentDetail) use ($commission) {
+                    if ($paymentDetail->orders->count() === 0) {
+                        return false;
+                    }
+
+                    return bccomp(
+                        $paymentDetail->orders->first()->amount->toPrecision(),
+                        $commission['amount']->toPrecision(),
+                    ) === 0;
+                });
+
+                if ($result->count() !== 0) {
+                    $availablePaymentDetails = null;
+                }
+            }
+
+            dump($availablePaymentDetails?->toArray());
+            dd($paymentDetails->toArray(), $commission);
+        });
+
+        dd('stop');
+
+        //====
+
+
+
+
         if ($this->dto->payment_detail_type?->equals(DetailType::CARD) && $lastDigitsProcessableGateways->isNotEmpty()) {
             $paymentDetail = queries()
                 ->paymentDetail()
@@ -184,6 +250,48 @@ class CreateOrder extends BaseFeature
         }
 
         return [$paymentDetail->paymentGateway, $paymentDetail];
+    }
+
+    protected function calcCommission(Money $baseAmount, Merchant $merchant, PaymentGateway $paymentGateway)
+    {
+        $service_commissions = $merchant->user->meta->service_commissions;
+
+        $service_commission_rate_total = $paymentGateway->service_commission_rate;
+        $service_commission_rate_merchant = $paymentGateway->service_commission_rate;
+        $service_commission_rate_client = 0;
+
+        if (isset($service_commissions[$merchant->id][$paymentGateway->id])) {
+            if ($service_commissions[$merchant->id][$paymentGateway->id]['gateway_total_commission'] > 0) {
+                $service_commission_rate_total = $service_commissions[$merchant->id][$paymentGateway->id]['gateway_total_commission'];
+            }
+
+            $service_commission_rate_merchant = $service_commissions[$merchant->id][$paymentGateway->id]['merchant_commission'];
+            $service_commission_rate_client = $service_commission_rate_total - $service_commission_rate_merchant;
+
+            if ($service_commissions[$merchant->id][$paymentGateway->id]['gateway_total_commission'] === 0) {
+                $service_commission_rate_total = 0;
+                $service_commission_rate_merchant = 0;
+                $service_commission_rate_client = 0;
+            }
+        }
+
+        $client_commission_amount = 0;
+        if ($service_commission_rate_client > 0) {
+            $client_commission_amount = $baseAmount
+                ->mul($service_commission_rate_client / 100);
+
+            $client_commission_amount = intval(round($client_commission_amount->toBeauty()));
+        }
+
+        $amount = $baseAmount->add($client_commission_amount);
+
+        return [
+            'base_amount' => $baseAmount,
+            'amount' => $amount,
+            'service_commission_rate_total' => $service_commission_rate_total,
+            'service_commission_rate_merchant' => $service_commission_rate_merchant,
+            'service_commission_rate_client' => $service_commission_rate_client,
+        ];
     }
 
     protected function calcConversionPrices(Currency $currency, float $commission_rate): array
