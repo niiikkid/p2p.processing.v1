@@ -62,13 +62,19 @@ class PaymentGatewayController extends Controller
             ];
         }
 
-        $paymentGateways = PaymentGatewayResource::collection(queries()->paymentGateway()->getAllActive())->resolve();
+        $paymentGateways = queries()->paymentGateway()->getAllActive();
+        $paymentGatewaysForSBP = $paymentGateways->filter(function (PaymentGateway $paymentGateway) {
+            return $paymentGateway->currency->getCode() === Currency::RUB()->getCode()
+                && $paymentGateway->code !== 'sbp_rub';
+        });
+        $paymentGateways = PaymentGatewayResource::collection($paymentGateways)->resolve();
+        $paymentGatewaysForSBP = PaymentGatewayResource::collection($paymentGatewaysForSBP)->resolve();
 
         $paymentGateway->code = preg_replace('/_[a-z]{1,}$/', '', $paymentGateway->code);
 
         $paymentGateway = PaymentGatewayResource::make($paymentGateway)->resolve();
 
-        return Inertia::render('PaymentGateway/Edit', compact('paymentGateway', 'currencies', 'detailTypes', 'paymentGateways'));
+        return Inertia::render('PaymentGateway/Edit', compact('paymentGateway', 'currencies', 'detailTypes', 'paymentGateways', 'paymentGatewaysForSBP'));
     }
 
     public function update(UpdateRequest $request, PaymentGateway $paymentGateway)

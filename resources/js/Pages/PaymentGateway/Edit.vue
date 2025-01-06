@@ -10,13 +10,14 @@ import GoBackButton from "@/Components/GoBackButton.vue";
 import TextInputBlock from "@/Components/Form/TextInputBlock.vue";
 import DropDownWithRadio from "@/Components/Form/DropDownWithRadio.vue";
 import DropDownWithCheckbox from "@/Components/Form/DropDownWithCheckbox.vue";
-import {ref} from "vue";
+import {computed, ref, watch} from "vue";
 import TextInput from "@/Components/TextInput.vue";
 
 const payment_gateway = usePage().props.paymentGateway;
 const currencies = usePage().props.currencies;
 const detail_types = usePage().props.detailTypes;
 const payment_gateways = usePage().props.paymentGateways;
+const paymentGatewaysForSBP = usePage().props.paymentGatewaysForSBP;
 
 const form = useForm({
     name: payment_gateway.original_name,
@@ -62,6 +63,16 @@ const removeSender = (sender) => {
     });
 }
 
+const isLastCardDigitsAvailable = computed(() => {
+    return form.detail_types.includes('card') && form.detail_types.length === 1;
+})
+
+watch(() => isLastCardDigitsAvailable.value, (value, oldValue) => {
+    if (oldValue && ! value) {
+        form.payment_confirmation_by_card_last_digits = false;
+    }
+})
+
 defineOptions({ layout: AuthenticatedLayout })
 </script>
 
@@ -96,6 +107,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             />
 
                             <TextInputBlock
+                                v-if="form.code !== 'sbp'"
                                 v-model="form.code"
                                 :form="form"
                                 field="code"
@@ -104,18 +116,18 @@ defineOptions({ layout: AuthenticatedLayout })
                                 helper="К коду метода будет автоматически добавлен код валюты. Например: sberbank_rub"
                             />
 
-                            <div>
+                            <div v-if="form.code === 'sbp'">
                                 <DropDownWithCheckbox
                                     v-model="form.sub_payment_gateways"
-                                    :items="payment_gateways"
+                                    :items="paymentGatewaysForSBP"
                                     value="id"
                                     name="name"
-                                    label="Вспомогательный метод"
+                                    label="Методы"
                                 />
                                 <InputError :message="form.errors.sub_payment_gateways" class="mt-2" />
                             </div>
 
-                            <div>
+                            <div v-if="form.code !== 'sbp'">
                                 <DropDownWithCheckbox
                                     v-model="form.detail_types"
                                     :items="detail_types"
@@ -126,7 +138,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <InputError :message="form.errors.detail_types" class="mt-2" />
                             </div>
 
-                            <div>
+                            <div v-if="form.code !== 'sbp'">
                                 <DropDownWithRadio
                                     v-model="form.currency"
                                     :items="currencies"
@@ -280,7 +292,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 </label>
                             </div>
 
-                            <div>
+                            <div v-if="isLastCardDigitsAvailable">
                                 <label class="inline-flex items-center mt-3 cursor-pointer">
                                     <input type="checkbox" value="" class="sr-only peer" v-model="form.payment_confirmation_by_card_last_digits">
                                     <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
@@ -288,7 +300,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                 </label>
                             </div>
 
-                            <div class="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
+                            <div v-if="isLastCardDigitsAvailable" class="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
                                 <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                                 </svg>

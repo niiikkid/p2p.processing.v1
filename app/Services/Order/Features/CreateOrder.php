@@ -17,6 +17,7 @@ use App\Services\Money\Money;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 //TODO добавить возможность создавать множественные ордера с одной суммой для одного и тогоже юзера
@@ -165,8 +166,11 @@ class CreateOrder extends BaseFeature
 
         $amount = $this->dto->amount;
 
-        $paymentGateways->each(function (PaymentGateway $paymentGateway) use ($amount, $amount_usdt, $merchant) {
-            $paymentDetails = PaymentDetail::query()
+        $paymentDetails = collect();
+
+        //По банкам
+        $paymentGateways->each(function (PaymentGateway $paymentGateway) use ($amount, $amount_usdt, $merchant, &$paymentDetails) {
+            $availablePaymentDetails = PaymentDetail::query()
                 ->whereHas('user.wallet', function (Builder $query) use ($amount_usdt) {
                     $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
                 })
@@ -181,40 +185,57 @@ class CreateOrder extends BaseFeature
                 ->with(['paymentGateway', 'orders' => function (HasMany $query) {
                     $query->where('status', OrderStatus::PENDING);
                 }])
-                ->get();
+                ->get()
+                ->groupBy('user_id');
 
             $commission = $this->calcCommission($amount, $merchant, $paymentGateway);
-
             $uniqueBy = $paymentGateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
 
-            $availablePaymentDetails = $paymentDetails->filter(function (PaymentDetail $paymentDetail) {
-                return $paymentDetail->orders->count() === 0;
-            });
-
-            if ($uniqueBy === 'card') {
-                //то бери любую карту и используй
-            }
-
-            if ($uniqueBy === 'amount') {
-                $result = $paymentDetails->filter(function (PaymentDetail $paymentDetail) use ($commission) {
-                    if ($paymentDetail->orders->count() === 0) {
-                        return false;
-                    }
-
-                    return bccomp(
-                        $paymentDetail->orders->first()->amount->toPrecision(),
-                        $commission['amount']->toPrecision(),
-                    ) === 0;
+            //По трейдерам
+            $availablePaymentDetails->each(function (Collection $paymentDetailsByTrader) use ($paymentGateway, $commission, $uniqueBy, &$paymentDetails) {
+                $availablePaymentDetailsByTrader = $paymentDetailsByTrader->filter(function (PaymentDetail $paymentDetail) {
+                    return $paymentDetail->orders->count() === 0;
                 });
 
-                if ($result->count() !== 0) {
-                    $availablePaymentDetails = null;
+                if ($uniqueBy === 'card') {
+                    //то бери любую карту и используй
                 }
-            }
 
-            dump($availablePaymentDetails?->toArray());
-            dd($paymentDetails->toArray(), $commission);
+                if ($uniqueBy === 'amount') {
+                    $result = $paymentDetailsByTrader->filter(function (PaymentDetail $paymentDetail) use ($commission) {
+                        if ($paymentDetail->orders->count() === 0) {
+                            return false;
+                        }
+
+                        return bccomp( //если есть с такой суммой, то добавляем в список
+                                $paymentDetail->orders->first()->amount->toPrecision(),
+                                $commission['amount']->toPrecision(),
+                            ) === 0;
+                    });
+
+                    if ($result->count() !== 0) {
+                        $availablePaymentDetailsByTrader = collect();
+                    }
+                }
+
+                //проверки для СБП
+                //1 Если метод сбп, то проверить что для под метода нет сделок с такой суммой
+                if ($paymentGateway->sub_payment_gateways->isNotEmpty()) {
+
+                }
+
+                //2 Если метод не сбп, то проверить что у сбп с таким под методом нет сделок с такой суммой
+                if ($paymentGateway->sub_payment_gateways->isEmpty()) {
+
+                }
+
+                if ($availablePaymentDetailsByTrader->isNotEmpty()) {
+                    $paymentDetails = $paymentDetails->merge($availablePaymentDetailsByTrader)->unique('id');
+                }
+            });
         });
+
+        dump($paymentDetails?->toArray());
 
         dd('stop');
 
