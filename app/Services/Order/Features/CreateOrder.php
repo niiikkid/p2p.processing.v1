@@ -269,16 +269,16 @@ class CreateOrder extends BaseFeature
             });
         });
 
-        dump($paymentDetails?->toArray());
+  /*      dump($paymentDetails?->toArray());
 
         dd('stop');
 
         //====
+*/
 
 
 
-
-        if ($this->dto->payment_detail_type?->equals(DetailType::CARD) && $lastDigitsProcessableGateways->isNotEmpty()) {
+        /*if ($this->dto->payment_detail_type?->equals(DetailType::CARD) && $lastDigitsProcessableGateways->isNotEmpty()) {
             $paymentDetail = queries()
                 ->paymentDetail()
                 ->getCardConfirmableForOrderCreate(
@@ -298,11 +298,13 @@ class CreateOrder extends BaseFeature
                     payment_detail_type: $this->dto->payment_detail_type,
                     merchant: $merchant,
                 );
-        }
+        }*/
 
-        if (! $paymentDetail) {
+        if ($paymentDetails->isEmpty()) {
             throw OrderException::make('Подходящие платежные реквизиты не найдены.');
         }
+
+        $paymentDetail = $paymentDetails->random();
 
         return [$paymentDetail->paymentGateway, $paymentDetail];
     }
