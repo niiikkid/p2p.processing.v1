@@ -229,18 +229,20 @@ class CreateOrder extends BaseFeature
                 //1 Если метод сбп, то проверить что для под метода нет сделок с такой суммой
                 if ($paymentGateway->is_sbp) {
                     $res = $availablePaymentDetailsByTrader->pluck('sub_payment_gateway_id');
-                    $exists = PaymentDetail::query()
+                    $existingGatewaysIDs = PaymentDetail::query()
                         ->whereHas('orders', function (Builder $query) use ($commission) {
                             $query->where('status', OrderStatus::PENDING);
                             $query->where('amount', $commission['amount']->toUnits());
                         })
                         ->where('user_id', $traderID)
                         ->whereIn('payment_gateway_id', $res)
-                        ->exists();
+                        ->get('payment_gateway_id')
+                        ->pluck('payment_gateway_id')
+                        ->toArray();
 
-                    if ($exists) {
-                        $availablePaymentDetailsByTrader = collect();
-                    }
+                    $availablePaymentDetailsByTrader = $availablePaymentDetailsByTrader->filter(function (PaymentDetail $paymentDetail) use ($existingGatewaysIDs) {
+                        return ! in_array($paymentDetail->sub_payment_gateway_id, $existingGatewaysIDs);
+                    });
                 }
 
                 //2 Если метод не сбп, то проверить что у сбп с таким под методом нет сделок с такой суммой
