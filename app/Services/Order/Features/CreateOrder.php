@@ -193,8 +193,15 @@ class CreateOrder extends BaseFeature
 
             //По трейдерам
             $availablePaymentDetails->each(function (Collection $paymentDetailsByTrader) use ($paymentGateway, $commission, $uniqueBy, &$paymentDetails) {
+                $traderID = $paymentDetailsByTrader->first()->user_id;
                 $availablePaymentDetailsByTrader = $paymentDetailsByTrader->filter(function (PaymentDetail $paymentDetail) {
                     return $paymentDetail->orders->count() === 0;
+                });
+
+                //все активные сделки трейдера
+                $traderOrders = collect();
+                $paymentDetailsByTrader->each(function (PaymentDetail $paymentDetail) use (&$traderOrders) {
+                    $traderOrders = $traderOrders->merge($paymentDetail->orders)->unique('id');
                 });
 
                 if ($uniqueBy === 'card') {
@@ -220,13 +227,40 @@ class CreateOrder extends BaseFeature
 
                 //проверки для СБП
                 //1 Если метод сбп, то проверить что для под метода нет сделок с такой суммой
-                if ($paymentGateway->sub_payment_gateways->isNotEmpty()) {
+                if ($paymentGateway->is_sbp) {
+                    $res = $availablePaymentDetailsByTrader->pluck('sub_payment_gateway_id');
+                    $exists = PaymentDetail::query()
+                        ->whereHas('orders', function (Builder $query) use ($commission) {
+                            $query->where('status', OrderStatus::PENDING);
+                            $query->where('amount', $commission['amount']->toUnits());
+                        })
+                        ->where('user_id', $traderID)
+                        ->whereIn('payment_gateway_id', $res)
+                        ->exists();
 
+                    if ($exists) {
+                        $availablePaymentDetailsByTrader = collect();
+                    }
                 }
 
                 //2 Если метод не сбп, то проверить что у сбп с таким под методом нет сделок с такой суммой
-                if ($paymentGateway->sub_payment_gateways->isEmpty()) {
+                if (! $paymentGateway->is_sbp) {
+                    if ($traderOrders->isNotEmpty()) {
+                        $traderOrders->each(function (Order $traderOrder) use (&$availablePaymentDetailsByTrader, $paymentGateway, $commission) {
+                            if ($traderOrder->paymentGateway->is_sbp) {
+                                if ($traderOrder->paymentDetail->subPaymentGateway->code === $paymentGateway->code) {
+                                    $res = bccomp( //если есть с такой суммой, то добавляем в список
+                                        $traderOrder->amount->toPrecision(),
+                                        $commission['amount']->toPrecision(),
+                                    ) === 0;
 
+                                    if ($res) {
+                                        $availablePaymentDetailsByTrader = collect();
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
 
                 if ($availablePaymentDetailsByTrader->isNotEmpty()) {

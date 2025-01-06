@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $reservation_time
  * @property array<int, DetailType> $detail_types
  * @property Collection<int, PaymentGateway> $sub_payment_gateways
+ * @property boolean $is_sbp
  * @property Currency $currency
  * @property Collection<int, PaymentDetail> $paymentDetails
  * @property Collection<int, Order> $orders
@@ -87,6 +88,15 @@ class PaymentGateway extends Model
                 }
 
                 return PaymentGateway::whereIn('id', $value)->get();
+            },
+        );
+    }
+
+    protected function isSBP(): Attribute
+    {
+        return Attribute::make(
+            get: function ()  {
+                return $this->code === 'sbp_rub';
             },
         );
     }
