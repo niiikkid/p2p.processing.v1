@@ -18,6 +18,7 @@ class OrderQueriesEloquent implements OrderQueries
     public function findPendingForSBP(Money $amount, User $user, PaymentGateway $paymentGateway): ?Order
     {
         return Order::where('amount', $amount->toUnits())
+            ->whereDoesntHave('dispute')
             ->where('status', OrderStatus::PENDING)
             ->where('currency', $amount->getCurrency()->getCode())
             ->whereRelation('paymentDetail', 'user_id', $user->id)
@@ -29,6 +30,7 @@ class OrderQueriesEloquent implements OrderQueries
     public function findPending(Money $amount, User $user, PaymentGateway $paymentGateway): ?Order
     {
         return Order::where('amount', $amount->toUnits())
+            ->whereDoesntHave('dispute')
             ->where('status', OrderStatus::PENDING)
             ->where('currency', $amount->getCurrency()->getCode())
             ->whereRelation('paymentDetail', 'user_id', $user->id)
@@ -42,6 +44,7 @@ class OrderQueriesEloquent implements OrderQueries
     public function findPendingMultiple(Money $amount, User $user, PaymentGateway $paymentGateway): Collection
     {
         return Order::where('amount', $amount->toUnits())
+            ->whereDoesntHave('dispute')
             ->where('status', OrderStatus::PENDING)
             ->where('currency', $amount->getCurrency()->getCode())
             ->whereRelation('paymentDetail', 'user_id', $user->id)
