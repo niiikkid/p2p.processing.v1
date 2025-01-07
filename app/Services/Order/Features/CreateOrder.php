@@ -155,21 +155,140 @@ class CreateOrder extends BaseFeature
         );
         $amount_usdt = $this->dto->amount->convert($base_conversion_price, Currency::USDT());
 
-        $lastDigitsProcessableGateways = $paymentGateways
-            ->filter(function (PaymentGateway $paymentGateway) {
-                return $paymentGateway->payment_confirmation_by_card_last_digits
-                    && in_array(DetailType::CARD, $paymentGateway->detail_types);
-            });
-
-
         //====
 
         $amount = $this->dto->amount;
 
         $paymentDetails = collect();
 
+        User::query()
+            ->whereNull('banned_at')
+            ->whereHas('wallet', function (Builder $query) use ($amount_usdt) {
+                $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
+            })
+            ->whereHas('paymentDetails', function ($query) use ($merchant, $paymentGateways) {
+                $query->active();
+                $query->whereIn('payment_gateway_id', $paymentGateways->pluck('id')->toArray());
+                $query->where('detail_type', $this->dto->payment_detail_type);
+            })
+            ->when($merchant, function (Builder $query) use ($merchant) {
+                $query->where(function (Builder $query) use ($merchant) {
+                    $query->whereDoesntHave('personalMerchants');
+                    $query->orWhereRelation('personalMerchants', 'id', $merchant->id);
+                });
+            })
+            ->chunk(50, function (Collection $users) use ($amount, $merchant, &$paymentDetails, $paymentGateways) {
+                $users->each(function ($trader) use ($amount, $merchant, &$paymentDetails, $paymentGateways) {
+                    $allPaymentDetails = PaymentDetail::query()
+                        ->active()
+                        ->whereIn('payment_gateway_id', $paymentGateways->pluck('id')->toArray())
+                        ->with(['paymentGateway', 'subPaymentGateway', 'orders' => function (HasMany $query) {
+                            $query->where('status', OrderStatus::PENDING);
+                        }])
+                        ->whereRaw("daily_limit - current_daily_limit >= {$amount->toUnits()}")
+                        ->when($this->dto->payment_detail_type, function (Builder $query) {
+                            $query->where('detail_type', $this->dto->payment_detail_type);
+                        })
+                        ->get();
+
+                    //все активные сделки трейдера
+                    $traderOrders = Order::query()
+                        ->where('status', OrderStatus::PENDING)
+                        ->whereRelation('paymentDetail', 'user_id', $trader->id)
+                        ->get();
+
+                    $allPaymentDetails
+                        ->groupBy('payment_gateway_id')
+                        ->each(function (Collection $paymentDetailsByGateway) use ($amount, $merchant, &$paymentDetails, $trader, $traderOrders) {
+                            $paymentGateway = $paymentDetailsByGateway->first()->paymentGateway;
+                            $commission = $this->calcCommission($amount, $merchant, $paymentGateway);
+                            $uniqueBy = $paymentGateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
+
+                            //=====
+                            //=====
+                            //=====
+
+                            $availablePaymentDetails = $paymentDetailsByGateway->filter(function (PaymentDetail $paymentDetail) {
+                                return $paymentDetail->orders->count() === 0;
+                            });
+
+                            if ($uniqueBy === 'card') {
+                                //то бери любую карту и используй
+                            }
+
+                            if ($uniqueBy === 'amount') {
+                                $result = $paymentDetailsByGateway->filter(function (PaymentDetail $paymentDetail) use ($commission) {
+                                    if ($paymentDetail->orders->count() === 0) {
+                                        return false;
+                                    }
+
+                                    return bccomp( //если есть с такой суммой, то добавляем в список
+                                            $paymentDetail->orders->first()->amount->toPrecision(),
+                                            $commission['amount']->toPrecision(),
+                                        ) === 0;
+                                });
+
+                                if ($result->count() !== 0) {
+                                    $availablePaymentDetails = collect();
+                                }
+                            }
+
+                            //проверки для СБП
+                            //1 Если метод сбп, то проверить что для под метода нет сделок с такой суммой
+                            if ($paymentGateway->is_sbp) {
+                                $res = $availablePaymentDetails->pluck('sub_payment_gateway_id');
+
+                                $existingGatewaysIDs = PaymentDetail::query()
+                                    ->whereHas('orders', function (Builder $query) use ($commission) {
+                                        $query->where('status', OrderStatus::PENDING);
+                                        $query->where('amount', $commission['amount']->toUnits());
+                                    })
+                                    ->where('user_id', $trader->id)
+                                    ->whereIn('payment_gateway_id', $res)
+                                    ->get('payment_gateway_id')
+                                    ->pluck('payment_gateway_id')
+                                    ->unique()
+                                    ->toArray();
+
+                                $availablePaymentDetails = $availablePaymentDetails->filter(function (PaymentDetail $paymentDetail) use ($existingGatewaysIDs) {
+                                    return ! in_array($paymentDetail->sub_payment_gateway_id, $existingGatewaysIDs);
+                                });
+                            }
+
+                            //2 Если метод не сбп, то проверить что у сбп с таким под методом нет сделок с такой суммой
+                            if (! $paymentGateway->is_sbp) {
+                                if ($traderOrders->isNotEmpty()) {
+                                    $traderOrders->each(function (Order $traderOrder) use (&$availablePaymentDetails, $paymentGateway, $commission) {
+                                        if ($traderOrder->paymentGateway->is_sbp) {
+                                            if ($traderOrder->paymentDetail->subPaymentGateway->code === $paymentGateway->code) {
+                                                $res = bccomp( //если есть с такой суммой, то добавляем в список
+                                                        $traderOrder->amount->toPrecision(),
+                                                        $commission['amount']->toPrecision(),
+                                                    ) === 0;
+
+                                                if ($res) {
+                                                    $availablePaymentDetails = collect();
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+
+                            if ($availablePaymentDetails->isNotEmpty()) {
+                                $paymentDetails = $paymentDetails->merge($availablePaymentDetails)->unique('id');
+                            }
+
+
+                            //=====
+                            //=====
+                            //=====
+                        });
+                });
+            });
+
         //По банкам
-        $paymentGateways->each(function (PaymentGateway $paymentGateway) use ($amount, $amount_usdt, $merchant, &$paymentDetails) {
+/*        $paymentGateways->each(function (PaymentGateway $paymentGateway) use ($amount, $amount_usdt, $merchant, &$paymentDetails) {
             $availablePaymentDetails = PaymentDetail::query()
                 ->whereHas('user.wallet', function (Builder $query) use ($amount_usdt) {
                     $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
@@ -269,7 +388,7 @@ class CreateOrder extends BaseFeature
                     $paymentDetails = $paymentDetails->merge($availablePaymentDetailsByTrader)->unique('id');
                 }
             });
-        });
+        });*/
 
   /*      dump($paymentDetails?->toArray());
 
