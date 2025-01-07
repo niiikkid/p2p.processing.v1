@@ -58,10 +58,6 @@ class SmsService implements SmsServiceContract
             return;
         }
 
-        if ($order->paymentGateway->code !== $result->paymentGateway->code) {
-            return;
-        }
-
         if ($order && $order->status->equals(OrderStatus::PENDING)) {
             services()->order()->succeed($order);
 
