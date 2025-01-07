@@ -65,11 +65,14 @@ class PaymentController extends Controller
         Gate::authorize('access-to-merchant', $merchant);
 
         try {
-            make(OrderServiceContract::class)->create(
-                OrderCreateDTO::formMerchantRequest(
-                    $request->all(),
-                )
-            );
+            cache()->lock('creating-order', 5)
+                ->block(7, function () use ($request) {
+                    return make(OrderServiceContract::class)->create(
+                        OrderCreateDTO::formMerchantRequest(
+                            $request->all(),
+                        )
+                    );
+                });
         } catch (OrderException $e) {
             return redirect()->back()->with('message', $e->getMessage());
         }
