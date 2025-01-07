@@ -26,26 +26,32 @@ class SmsService implements SmsServiceContract
             return;
         }
 
-        if ($result->paymentGateway->payment_confirmation_by_card_last_digits) {
-            $orders = queries()
-                ->order()
-                ->findPendingMultiple($result->amount, $sms->user);
+        $order = queries()
+            ->order()
+            ->findPendingForSBP($result->amount, $sms->user, $result->paymentGateway);
 
-            if ($orders->count() <= 1) {
-                $order = $orders->first();
+        if (! $order) {
+            if ($result->paymentGateway->payment_confirmation_by_card_last_digits) {
+                $orders = queries()
+                    ->order()
+                    ->findPendingMultiple($result->amount, $sms->user, $result->paymentGateway);
+
+                if ($orders->count() <= 1) {
+                    $order = $orders->first();
+                } else {
+                    $orders = $orders->filter(function (Order $order) use ($result) {
+                        $lastDigits = substr($order->paymentDetail->detail, -4);
+
+                        return $lastDigits === $result->card_last_digits && $order->paymentDetail->detail_type->equals(DetailType::CARD);
+                    });
+
+                    $order = $orders->first();
+                }
             } else {
-                $orders = $orders->filter(function (Order $order) use ($result) {
-                    $lastDigits = substr($order->paymentDetail->detail, -4);
-
-                    return $lastDigits === $result->card_last_digits && $order->paymentDetail->detail_type->equals(DetailType::CARD);
-                });
-
-                $order = $orders->first();
+                $order = queries()
+                    ->order()
+                    ->findPending($result->amount, $sms->user, $result->paymentGateway);
             }
-        } else {
-            $order = queries()
-                ->order()
-                ->findPending($result->amount, $sms->user);
         }
 
         if (! $order) {
