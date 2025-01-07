@@ -169,7 +169,9 @@ class CreateOrder extends BaseFeature
             ->whereHas('paymentDetails', function ($query) use ($merchant, $paymentGateways) {
                 $query->active();
                 $query->whereIn('payment_gateway_id', $paymentGateways->pluck('id')->toArray());
-                $query->where('detail_type', $this->dto->payment_detail_type);
+                $query->when($this->dto->payment_detail_type, function (Builder $query) {
+                    $query->where('detail_type', $this->dto->payment_detail_type);
+                });
             })
             ->when($merchant, function (Builder $query) use ($merchant) {
                 $query->where(function (Builder $query) use ($merchant) {
