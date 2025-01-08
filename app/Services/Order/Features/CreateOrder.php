@@ -206,10 +206,6 @@ class CreateOrder extends BaseFeature
                             $commission = $this->calcCommission($amount, $merchant, $paymentGateway);
                             $uniqueBy = $paymentGateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
 
-                            //=====
-                            //=====
-                            //=====
-
                             $availablePaymentDetails = $paymentDetailsByGateway->filter(function (PaymentDetail $paymentDetail) {
                                 return $paymentDetail->orders->count() === 0;
                             });
@@ -280,11 +276,6 @@ class CreateOrder extends BaseFeature
                             if ($availablePaymentDetails->isNotEmpty()) {
                                 $paymentDetails = $paymentDetails->merge($availablePaymentDetails)->unique('id');
                             }
-
-
-                            //=====
-                            //=====
-                            //=====
                         });
                 });
             });
