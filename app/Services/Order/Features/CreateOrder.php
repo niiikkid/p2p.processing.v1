@@ -182,6 +182,7 @@ class CreateOrder extends BaseFeature
             ->chunk(50, function (Collection $users) use ($amount, $merchant, &$paymentDetails, $paymentGateways) {
                 $users->each(function ($trader) use ($amount, $merchant, &$paymentDetails, $paymentGateways) {
                     $allPaymentDetails = PaymentDetail::query()
+                        ->where('user_id', $trader->id)
                         ->active()
                         ->whereIn('payment_gateway_id', $paymentGateways->pluck('id')->toArray())
                         ->with(['paymentGateway', 'subPaymentGateway', 'orders' => function (HasMany $query) {
