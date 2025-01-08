@@ -2,6 +2,7 @@
 
 namespace App\Queries\Eloquent;
 
+use App\Enums\DetailType;
 use App\Enums\OrderStatus;
 use App\Models\Dispute;
 use App\Models\Order;
@@ -49,6 +50,7 @@ class OrderQueriesEloquent implements OrderQueries
             ->where('currency', $amount->getCurrency()->getCode())
             ->whereRelation('paymentDetail', 'user_id', $user->id)
             ->whereRelation('paymentDetail', 'detail', 'like', "%$cardLastDigits")
+            ->whereRelation('paymentDetail', 'detail_type', DetailType::CARD)
             ->where('payment_gateway_id', $paymentGateway->id)
             ->get();
     }
