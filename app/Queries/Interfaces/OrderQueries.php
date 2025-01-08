@@ -20,7 +20,7 @@ interface OrderQueries
     /**
      * @return Collection<int, Dispute>
      */
-    public function findPendingMultiple(Money $amount, User $user, PaymentGateway $paymentGateway): Collection;
+    public function findPendingMultipleCardConfirmation(Money $amount, User $user, PaymentGateway $paymentGateway, string $cardLastDigits): Collection;
 
     public function paginateForAdmin(array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null, ?string $externalID = null, ?string $uuid = null): LengthAwarePaginator;
 

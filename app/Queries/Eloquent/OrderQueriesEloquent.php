@@ -41,13 +41,14 @@ class OrderQueriesEloquent implements OrderQueries
     /**
      * @return Collection<int, Dispute>
      */
-    public function findPendingMultiple(Money $amount, User $user, PaymentGateway $paymentGateway): Collection
+    public function findPendingMultipleCardConfirmation(Money $amount, User $user, PaymentGateway $paymentGateway, string $cardLastDigits): Collection
     {
         return Order::where('amount', $amount->toUnits())
             ->whereDoesntHave('dispute')
             ->where('status', OrderStatus::PENDING)
             ->where('currency', $amount->getCurrency()->getCode())
             ->whereRelation('paymentDetail', 'user_id', $user->id)
+            ->whereRelation('paymentDetail', 'detail', 'like', "%$cardLastDigits")
             ->where('payment_gateway_id', $paymentGateway->id)
             ->get();
     }

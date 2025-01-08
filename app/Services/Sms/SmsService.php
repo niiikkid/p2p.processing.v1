@@ -34,17 +34,11 @@ class SmsService implements SmsServiceContract
             if ($result->paymentGateway->payment_confirmation_by_card_last_digits) {
                 $orders = queries()
                     ->order()
-                    ->findPendingMultiple($result->amount, $sms->user, $result->paymentGateway);
+                    ->findPendingMultipleCardConfirmation($result->amount, $sms->user, $result->paymentGateway, $result->card_last_digits);
 
-                if ($orders->count() <= 1) {
-                    $order = $orders->first();
+                if ($orders->count() > 1) {
+                    $order = null;
                 } else {
-                    $orders = $orders->filter(function (Order $order) use ($result) {
-                        $lastDigits = substr($order->paymentDetail->detail, -4);
-
-                        return $lastDigits === $result->card_last_digits && $order->paymentDetail->detail_type->equals(DetailType::CARD);
-                    });
-
                     $order = $orders->first();
                 }
             } else {
