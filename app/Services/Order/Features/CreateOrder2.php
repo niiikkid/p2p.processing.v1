@@ -14,7 +14,6 @@ use App\Models\PaymentGateway;
 use App\Models\User;
 use App\Services\Money\Currency;
 use App\Services\Money\Money;
-use App\Services\Order\OrderDetails\OrderDetailProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
@@ -22,7 +21,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 //TODO добавить возможность создавать множественные ордера с одной суммой для одного и тогоже юзера
-class CreateOrder extends BaseFeature
+class CreateOrder2 extends BaseFeature
 {
     public function __construct(
         protected OrderCreateDTO $dto
@@ -135,22 +134,6 @@ class CreateOrder extends BaseFeature
      */
     protected function getPaymentGatewayAndDetail(Merchant $merchant): array
     {
-        if ($this->dto->payment_gateway) {
-            $paymentGateways = queries()
-                ->paymentGateway()
-                ->getByCodeForOrderCreate($this->dto->payment_gateway, $this->dto->amount);
-        } elseif ($this->dto->currency) {
-            $paymentGateways = queries()
-                ->paymentGateway()
-                ->getByCurrencyForOrderCreate($this->dto->currency, $this->dto->amount);
-        } else {
-            throw OrderException::make('Требуется валюта или платежный метод.');
-        }
-
-        if ($paymentGateways->isEmpty()) {
-            throw OrderException::make('Подходящий платежный метод не найден. Попробуйте изменить метод/валюту или сумму.');
-        }
-
         $base_conversion_price = services()->market()->getBuyPrice(
             $this->dto->amount->getCurrency()
         );
@@ -160,48 +143,19 @@ class CreateOrder extends BaseFeature
 
         $amount = $this->dto->amount;
 
-        $res = (new OrderDetailProvider(
-            merchant: $merchant,
-            amount: $this->dto->amount,
-            currency: $this->dto->currency,
-            gateway: $this->dto->payment_gateway ? queries()->paymentGateway()->getByCode($this->dto->payment_gateway) : null,
-            detailType: $this->dto->payment_detail_type,
-        ))->provide();
-        dd(1);
-
         $paymentDetails = collect();
 
         User::query()
-            ->whereNull('banned_at')
             ->whereHas('wallet', function (Builder $query) use ($amount_usdt) {
                 $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
-            })
-            ->whereHas('paymentDetails', function ($query) use ($merchant, $paymentGateways) {
-                $query->active();
-                $query->whereIn('payment_gateway_id', $paymentGateways->pluck('id')->toArray());
-                $query->when($this->dto->payment_detail_type, function (Builder $query) {
-                    $query->where('detail_type', $this->dto->payment_detail_type);
-                });
-            })
-            ->when($merchant, function (Builder $query) use ($merchant) {
-                $query->where(function (Builder $query) use ($merchant) {
-                    $query->whereDoesntHave('personalMerchants');
-                    $query->orWhereRelation('personalMerchants', 'id', $merchant->id);
-                });
             })
             ->chunk(50, function (Collection $users) use ($amount, $merchant, &$paymentDetails, $paymentGateways) {
                 $users->each(function ($trader) use ($amount, $merchant, &$paymentDetails, $paymentGateways) {
                     $allPaymentDetails = PaymentDetail::query()
-                        ->where('user_id', $trader->id)
-                        ->active()
-                        ->whereIn('payment_gateway_id', $paymentGateways->pluck('id')->toArray())
                         ->with(['paymentGateway', 'subPaymentGateway', 'orders' => function (HasMany $query) {
                             $query->where('status', OrderStatus::PENDING);
                         }])
                         ->whereRaw("daily_limit - current_daily_limit >= {$amount->toUnits()}")
-                        ->when($this->dto->payment_detail_type, function (Builder $query) {
-                            $query->where('detail_type', $this->dto->payment_detail_type);
-                        })
                         ->get();
 
                     //все активные сделки трейдера
@@ -213,10 +167,6 @@ class CreateOrder extends BaseFeature
                     $allPaymentDetails
                         ->groupBy('payment_gateway_id')
                         ->each(function (Collection $paymentDetailsByGateway) use ($amount, $merchant, &$paymentDetails, $trader, $traderOrders) {
-                            $paymentGateway = $paymentDetailsByGateway->first()->paymentGateway;
-                            $commission = $this->calcCommission($amount, $merchant, $paymentGateway);
-                            $uniqueBy = $paymentGateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
-
                             $availablePaymentDetails = $paymentDetailsByGateway->filter(function (PaymentDetail $paymentDetail) {
                                 return $paymentDetail->orders->count() === 0;
                             });
@@ -298,48 +248,6 @@ class CreateOrder extends BaseFeature
         $paymentDetail = $paymentDetails->random();
 
         return [$paymentDetail->paymentGateway, $paymentDetail];
-    }
-
-    protected function calcCommission(Money $baseAmount, Merchant $merchant, PaymentGateway $paymentGateway)
-    {
-        $service_commissions = $merchant->user->meta->service_commissions;
-
-        $service_commission_rate_total = $paymentGateway->service_commission_rate;
-        $service_commission_rate_merchant = $paymentGateway->service_commission_rate;
-        $service_commission_rate_client = 0;
-
-        if (isset($service_commissions[$merchant->id][$paymentGateway->id])) {
-            if ($service_commissions[$merchant->id][$paymentGateway->id]['gateway_total_commission'] > 0) {
-                $service_commission_rate_total = $service_commissions[$merchant->id][$paymentGateway->id]['gateway_total_commission'];
-            }
-
-            $service_commission_rate_merchant = $service_commissions[$merchant->id][$paymentGateway->id]['merchant_commission'];
-            $service_commission_rate_client = $service_commission_rate_total - $service_commission_rate_merchant;
-
-            if ($service_commissions[$merchant->id][$paymentGateway->id]['gateway_total_commission'] === 0) {
-                $service_commission_rate_total = 0;
-                $service_commission_rate_merchant = 0;
-                $service_commission_rate_client = 0;
-            }
-        }
-
-        $client_commission_amount = 0;
-        if ($service_commission_rate_client > 0) {
-            $client_commission_amount = $baseAmount
-                ->mul($service_commission_rate_client / 100);
-
-            $client_commission_amount = intval(round($client_commission_amount->toBeauty()));
-        }
-
-        $amount = $baseAmount->add($client_commission_amount);
-
-        return [
-            'base_amount' => $baseAmount,
-            'amount' => $amount,
-            'service_commission_rate_total' => $service_commission_rate_total,
-            'service_commission_rate_merchant' => $service_commission_rate_merchant,
-            'service_commission_rate_client' => $service_commission_rate_client,
-        ];
     }
 
     protected function calcConversionPrices(Currency $currency, float $commission_rate): array
