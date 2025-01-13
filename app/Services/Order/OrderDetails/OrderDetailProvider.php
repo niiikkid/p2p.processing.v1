@@ -3,7 +3,6 @@
 namespace App\Services\Order\OrderDetails;
 
 use App\Enums\DetailType;
-use App\Enums\OrderStatus;
 use App\Exceptions\OrderException;
 use App\Models\Merchant;
 use App\Models\PaymentDetail;
@@ -12,9 +11,10 @@ use App\Models\User;
 use App\Services\Money\Currency;
 use App\Services\Money\Money;
 use App\Services\Order\OrderDetails\Classes\ServiceCommissionRate;
+use App\Services\Order\OrderDetails\Classes\TraderMarkupRate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class OrderDetailProvider
 {
@@ -36,6 +36,9 @@ class OrderDetailProvider
      */
     public function provide()
     {
+        //TODO remove
+        $time_start = microtime(true);
+
         $gateways = $this->getGateways();
 
         $traders = $this->getTraders($gateways);
@@ -44,13 +47,64 @@ class OrderDetailProvider
 
         $gateways = $this->setGatewaysMeta($gateways);
 
+        $this->setDetailsMeta($gateways, $traders);
+
+        //TODO remove
+        $time_end = microtime(true);
+        $execution_time = ($time_end - $time_start)/60;
+        dump($execution_time);
+
         dd($this->details->toArray());
     }
 
-    public function setGatewaysMeta(Collection $gateways): Collection
+    public function setDetailsMeta(Collection $gateways, Collection $traders): void
+    {
+        $this->details = $this->details->each(function (PaymentDetail $detail) use ($gateways, $traders) {
+            $gateway = $gateways->where('id', $detail->payment_gateway_id)->first();
+            $detail->setRelation('gateway', $gateway);
+            $trader = $traders->where('id', $detail->user_id)->first();
+            $detail->setRelation('trader', $trader);
+
+            $traderMarkupRate = TraderMarkupRate::calculate($gateway, $detail->trader);
+
+            $baseExchangePrice = services()->market()->getBuyPrice($gateway->currency);
+            $exchangePriceWithCommission = $baseExchangePrice->add(
+                $baseExchangePrice->mul($traderMarkupRate / 100)
+            );
+
+            $amount = $gateway->meta['amount_with_service_commission'];
+            $serviceCommissionRate = $gateway->meta['service_commission_rate'];
+
+            $profit = $amount->convert($exchangePriceWithCommission, Currency::USDT());
+            $serviceProfit = $profit->mul($serviceCommissionRate['total'] / 100);
+            $merchantProfit = $profit->sub($serviceProfit);
+
+            $traderMarkup = $amount
+                ->convert($baseExchangePrice, Currency::USDT())
+                ->sub($profit);
+
+            $detail->meta = [
+                'trader_markup_rate' => $traderMarkupRate,
+                'exchange_price' => [
+                    'base' => $baseExchangePrice,
+                    'with_commission' => $exchangePriceWithCommission,
+                ],
+                'profit' => [
+                    'total' => $profit,
+                    'service' => $serviceProfit,
+                    'merchant' => $merchantProfit,
+                ],
+                'trader_markup' => $traderMarkup,
+            ];
+
+            return $detail;
+        });
+    }
+
+    protected function setGatewaysMeta(Collection $gateways): Collection
     {
         $gateways->each(function (PaymentGateway $gateway) {
-            $commission = ServiceCommissionRate::calculate($this->merchant, $gateway, $this->merchant->user->meta);
+            $commission = ServiceCommissionRate::calculate($this->merchant, $gateway);
             $uniqueBy = $gateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
 
             $amount = $this->amount;
@@ -64,8 +118,8 @@ class OrderDetailProvider
             }
 
             $gateway->meta = [
-                'final_amount' => $amount,
-                'commission' => $commission,
+                'amount_with_service_commission' => $amount,
+                'service_commission_rate' => $commission,
                 'uniqueBy' => $uniqueBy,
             ];
 
@@ -75,7 +129,7 @@ class OrderDetailProvider
         return $gateways;
     }
 
-    public function getDetails(Collection $gateways, Collection $traders): Collection
+    protected function getDetails(Collection $gateways, Collection $traders): Collection
     {
         return PaymentDetail::query()
             ->whereIn('user_id', $traders->pluck('id'))
@@ -90,9 +144,12 @@ class OrderDetailProvider
             ->get();
     }
 
-    public function getTraders(Collection $gateways): Collection
+    protected function getTraders(Collection $gateways): Collection
     {
         return User::query()
+            ->with(['meta' => function (HasOne $query) {
+                $query->select(['user_id', 'exchange_markup_rates']);
+            }])
             ->whereNull('banned_at')
             ->whereHas('paymentDetails', function ($query) use ($gateways) {
                 $query->active();
@@ -111,7 +168,7 @@ class OrderDetailProvider
             ->get();
     }
 
-    public function getGateways(): Collection
+    protected function getGateways(): Collection
     {
         if ($this->gateway) {
             $paymentGateways = queries()

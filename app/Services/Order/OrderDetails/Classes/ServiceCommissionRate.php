@@ -4,13 +4,12 @@ namespace App\Services\Order\OrderDetails\Classes;
 
 use App\Models\Merchant;
 use App\Models\PaymentGateway;
-use App\Models\UserMeta;
 
 class ServiceCommissionRate
 {
-    public static function calculate(Merchant $merchant, PaymentGateway $paymentGateway, UserMeta $userMeta): array
+    public static function calculate(Merchant $merchant, PaymentGateway $paymentGateway): array
     {
-        $service_commissions = $userMeta->service_commissions;
+        $service_commissions = $merchant->user->meta->service_commissions;
 
         $service_commission_rate_total = $paymentGateway->service_commission_rate;
         $service_commission_rate_merchant = $paymentGateway->service_commission_rate;
