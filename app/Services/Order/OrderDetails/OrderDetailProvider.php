@@ -49,23 +49,43 @@ class OrderDetailProvider
 
         $this->setDetailsMeta($gateways, $traders);
 
+        $this->filterDetails();
+
         //TODO remove
         $time_end = microtime(true);
         $execution_time = ($time_end - $time_start)/60;
         dump($execution_time);
-
+        dump($this->details->count());
         dd($this->details->toArray());
+    }
+
+    public function filterDetails(): void
+    {
+        //достаточно средств на траст балансе
+        $this->details = $this->details->filter(function (PaymentDetail $detail) {
+            $trustBalance = (int)$detail->user->wallet->trust_balance->toUnits();
+            $amount = (int)$detail->meta['profit']['total']->toUnits();
+
+            return $trustBalance >= $amount;
+        });
+
+        $this->details = $this->details->filter(function (PaymentDetail $detail) {
+            $limit = (int)$detail->daily_limit->sub($detail->current_daily_limit)->toUnits();
+            $amount = (int)$detail->meta['profit']['total']->toUnits();
+
+            return $limit >= $amount;
+        });
     }
 
     public function setDetailsMeta(Collection $gateways, Collection $traders): void
     {
         $this->details = $this->details->each(function (PaymentDetail $detail) use ($gateways, $traders) {
             $gateway = $gateways->where('id', $detail->payment_gateway_id)->first();
-            $detail->setRelation('gateway', $gateway);
+            $detail->setRelation('paymentGateway', $gateway);
             $trader = $traders->where('id', $detail->user_id)->first();
-            $detail->setRelation('trader', $trader);
+            $detail->setRelation('user', $trader);
 
-            $traderMarkupRate = TraderMarkupRate::calculate($gateway, $detail->trader);
+            $traderMarkupRate = TraderMarkupRate::calculate($gateway, $detail->user);
 
             $baseExchangePrice = services()->market()->getBuyPrice($gateway->currency);
             $exchangePriceWithCommission = $baseExchangePrice->add(
@@ -139,7 +159,7 @@ class OrderDetailProvider
                 $query->where('detail_type', $this->detailType);
             })
             ->select([
-                'id', 'user_id', 'payment_gateway_id'
+                'id', 'user_id', 'payment_gateway_id', 'daily_limit', 'current_daily_limit', 'currency'
             ])
             ->get();
     }
@@ -149,6 +169,9 @@ class OrderDetailProvider
         return User::query()
             ->with(['meta' => function (HasOne $query) {
                 $query->select(['user_id', 'exchange_markup_rates']);
+            }])
+            ->with(['wallet' => function (HasOne $query) {
+                $query->select(['user_id', 'trust_balance', 'currency']);
             }])
             ->whereNull('banned_at')
             ->whereHas('paymentDetails', function ($query) use ($gateways) {

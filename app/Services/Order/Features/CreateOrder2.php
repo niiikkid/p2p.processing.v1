@@ -146,16 +146,12 @@ class CreateOrder2 extends BaseFeature
         $paymentDetails = collect();
 
         User::query()
-            ->whereHas('wallet', function (Builder $query) use ($amount_usdt) {
-                $query->where('trust_balance', '>=', (int)$amount_usdt->toUnits());
-            })
             ->chunk(50, function (Collection $users) use ($amount, $merchant, &$paymentDetails, $paymentGateways) {
                 $users->each(function ($trader) use ($amount, $merchant, &$paymentDetails, $paymentGateways) {
                     $allPaymentDetails = PaymentDetail::query()
                         ->with(['paymentGateway', 'subPaymentGateway', 'orders' => function (HasMany $query) {
                             $query->where('status', OrderStatus::PENDING);
                         }])
-                        ->whereRaw("daily_limit - current_daily_limit >= {$amount->toUnits()}")
                         ->get();
 
                     //все активные сделки трейдера
