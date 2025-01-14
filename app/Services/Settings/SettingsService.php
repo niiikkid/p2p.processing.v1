@@ -17,6 +17,8 @@ class SettingsService implements SettingsServiceContract
     const CURRENCY_PRICE_PARSER_SETTINGS = 'currency_price_parser_settings';
     const SUPPORT_LINK = 'support_link';
 
+    protected array $cache = [];
+
     public function getPrimeTimeBonus(): PrimeTimeSettings
     {
         return new PrimeTimeSettings(
@@ -61,6 +63,8 @@ class SettingsService implements SettingsServiceContract
 
     public function createAll(): void
     {
+        $this->cache = [];
+
         Setting::firstOrCreate([
             'key' => self::PRIME_TIME_BONUS_STARTS,
             'value' => '00:00',
@@ -97,11 +101,17 @@ class SettingsService implements SettingsServiceContract
 
     protected function getParam(string $key): mixed
     {
-        return Setting::where('key', $key)->first()->value;
+        if (empty($this->cache[$key])) {
+            $this->cache[$key] = Setting::where('key', $key)->first()->value;
+        }
+
+        return $this->cache[$key];
     }
 
     protected function updateParam(string $key, mixed $value): bool
     {
+        unset($this->cache[$key]);
+
         return Setting::where('key', $key)->update(['value' => $value]);
     }
 }
