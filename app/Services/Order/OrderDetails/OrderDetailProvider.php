@@ -18,6 +18,7 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 
 class OrderDetailProvider
 {
@@ -39,6 +40,7 @@ class OrderDetailProvider
      */
     public function provide()
     {
+        DB::connection()->enableQueryLog();
         //TODO remove
         $time_start = microtime(true);
 
@@ -58,6 +60,8 @@ class OrderDetailProvider
         $time_end = microtime(true);
         $execution_time = ($time_end - $time_start)/60;
 
+        $queries = DB::getQueryLog();
+        dump(count($queries));
         dump($execution_time);
         dump($this->details->count());
         dd($this->details->toArray());
@@ -92,6 +96,16 @@ class OrderDetailProvider
 
     public function filterDetails(): void
     {
+        $rawDetails = PaymentDetail::query()
+            ->whereHas('orders', function (Builder $query) {
+                $query->where('status', OrderStatus::PENDING);
+            })
+            ->with(['orders' => function ($query) {
+                $query->where('status', OrderStatus::PENDING);
+                $query->select('id', 'payment_detail_id', 'amount', 'currency', 'status');
+            }])
+            ->get(['id', 'payment_gateway_id', 'user_id', 'sub_payment_gateway_id']);
+
         //достаточно средств на траст балансе
         $this->details = $this->details->filter(function (PaymentDetail $detail) {
             $trustBalance = (int)$detail->user->wallet->trust_balance->toUnits();
@@ -109,7 +123,7 @@ class OrderDetailProvider
         });
 
         //Фильтр по $uniqueBy
-        $this->details = $this->details->filter(function (PaymentDetail $detail) {
+        $this->details = $this->details->filter(function (PaymentDetail $detail) use ($rawDetails) {
             $amount = (int)$detail->meta['profit']['total']->toUnits();
             $uniqueBy = $detail->paymentGateway->meta['uniqueBy'];
 
@@ -117,14 +131,11 @@ class OrderDetailProvider
                 //то бери любую карту и используй
                 return true;
             } else if ($uniqueBy === 'amount') {
-                $unique = PaymentDetail::query()
-                    ->whereHas('orders', function (Builder $query) use ($amount) {
-                        $query->where('amount', $amount);
-                        $query->where('status', OrderStatus::PENDING);
-                    })
+                $unique = !$rawDetails
+                    ->where('orders.amount', $amount)
                     ->where('payment_gateway_id', $detail->payment_gateway_id)
                     ->where('user_id', $detail->user_id)
-                    ->doesntExist();
+                    ->count();
 
                 return $unique;
             }
@@ -135,29 +146,23 @@ class OrderDetailProvider
         //Фильтры для СБП
         //1 Если метод сбп, то проверить что для под метода нет сделок с такой суммой
         //2 Если метод не сбп, то проверить что у сбп с таким под методом нет сделок с такой суммой
-        $this->details = $this->details->filter(function (PaymentDetail $detail) {
+        $this->details = $this->details->filter(function (PaymentDetail $detail) use ($rawDetails) {
             $amount = (int)$detail->meta['profit']['total']->toUnits();
 
             if ($detail->paymentGateway->is_sbp) {//СБП
-                $unique = PaymentDetail::query()
-                    ->whereHas('orders', function (Builder $query) use ($amount) {
-                        $query->where('amount', $amount);
-                        $query->where('status', OrderStatus::PENDING);
-                    })
+                $unique = !$rawDetails
+                    ->where('orders.amount', $amount)
                     ->where('payment_gateway_id', $detail->sub_payment_gateway_id)
                     ->where('user_id', $detail->user_id)
-                    ->doesntExist();
+                    ->count();
 
                 return $unique;
             } else {//не СБП
-                $unique = PaymentDetail::query()
-                    ->whereHas('orders', function (Builder $query) use ($amount) {
-                        $query->where('amount', $amount);
-                        $query->where('status', OrderStatus::PENDING);
-                    })
+                $unique = !$rawDetails
+                    ->where('orders.amount', $amount)
                     ->where('sub_payment_gateway_id', $detail->payment_gateway_id)
                     ->where('user_id', $detail->user_id)
-                    ->doesntExist();
+                    ->count();
 
                 return $unique;
             }
@@ -170,7 +175,7 @@ class OrderDetailProvider
             $gateway = $gateways->where('id', $detail->payment_gateway_id)->first();
             $detail->setRelation('paymentGateway', $gateway);
             $trader = $traders->where('id', $detail->user_id)->first();
-            $detail->setRelation('user', $trader);
+            $detail = $detail->setRelation('user', $trader);
 
             $traderMarkupRate = TraderMarkupRate::calculate($gateway, $detail->user);
 

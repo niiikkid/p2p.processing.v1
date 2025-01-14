@@ -4,6 +4,7 @@ namespace App\Services\Order\OrderDetails\Classes;
 
 use App\Models\PaymentGateway;
 use App\Models\User;
+use App\Models\UserMeta;
 use Illuminate\Support\Carbon;
 
 class TraderMarkupRate
