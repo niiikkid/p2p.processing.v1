@@ -20,7 +20,7 @@ class OrderCreateDTO extends BaseDTO
         public ?string $callback_url = null,
         public ?string $success_url = null,
         public ?string $fail_url = null,
-        public ?string $payment_gateway = null,
+        public ?PaymentGateway $payment_gateway = null,
         public ?Currency $currency = null,
         public ?DetailType $payment_detail_type = null,
     )
@@ -30,7 +30,7 @@ class OrderCreateDTO extends BaseDTO
     {
         if (! empty($data['payment_gateway'])) {
             $paymentGateway = queries()->paymentGateway()->getByCode($data['payment_gateway']);
-
+            $data['payment_gateway'] = $paymentGateway;
             $data['amount'] = Money::fromPrecision($data['amount'], $paymentGateway->currency);
         } else if (! empty($data['currency'])) {
             $data['currency'] = new Currency($data['currency']);
@@ -47,7 +47,7 @@ class OrderCreateDTO extends BaseDTO
     {
         if (! empty($data['payment_gateway'])) {
             $paymentGateway = queries()->paymentGateway()->getByCode($data['payment_gateway']);
-
+            $data['payment_gateway'] = $paymentGateway;
             $data['amount'] = Money::fromPrecision($data['amount'], $paymentGateway->currency);
         } else if (! empty($data['currency'])) {
             $data['currency'] = new Currency($data['currency']);
