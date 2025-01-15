@@ -8,9 +8,8 @@ use App\Enums\TransactionType;
 use App\Exceptions\OrderException;
 use App\Models\Merchant;
 use App\Models\Order;
-use App\Models\PaymentGateway;
+use App\Models\User;
 use App\Services\Order\OrderDetails\OrderDetailProvider;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class CreateOrder extends BaseFeature
@@ -29,19 +28,21 @@ class CreateOrder extends BaseFeature
 
         $this->validateMerchant($merchant);
 
-        $orderDetails = (new OrderDetailProvider(
+        $detail = (new OrderDetailProvider(
             merchant: $merchant,
             amount: $this->dto->amount,
             currency: $this->dto->currency,
             gateway: $this->dto->payment_gateway,
             detailType: $this->dto->payment_detail_type,
         ))->provide();
-dd($orderDetails);
-        $expires_at = $this->getExpirationTime($orderDetails['gateway']);
+dd($detail);
+        $expires_at = now()->addMinutes($detail->gateway->reservationTime);
+
+        $wallet = User::find($detail->trader->id)->wallet;
 
         services()->wallet()->takeTrust(
-            wallet: $orderDetails['trader']->wallet,
-            amount: $orderDetails['profit_amount'],
+            wallet: $wallet,
+            amount: $detail->profitTotal,
             type: TransactionType::PAYMENT_FOR_OPENED_ORDER
         );
 
@@ -50,32 +51,27 @@ dd($orderDetails);
             'external_id' => $this->dto->external_id,
             'merchant_id' => $merchant->id,
             'base_amount' => $this->dto->amount,
-            'amount' => $orderDetails['amount'],
-            'profit' => $orderDetails['profit_amount'],
-            'merchant_profit' => $orderDetails['merchant_profit_amount'],
-            'service_profit' => $orderDetails['service_profit_amount'],
-            'trader_profit' => $orderDetails['trader_markup_amount'],
-            'currency' => $orderDetails['gateway']->currency,
-            'base_conversion_price' => $orderDetails['exchange_price'],
-            'conversion_price' => $orderDetails['exchange_price_with_commission'],
-            'trader_commission_rate' => $orderDetails['trader_markup_rate'],
-            'service_commission_rate_total' => $orderDetails['service_commission_rate_total'],
-            'service_commission_rate_merchant' => $orderDetails['service_commission_rate_merchant'],
-            'service_commission_rate_client' => $orderDetails['service_commission_rate_client'],
+            'amount' => $detail->gateway->amountWithServiceCommission,
+            'profit' => $detail->profitTotal,
+            'merchant_profit' => $detail->profitMerchantPart,
+            'service_profit' => $detail->profitServicePart,
+            'trader_profit' => $detail->traderMarkup,
+            'currency' => $this->dto->amount->getCurrency(),
+            'base_conversion_price' => $detail->exchangePriceInitial,
+            'conversion_price' => $detail->exchangePriceWithCommission,
+            'trader_commission_rate' => $detail->traderMarkupRate,
+            'service_commission_rate_total' => $detail->gateway->serviceCommissionRateTotal,
+            'service_commission_rate_merchant' => $detail->gateway->serviceCommissionRateMerchant,
+            'service_commission_rate_client' => $detail->gateway->serviceCommissionRateClient,
             'status' => OrderStatus::PENDING,
             'callback_url' => $this->dto->callback_url,
             'success_url' => $this->dto->success_url,
             'fail_url' => $this->dto->fail_url,
             'is_h2h' => $this->dto->h2h,
-            'payment_gateway_id' => $orderDetails['gateway']->id,
-            'payment_detail_id' => $orderDetails['detail']->id,
+            'payment_gateway_id' => $detail->gateway->id,
+            'payment_detail_id' => $detail->id,
             'expires_at' => $expires_at,
         ]);
-    }
-
-    protected function getExpirationTime(PaymentGateway $paymentGateway): Carbon
-    {
-        return now()->addMinutes($paymentGateway->reservation_time);
     }
 
     protected function validateMerchant(Merchant $merchant): void
