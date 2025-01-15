@@ -35,6 +35,7 @@ class OrderCreateDTO extends BaseDTO
         } else if (! empty($data['currency'])) {
             $data['currency'] = new Currency($data['currency']);
             $data['amount'] = Money::fromPrecision($data['amount'], $data['currency']);
+            $data['payment_gateway'] = null;
         }
 
         $data['payment_detail_type'] = ! empty($data['payment_detail_type']) ? DetailType::from($data['payment_detail_type']) : null;
@@ -52,6 +53,7 @@ class OrderCreateDTO extends BaseDTO
         } else if (! empty($data['currency'])) {
             $data['currency'] = new Currency($data['currency']);
             $data['amount'] = Money::fromPrecision($data['amount'], $data['currency']);
+            $data['payment_gateway'] = null;
         }
 
         $data['payment_detail_type'] = ! empty($data['payment_detail_type']) ? DetailType::from($data['payment_detail_type']) : null;

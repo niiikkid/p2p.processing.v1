@@ -6,7 +6,6 @@ use App\Enums\DetailType;
 use App\Enums\OrderStatus;
 use App\Exceptions\OrderException;
 use App\Models\Merchant;
-use App\Models\Order;
 use App\Models\PaymentDetail;
 use App\Models\PaymentGateway;
 use App\Models\User;
@@ -14,16 +13,17 @@ use App\Services\Money\Currency;
 use App\Services\Money\Money;
 use App\Services\Order\OrderDetails\Classes\ServiceCommissionRate;
 use App\Services\Order\OrderDetails\Classes\TraderMarkupRate;
-use Barryvdh\Debugbar\Facades\Debugbar;
+use App\Services\Order\OrderDetails\Values\Detail;
+use App\Services\Order\OrderDetails\Values\Gateway;
+use App\Services\Order\OrderDetails\Values\Trader;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+
 
 class OrderDetailProvider
 {
-    protected Collection $details;
-
     public function __construct(
         protected Merchant $merchant,
         protected Money $amount,
@@ -31,9 +31,7 @@ class OrderDetailProvider
         protected ?PaymentGateway $gateway = null,
         protected ?DetailType $detailType = null,
     )
-    {
-        $this->details = new Collection();
-    }
+    {}
 
     /**
      * @throws OrderException
@@ -48,12 +46,8 @@ class OrderDetailProvider
 
         $traders = $this->getTraders($gateways);
 
-        $this->details = $this->getDetails($gateways, $traders);
-
-        $gateways = $this->setGatewaysMeta($gateways);
-
-        $this->setDetailsMeta($gateways, $traders);
-
+        $details = $this->getDetails($gateways, $traders);
+        dd($details);
         $this->filterDetails();
 
         //TODO remove
@@ -169,81 +163,14 @@ class OrderDetailProvider
         });
     }
 
-    public function setDetailsMeta(Collection $gateways, Collection $traders): void
-    {
-        $this->details = $this->details->each(function (PaymentDetail $detail) use ($gateways, $traders) {
-            $gateway = $gateways->where('id', $detail->payment_gateway_id)->first();
-            $detail->setRelation('paymentGateway', $gateway);
-            $trader = $traders->where('id', $detail->user_id)->first();
-            $detail = $detail->setRelation('user', $trader);
-
-            $traderMarkupRate = TraderMarkupRate::calculate($gateway, $detail->user);
-
-            $baseExchangePrice = services()->market()->getBuyPrice($gateway->currency);
-            $exchangePriceWithCommission = $baseExchangePrice->add(
-                $baseExchangePrice->mul($traderMarkupRate / 100)
-            );
-
-            $amount = $gateway->meta['amount_with_service_commission'];
-            $serviceCommissionRate = $gateway->meta['service_commission_rate'];
-
-            $profit = $amount->convert($exchangePriceWithCommission, Currency::USDT());
-            $serviceProfit = $profit->mul($serviceCommissionRate['total'] / 100);
-            $merchantProfit = $profit->sub($serviceProfit);
-
-            $traderMarkup = $amount
-                ->convert($baseExchangePrice, Currency::USDT())
-                ->sub($profit);
-
-            $detail->meta = [
-                'trader_markup_rate' => $traderMarkupRate,
-                'exchange_price' => [
-                    'base' => $baseExchangePrice,
-                    'with_commission' => $exchangePriceWithCommission,
-                ],
-                'profit' => [
-                    'total' => $profit,
-                    'service' => $serviceProfit,
-                    'merchant' => $merchantProfit,
-                ],
-                'trader_markup' => $traderMarkup,
-            ];
-
-            return $detail;
-        });
-    }
-
-    protected function setGatewaysMeta(Collection $gateways): Collection
-    {
-        $gateways->each(function (PaymentGateway $gateway) {
-            $commission = ServiceCommissionRate::calculate($this->merchant, $gateway);
-            $uniqueBy = $gateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
-
-            $amount = $this->amount;
-            if ($commission['client'] > 0) {
-                $clientCommissionAmount = $this->amount
-                    ->mul($commission['client'] / 100);
-
-                $amount = $this->amount->add(
-                    intval(round($clientCommissionAmount->toBeauty()))
-                );
-            }
-
-            $gateway->meta = [
-                'amount_with_service_commission' => $amount,
-                'service_commission_rate' => $commission,
-                'uniqueBy' => $uniqueBy,
-            ];
-
-            return $gateway;
-        });
-
-        return $gateways;
-    }
-
+    /**
+     * @param Collection<int, Gateway> $gateways
+     * @param Collection<int, Trader> $traders
+     * @return Collection<int, Detail>
+     */
     protected function getDetails(Collection $gateways, Collection $traders): Collection
     {
-        return PaymentDetail::query()
+        $paymentDetails = PaymentDetail::query()
             ->whereDoesntHave('orders', function (Builder $query) use ($gateways, $traders) {
                 $query->where('status', OrderStatus::PENDING);
             })
@@ -257,11 +184,67 @@ class OrderDetailProvider
                 'id', 'user_id', 'payment_gateway_id', 'sub_payment_gateway_id', 'daily_limit', 'current_daily_limit', 'currency'
             ])
             ->get();
+
+        $details = collect();
+
+        $paymentDetails->each(function (PaymentDetail $detail) use ($gateways, $traders, &$details) {
+            /**
+             * @var Gateway $gateway
+             * @var Trader $trader
+             */
+            $gateway = $gateways->where('id', $detail->payment_gateway_id)->first();
+            $trader = $traders->where('id', $detail->user_id)->first();
+
+            $traderMarkupRate = TraderMarkupRate::calculate($gateway, $trader);
+
+            $baseExchangePrice = services()->market()->getBuyPrice($this->amount->getCurrency());
+            $exchangePriceWithCommission = $baseExchangePrice->add(
+                $baseExchangePrice->mul($traderMarkupRate / 100)
+            );
+
+            $profit = $gateway->amountWithServiceCommission
+                ->convert($exchangePriceWithCommission, Currency::USDT());
+            $serviceProfit = $profit->mul($gateway->serviceCommissionRateTotal / 100);
+            $merchantProfit = $profit->sub($serviceProfit);
+
+            $traderMarkup = $gateway->amountWithServiceCommission
+                ->convert($baseExchangePrice, Currency::USDT())
+                ->sub($profit);
+
+            $details->push(
+                new Detail(
+                    id: $detail->id,
+                    userID: $detail->user_id,
+                    paymentGatewayID: $detail->payment_gateway_id,
+                    subPaymentGatewayID: $detail->sub_payment_gateway_id,
+                    dailyLimit: $detail->daily_limit,
+                    currentDailyLimit: $detail->current_daily_limit,
+                    currency: $detail->currency,
+                    exchangePriceInitial: $baseExchangePrice,
+                    exchangePriceWithCommission: $exchangePriceWithCommission,
+                    profitTotal: $profit,
+                    profitServicePart: $serviceProfit,
+                    profitMerchantPart: $merchantProfit,
+                    traderMarkupRate: $traderMarkupRate,
+                    traderMarkup: $traderMarkup,
+                    gateway: $gateway,
+                    trader: $trader,
+                )
+            );
+        });
+
+        return $details;
     }
 
+    /**
+     * @param Collection<int, Gateway> $gateways
+     * @return Collection<int, Trader>
+     */
     protected function getTraders(Collection $gateways): Collection
     {
-        return User::query()
+        $traders = collect();
+
+        User::query()
             ->with(['meta' => function (HasOne $query) {
                 $query->select(['user_id', 'exchange_markup_rates']);
             }])
@@ -283,15 +266,31 @@ class OrderDetailProvider
             ->select([
                 'id'
             ])
-            ->get();
+            ->get()
+            ->each(function (User $user) use (&$traders) {
+                $traders->push(
+                    new Trader(
+                        id: $user->id,
+                        trustBalance: $user->wallet->trust_balance,
+                        exchangeMarkupRates: $user->meta->exchange_markup_rates,
+                    )
+                );
+            });
+
+        return $traders;
     }
 
+
+    /**
+     * @return Collection<int, Gateway>
+     * @throws OrderException
+     */
     protected function getGateways(): Collection
     {
         if ($this->gateway) {
             $paymentGateways = queries()
                 ->paymentGateway()
-                ->getByCodeForOrderCreate($this->gateway, $this->amount);
+                ->getByCodeForOrderCreate($this->gateway->code, $this->amount);
         } else if ($this->currency) {
             $paymentGateways = queries()
                 ->paymentGateway()
@@ -304,6 +303,37 @@ class OrderDetailProvider
             throw OrderException::make('Подходящий платежный метод не найден. Попробуйте изменить метод/валюту или сумму.');
         }
 
-        return $paymentGateways;
+        $gateways = collect();
+
+        $paymentGateways->each(function (PaymentGateway $gateway) use (&$gateways) {
+            $commission = ServiceCommissionRate::calculate($this->merchant, $gateway);
+            $uniqueBy = $gateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
+
+            $amount = $this->amount;
+            if ($commission['client'] > 0) {
+                $clientCommissionAmount = $this->amount
+                    ->mul($commission['client'] / 100);
+
+                $amount = $this->amount->add(
+                    intval(round($clientCommissionAmount->toBeauty()))
+                );
+            }
+
+            $gateways->push(
+                new Gateway(
+                    id: $gateway->id,
+                    code: $gateway->code,
+                    reservationTime: $gateway->reservation_time,
+                    amountWithServiceCommission: $amount,
+                    traderMarkupRate: $gateway->commission_rate,
+                    serviceCommissionRateTotal: $commission['total'],
+                    serviceCommissionRateMerchant: $commission['merchant'],
+                    serviceCommissionRateClient: $commission['client'],
+                    uniqueBy: $uniqueBy,
+                )
+            );
+        });
+
+        return $gateways;
     }
 }

@@ -5,16 +5,18 @@ namespace App\Services\Order\OrderDetails\Classes;
 use App\Models\PaymentGateway;
 use App\Models\User;
 use App\Models\UserMeta;
+use App\Services\Order\OrderDetails\Values\Gateway;
+use App\Services\Order\OrderDetails\Values\Trader;
 use Illuminate\Support\Carbon;
 
 class TraderMarkupRate
 {
-    public static function calculate(PaymentGateway $paymentGateway, User $trader): float
+    public static function calculate(Gateway $gateway, Trader $trader): float
     {
-        $commission_rate = $paymentGateway->commission_rate;
+        $commission_rate = $gateway->traderMarkupRate;
 
-        $personalMarkup = array_filter($trader->meta->exchange_markup_rates, function ($value) use ($paymentGateway) {
-            return $value['id'] === $paymentGateway->id;
+        $personalMarkup = array_filter($trader->exchangeMarkupRates, function ($value) use ($gateway) {
+            return $value['id'] === $gateway->id;
         });
 
         $personalMarkup = array_values($personalMarkup);
