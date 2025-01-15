@@ -16,6 +16,7 @@ class Gateway
         public float $serviceCommissionRateMerchant,
         public float $serviceCommissionRateClient,
         public string $uniqueBy,
+        public bool $isSBP,
     )
     {}
 }
