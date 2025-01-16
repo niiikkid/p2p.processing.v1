@@ -58,7 +58,7 @@ dd($detail);
             'trader_profit' => $detail->traderMarkup,
             'currency' => $this->dto->amount->getCurrency(),
             'base_conversion_price' => $detail->exchangePriceInitial,
-            'conversion_price' => $detail->exchangePriceWithCommission,
+            'conversion_price' => $detail->exchangePriceWithMarkup,
             'trader_commission_rate' => $detail->traderMarkupRate,
             'service_commission_rate_total' => $detail->gateway->serviceCommissionRateTotal,
             'service_commission_rate_merchant' => $detail->gateway->serviceCommissionRateMerchant,

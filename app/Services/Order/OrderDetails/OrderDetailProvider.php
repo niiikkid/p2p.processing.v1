@@ -101,7 +101,7 @@ class OrderDetailProvider
 
         //Фильтр по $uniqueBy
         $details = $details->filter(function (Detail $detail) use ($paymentDetails) {
-            $amount = (int)$detail->profitTotal->toUnits();
+            $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
             $uniqueBy = $detail->gateway->uniqueBy;
 
             if ($uniqueBy === 'card') {
@@ -124,7 +124,7 @@ class OrderDetailProvider
         //1 Если метод сбп, то проверить что для под метода нет сделок с такой суммой
         //2 Если метод не сбп, то проверить что у сбп с таким под методом нет сделок с такой суммой
         $details = $details->filter(function (Detail $detail) use ($paymentDetails) {
-            $amount = (int)$detail->profitTotal->toUnits();
+            $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
 
             if ($detail->gateway->isSBP) {//СБП
                 $unique = !$paymentDetails
@@ -284,12 +284,12 @@ class OrderDetailProvider
             $traderMarkupRate = TraderMarkupRate::calculate($gateway, $trader);
 
             $baseExchangePrice = services()->market()->getBuyPrice($this->amount->getCurrency());
-            $exchangePriceWithCommission = $baseExchangePrice->add(
+            $exchangePriceWithMarkup = $baseExchangePrice->add(
                 $baseExchangePrice->mul($traderMarkupRate / 100)
             );
 
             $profit = $gateway->amountWithServiceCommission
-                ->convert($exchangePriceWithCommission, Currency::USDT());
+                ->convert($exchangePriceWithMarkup, Currency::USDT());
             $serviceProfit = $profit->mul($gateway->serviceCommissionRateTotal / 100);
             $merchantProfit = $profit->sub($serviceProfit);
 
@@ -307,7 +307,7 @@ class OrderDetailProvider
                     currentDailyLimit: $detail->current_daily_limit,
                     currency: $detail->currency,
                     exchangePriceInitial: $baseExchangePrice,
-                    exchangePriceWithCommission: $exchangePriceWithCommission,
+                    exchangePriceWithMarkup: $exchangePriceWithMarkup,
                     profitTotal: $profit,
                     profitServicePart: $serviceProfit,
                     profitMerchantPart: $merchantProfit,
