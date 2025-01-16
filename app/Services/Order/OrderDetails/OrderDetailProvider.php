@@ -94,7 +94,7 @@ class OrderDetailProvider
         //дневной лимит карты не исчерпан
         $details = $details->filter(function (Detail $detail) {
             $limit = (int)$detail->dailyLimit->sub($detail->currentDailyLimit)->toUnits();
-            $amount = (int)$detail->profitTotal->toUnits();
+            $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
 
             return $limit >= $amount;
         });
@@ -174,6 +174,7 @@ class OrderDetailProvider
 
         $paymentGateways->each(function (PaymentGateway $gateway) use (&$gateways) {
             $commission = ServiceCommissionRate::calculate($this->merchant, $gateway);
+
             $uniqueBy = $gateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
 
             $amount = $this->amount;
