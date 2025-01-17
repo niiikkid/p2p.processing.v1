@@ -6,6 +6,7 @@ use App\Enums\DetailType;
 use App\Enums\OrderStatus;
 use App\Exceptions\OrderException;
 use App\Models\Merchant;
+use App\Models\Order;
 use App\Models\PaymentDetail;
 use App\Models\PaymentGateway;
 use App\Models\User;
@@ -108,10 +109,14 @@ class OrderDetailProvider
                 //то бери любую карту и используй
                 return true;
             } else if ($uniqueBy === 'amount') {
-                $unique = !$paymentDetails
-                    ->where('orders.amount', $amount)
+                $unique = $paymentDetails
                     ->where('payment_gateway_id', $detail->gateway->id)
                     ->where('user_id', $detail->trader->id)
+                    ->pluck('orders')
+                    ->collapse()
+                    ->filter(function (Order $order) use ($amount) {
+                        return intval($order->amount->toUnits()) === $amount;
+                    })
                     ->count();
 
                 return $unique;
