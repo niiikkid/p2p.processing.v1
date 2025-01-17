@@ -28,6 +28,7 @@ const form = useForm({
     service_commission_rate: payment_gateway.service_commission_rate,
     is_active: !!payment_gateway.is_active,
     payment_confirmation_by_card_last_digits: !!payment_gateway.payment_confirmation_by_card_last_digits,
+    make_order_amount_unique: !!payment_gateway.make_order_amount_unique,
     reservation_time: payment_gateway.reservation_time,
     currency: payment_gateway.currency.toUpperCase(),
     detail_types: payment_gateway.detail_types ?? [],
@@ -70,6 +71,21 @@ const isLastCardDigitsAvailable = computed(() => {
 watch(() => isLastCardDigitsAvailable.value, (value, oldValue) => {
     if (oldValue && ! value) {
         form.payment_confirmation_by_card_last_digits = false;
+    }
+})
+
+watch(() => form.payment_confirmation_by_card_last_digits, (value, oldValue) => {
+    if (! oldValue && value) {
+        if (form.make_order_amount_unique) {
+            form.make_order_amount_unique = false;
+        }
+    }
+})
+watch(() => form.make_order_amount_unique, (value, oldValue) => {
+    if (! oldValue && value) {
+        if (form.payment_confirmation_by_card_last_digits) {
+            form.payment_confirmation_by_card_last_digits = false;
+        }
     }
 })
 
@@ -307,6 +323,24 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <span class="sr-only">Инфо</span>
                                 <div>
                                     Данная настройка работает только для реквизитов с типом карта. Если отключена, то платежи подтверждаются только по сумме платежа.
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="inline-flex items-center mt-3 cursor-pointer">
+                                    <input type="checkbox" value="" class="sr-only peer" v-model="form.make_order_amount_unique">
+                                    <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Делать сумму сделки уникальной.</span>
+                                </label>
+                            </div>
+
+                            <div class="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
+                                <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                                </svg>
+                                <span class="sr-only">Инфо</span>
+                                <div>
+                                    Данная настройка увеличивает сумму сделки на 1 рубль, чтобы задействовать все реквизиты, которые заблокированы по сумме.
                                 </div>
                             </div>
 
