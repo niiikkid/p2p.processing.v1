@@ -56,10 +56,10 @@ class OrderDetailProvider
         $execution_time = ($time_end - $time_start)/60;
 
         $queries = DB::getQueryLog();
-        dump(count($queries));
+        /*dump(count($queries));
         dump($execution_time);
         dump($details->count());
-        dd($details->toArray());
+        dd($details->toArray());*/
 
         if ($details->isEmpty()) {
             throw OrderException::make('Подходящие платежные реквизиты не найдены.');
@@ -109,7 +109,7 @@ class OrderDetailProvider
                 //то бери любую карту и используй
                 return true;
             } else if ($uniqueBy === 'amount') {
-                $unique = $paymentDetails
+                $unique = !$paymentDetails
                     ->where('payment_gateway_id', $detail->gateway->id)
                     ->where('user_id', $detail->trader->id)
                     ->pluck('orders')
@@ -133,17 +133,25 @@ class OrderDetailProvider
 
             if ($detail->gateway->isSBP) {//СБП
                 $unique = !$paymentDetails
-                    ->where('orders.amount', $amount)
                     ->where('payment_gateway_id', $detail->subPaymentGatewayID)
                     ->where('user_id', $detail->trader->id)
+                    ->pluck('orders')
+                    ->collapse()
+                    ->filter(function (Order $order) use ($amount) {
+                        return intval($order->amount->toUnits()) === $amount;
+                    })
                     ->count();
 
                 return $unique;
             } else {//не СБП
                 $unique = !$paymentDetails
-                    ->where('orders.amount', $amount)
                     ->where('sub_payment_gateway_id', $detail->paymentGatewayID)
                     ->where('user_id', $detail->trader->id)
+                    ->pluck('orders')
+                    ->collapse()
+                    ->filter(function (Order $order) use ($amount) {
+                        return intval($order->amount->toUnits()) === $amount;
+                    })
                     ->count();
 
                 return $unique;
