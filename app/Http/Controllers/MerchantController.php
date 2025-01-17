@@ -66,6 +66,15 @@ class MerchantController extends Controller
             });
         } else {
             $commissionSettings = $commissionSettings[$merchant->id];
+
+            $paymentGateways->each(function ($paymentGateway) use (&$commissionSettings) {
+                if (empty($commissionSettings[$paymentGateway->id])) {
+                    $commissionSettings[$paymentGateway->id] = [
+                        'gateway_total_commission' => null,
+                        'merchant_commission' => $paymentGateway->service_commission_rate,
+                    ];
+                }
+            });
         }
 
         $orders = OrderResource::collection($orders);
