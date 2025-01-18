@@ -95,8 +95,7 @@ class OrderDetailProvider
             $uniqueBy = $detail->gateway->uniqueBy;
 
             if ($uniqueBy === 'card') {
-                //то бери любую карту и используй
-                return true;
+                return $filterRules->uniqueByAmountForSBP($paymentDetails, $detail, $amount);
             } else if ($uniqueBy === 'amount') {
                 if ($detail->gateway->makeAmountUnique) {
                     $unique = false;

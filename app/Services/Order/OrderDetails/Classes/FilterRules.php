@@ -24,6 +24,13 @@ class FilterRules
             return false;
         }
 
+        $unique = $this->uniqueByAmountForSBP($paymentDetails, $detail, $amount);
+
+        return $unique;
+    }
+
+    public function uniqueByAmountForSBP(Collection $paymentDetails, Detail $detail, int $amount): bool
+    {
         //Фильтры для СБП
         //1 Если метод сбп, то проверить что для под метода нет сделок с такой суммой
         //2 Если метод не сбп, то проверить что у сбп с таким под методом нет сделок с такой суммой
