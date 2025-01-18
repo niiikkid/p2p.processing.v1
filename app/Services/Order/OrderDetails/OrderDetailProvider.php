@@ -86,7 +86,6 @@ class OrderDetailProvider
             return $limit >= $amount;
         });
 
-        //Фильтр по $uniqueBy
         $details = $details->filter(function (Detail $detail) use ($paymentDetails, $filterRules) {
             $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
             $uniqueBy = $detail->gateway->uniqueBy;
