@@ -40,10 +40,6 @@ class OrderDetailProvider
      */
     public function provide(): Detail
     {
-        DB::connection()->enableQueryLog();
-        //TODO remove
-        $time_start = microtime(true);
-
         $gateways = $this->getGateways();
 
         $traders = $this->getTraders($gateways);
@@ -51,16 +47,6 @@ class OrderDetailProvider
         $details = $this->getDetails($gateways, $traders);
 
         $details = $this->filterDetails($details);
-
-        //TODO remove
-        $time_end = microtime(true);
-        $execution_time = ($time_end - $time_start)/60;
-
-        $queries = DB::getQueryLog();
-        /*dump(count($queries));
-        dump($execution_time);
-        dump($details->count());
-        dd($details->toArray());*/
 
         if ($details->isEmpty()) {
             throw OrderException::make('Подходящие платежные реквизиты не найдены.');
