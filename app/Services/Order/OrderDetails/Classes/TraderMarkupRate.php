@@ -2,9 +2,6 @@
 
 namespace App\Services\Order\OrderDetails\Classes;
 
-use App\Models\PaymentGateway;
-use App\Models\User;
-use App\Models\UserMeta;
 use App\Services\Order\OrderDetails\Values\Gateway;
 use App\Services\Order\OrderDetails\Values\Trader;
 use Illuminate\Support\Carbon;

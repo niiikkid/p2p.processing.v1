@@ -58,7 +58,7 @@ class OrderDetailProvider
      */
     public function filterDetails(Collection $details): Collection
     {
-        $paymentDetails = PaymentDetail::query()
+        $paymentDetails = PaymentDetail::query() //TODO можно поменять местами сделки и реквизиты
             ->whereHas('orders', function (Builder $query) {
                 $query->where('status', OrderStatus::PENDING);
             })
