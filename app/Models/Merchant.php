@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $description
  * @property string $domain
  * @property string $callback_url
+ * @property boolean $make_order_amount_unique
  * @property boolean $active
  * @property int $user_id
  * @property User $user
@@ -35,6 +36,7 @@ class Merchant extends Model
         'description',
         'domain',
         'callback_url',
+        'make_order_amount_unique',
         'token',
         'user_id',
         'active',

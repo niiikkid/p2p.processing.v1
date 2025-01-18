@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MerchantResource;
 use App\Models\Merchant;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class MerchantController extends Controller
@@ -41,6 +43,15 @@ class MerchantController extends Controller
     {
         $merchant->update([
             'validated_at' => now(),
+        ]);
+    }
+
+    public function updateSettings(Request $request, Merchant $merchant)
+    {
+        $request->validate(['make_order_amount_unique' => 'required', 'amount']);
+
+        $merchant->update([
+            'make_order_amount_unique' => $request->make_order_amount_unique
         ]);
     }
 }
