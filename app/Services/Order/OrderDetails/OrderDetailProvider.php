@@ -134,50 +134,6 @@ class OrderDetailProvider
             return false;
         });
 
-        //Фильтры для СБП
-        //1 Если метод сбп, то проверить что для под метода нет сделок с такой суммой
-        //2 Если метод не сбп, то проверить что у сбп с таким под методом нет сделок с такой суммой
-        $details = $details->filter(function (Detail $detail) use ($paymentDetails, $filterRules) {
-            $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
-
-            if ($detail->gateway->isSBP) {//СБП
-                if ($detail->gateway->makeAmountUnique) {
-                    $unique = false;
-
-                    while (!$unique) {
-                        $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
-                        $unique = $filterRules->uniqueByAmountForSBP($paymentDetails, $detail, $amount);
-                        if ($unique) {
-                            continue;
-                        }
-                        $detail->gateway->amountWithServiceCommission
-                            = $detail->gateway->amountWithServiceCommission->add(1);
-                    }
-                } else {
-                    $unique = $filterRules->uniqueByAmountForSBP($paymentDetails, $detail, $amount);
-                }
-
-                return $unique;
-            } else {//не СБП
-                if ($detail->gateway->makeAmountUnique) {
-                    $unique = false;
-
-                    while (!$unique) {
-                        $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
-                        $unique = $filterRules->uniqueByAmountSubGateway($paymentDetails, $detail, $amount);
-                        if ($unique) {
-                            continue;
-                        }
-                        $detail->gateway->amountWithServiceCommission
-                            = $detail->gateway->amountWithServiceCommission->add(1);
-                    }
-                } else {
-                    $unique = $filterRules->uniqueByAmountSubGateway($paymentDetails, $detail, $amount);
-                }
-
-                return $unique;
-            }
-        });
 
         return $details;
     }
