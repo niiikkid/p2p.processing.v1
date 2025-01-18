@@ -190,6 +190,14 @@ class OrderDetailProvider
 
             $uniqueBy = $gateway->payment_confirmation_by_card_last_digits ? 'card' : 'amount';
 
+            $makeAmountUnique = false;
+            if ($uniqueBy === 'amount') {
+                $makeAmountUnique = $gateway->make_order_amount_unique;
+                if ($this->merchant->make_order_amount_unique) {
+                    $makeAmountUnique = $this->merchant->make_order_amount_unique;
+                }
+            }
+
             $amount = $this->amount;
             if ($commission['client'] > 0) {
                 $clientCommissionAmount = $this->amount
@@ -211,6 +219,7 @@ class OrderDetailProvider
                     serviceCommissionRateMerchant: $commission['merchant'],
                     serviceCommissionRateClient: $commission['client'],
                     uniqueBy: $uniqueBy,
+                    makeAmountUnique: $makeAmountUnique,
                     isSBP: $gateway->is_sbp
                 )
             );
