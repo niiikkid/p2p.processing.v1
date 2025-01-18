@@ -6,7 +6,6 @@ use App\Enums\DetailType;
 use App\Enums\OrderStatus;
 use App\Exceptions\OrderException;
 use App\Models\Merchant;
-use App\Models\Order;
 use App\Models\PaymentDetail;
 use App\Models\PaymentGateway;
 use App\Models\User;
@@ -21,8 +20,6 @@ use App\Services\Order\OrderDetails\Values\Trader;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-
 
 class OrderDetailProvider
 {
