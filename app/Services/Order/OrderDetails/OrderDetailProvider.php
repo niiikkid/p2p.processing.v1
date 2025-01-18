@@ -12,6 +12,7 @@ use App\Models\PaymentGateway;
 use App\Models\User;
 use App\Services\Money\Currency;
 use App\Services\Money\Money;
+use App\Services\Order\OrderDetails\Classes\FilterRules;
 use App\Services\Order\OrderDetails\Classes\ServiceCommissionRate;
 use App\Services\Order\OrderDetails\Classes\TraderMarkupRate;
 use App\Services\Order\OrderDetails\Values\Detail;
@@ -84,6 +85,8 @@ class OrderDetailProvider
             }])
             ->get(['id', 'payment_gateway_id', 'user_id', 'sub_payment_gateway_id']);
 
+        $filterRules = new FilterRules();
+
         //достаточно средств на траст балансе
         $details = $details->filter(function (Detail $detail) {
             $trustBalance = (int)$detail->trader->trustBalance->toUnits();
@@ -101,7 +104,7 @@ class OrderDetailProvider
         });
 
         //Фильтр по $uniqueBy
-        $details = $details->filter(function (Detail $detail) use ($paymentDetails) {
+        $details = $details->filter(function (Detail $detail) use ($paymentDetails, $filterRules) {
             $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
             $uniqueBy = $detail->gateway->uniqueBy;
 
@@ -109,15 +112,21 @@ class OrderDetailProvider
                 //то бери любую карту и используй
                 return true;
             } else if ($uniqueBy === 'amount') {
-                $unique = !$paymentDetails
-                    ->where('payment_gateway_id', $detail->gateway->id)
-                    ->where('user_id', $detail->trader->id)
-                    ->pluck('orders')
-                    ->collapse()
-                    ->filter(function (Order $order) use ($amount) {
-                        return intval($order->amount->toUnits()) === $amount;
-                    })
-                    ->count();
+                if ($detail->gateway->makeAmountUnique) {
+                    $unique = false;
+
+                    while (!$unique) {
+                        $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
+                        $unique = $filterRules->uniqueByAmount($paymentDetails, $detail, $amount);
+                        if ($unique) {
+                            continue;
+                        }
+                        $detail->gateway->amountWithServiceCommission
+                            = $detail->gateway->amountWithServiceCommission->add(1);
+                    }
+                } else {
+                    $unique = $filterRules->uniqueByAmount($paymentDetails, $detail, $amount);
+                }
 
                 return $unique;
             }
@@ -128,31 +137,43 @@ class OrderDetailProvider
         //Фильтры для СБП
         //1 Если метод сбп, то проверить что для под метода нет сделок с такой суммой
         //2 Если метод не сбп, то проверить что у сбп с таким под методом нет сделок с такой суммой
-        $details = $details->filter(function (Detail $detail) use ($paymentDetails) {
+        $details = $details->filter(function (Detail $detail) use ($paymentDetails, $filterRules) {
             $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
 
             if ($detail->gateway->isSBP) {//СБП
-                $unique = !$paymentDetails
-                    ->where('payment_gateway_id', $detail->subPaymentGatewayID)
-                    ->where('user_id', $detail->trader->id)
-                    ->pluck('orders')
-                    ->collapse()
-                    ->filter(function (Order $order) use ($amount) {
-                        return intval($order->amount->toUnits()) === $amount;
-                    })
-                    ->count();
+                if ($detail->gateway->makeAmountUnique) {
+                    $unique = false;
+
+                    while (!$unique) {
+                        $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
+                        $unique = $filterRules->uniqueByAmountForSBP($paymentDetails, $detail, $amount);
+                        if ($unique) {
+                            continue;
+                        }
+                        $detail->gateway->amountWithServiceCommission
+                            = $detail->gateway->amountWithServiceCommission->add(1);
+                    }
+                } else {
+                    $unique = $filterRules->uniqueByAmountForSBP($paymentDetails, $detail, $amount);
+                }
 
                 return $unique;
             } else {//не СБП
-                $unique = !$paymentDetails
-                    ->where('sub_payment_gateway_id', $detail->paymentGatewayID)
-                    ->where('user_id', $detail->trader->id)
-                    ->pluck('orders')
-                    ->collapse()
-                    ->filter(function (Order $order) use ($amount) {
-                        return intval($order->amount->toUnits()) === $amount;
-                    })
-                    ->count();
+                if ($detail->gateway->makeAmountUnique) {
+                    $unique = false;
+
+                    while (!$unique) {
+                        $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
+                        $unique = $filterRules->uniqueByAmountSubGateway($paymentDetails, $detail, $amount);
+                        if ($unique) {
+                            continue;
+                        }
+                        $detail->gateway->amountWithServiceCommission
+                            = $detail->gateway->amountWithServiceCommission->add(1);
+                    }
+                } else {
+                    $unique = $filterRules->uniqueByAmountSubGateway($paymentDetails, $detail, $amount);
+                }
 
                 return $unique;
             }
