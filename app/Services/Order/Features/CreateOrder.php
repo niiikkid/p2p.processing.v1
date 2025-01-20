@@ -53,7 +53,7 @@ class CreateOrder extends BaseFeature
                 'external_id' => $this->dto->external_id,
                 'merchant_id' => $merchant->id,
                 'base_amount' => $this->dto->amount,
-                'amount' => $detail->gateway->amountWithServiceCommission,
+                'amount' => $detail->finalAmount,
                 'profit' => $detail->profitTotal,
                 'merchant_profit' => $detail->profitMerchantPart,
                 'service_profit' => $detail->profitServicePart,

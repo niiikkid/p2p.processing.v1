@@ -24,6 +24,8 @@ class Detail
         public Money    $traderMarkup,
         public Gateway  $gateway,
         public Trader   $trader,
+        public Money    $initialAmount,
+        public Money    $finalAmount,
     )
     {}
 }

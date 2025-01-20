@@ -70,24 +70,9 @@ class OrderDetailProvider
 
         $filterRules = new FilterRules();
 
-        //достаточно средств на траст балансе
-        $details = $details->filter(function (Detail $detail) {
-            $trustBalance = (int)$detail->trader->trustBalance->toUnits();
-            $amount = (int)$detail->profitTotal->toUnits();
-
-            return $trustBalance >= $amount;
-        });
-
-        //дневной лимит карты не исчерпан
-        $details = $details->filter(function (Detail $detail) {
-            $limit = (int)$detail->dailyLimit->sub($detail->currentDailyLimit)->toUnits();
-            $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
-
-            return $limit >= $amount;
-        });
-
+        //фильтр по цене
         $details = $details->filter(function (Detail $detail) use ($paymentDetails, $filterRules) {
-            $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
+            $amount = (int)$detail->finalAmount->toUnits();
             $uniqueBy = $detail->gateway->uniqueBy;
 
             if ($uniqueBy === 'card') {
@@ -97,13 +82,13 @@ class OrderDetailProvider
                     $unique = false;
 
                     while (!$unique) {
-                        $amount = (int)$detail->gateway->amountWithServiceCommission->toUnits();
+                        $amount = (int)$detail->finalAmount->toUnits();
                         $unique = $filterRules->uniqueByAmount($paymentDetails, $detail, $amount);
                         if ($unique) {
                             continue;
                         }
-                        $detail->gateway->amountWithServiceCommission
-                            = $detail->gateway->amountWithServiceCommission->add(1);
+                        $finalAmount = $detail->finalAmount->add(1);
+                        $this->updateAmountsForDetail($detail, $finalAmount);
                     }
                 } else {
                     $unique = $filterRules->uniqueByAmount($paymentDetails, $detail, $amount);
@@ -115,6 +100,21 @@ class OrderDetailProvider
             return false;
         });
 
+        //достаточно средств на траст балансе
+        $details = $details->filter(function (Detail $detail) {
+            $trustBalance = (int)$detail->trader->trustBalance->toUnits();
+            $amount = (int)$detail->profitTotal->toUnits();
+
+            return $trustBalance >= $amount;
+        });
+
+        //дневной лимит карты не исчерпан
+        $details = $details->filter(function (Detail $detail) {
+            $limit = (int)$detail->dailyLimit->sub($detail->currentDailyLimit)->toUnits();
+            $amount = (int)$detail->finalAmount->toUnits();
+
+            return $limit >= $amount;
+        });
 
         return $details;
     }
@@ -273,7 +273,7 @@ class OrderDetailProvider
                 'id', 'user_id', 'payment_gateway_id', 'sub_payment_gateway_id', 'daily_limit', 'current_daily_limit', 'currency'
             ])
             ->get();
-        
+
         $paymentDetails = $paymentDetails->merge($paymentDetailsWithOrders)->unique('id');
 
         $details = collect();
@@ -293,6 +293,7 @@ class OrderDetailProvider
                 $baseExchangePrice->mul($traderMarkupRate / 100)
             );
 
+            $finalAmount = $gateway->amountWithServiceCommission;
             $profit = $gateway->amountWithServiceCommission
                 ->convert($exchangePriceWithMarkup, Currency::USDT());
             $serviceProfit = $profit->mul($gateway->serviceCommissionRateTotal / 100);
@@ -320,10 +321,30 @@ class OrderDetailProvider
                     traderMarkup: $traderMarkup,
                     gateway: $gateway,
                     trader: $trader,
+                    initialAmount: $this->amount,
+                    finalAmount: $finalAmount,
                 )
             );
         });
 
         return $details;
+    }
+
+    protected function updateAmountsForDetail(Detail $detail, Money $finalAmount): void
+    {
+        $profit = $finalAmount
+            ->convert($detail->exchangePriceWithMarkup, Currency::USDT());
+        $serviceProfit = $profit->mul($detail->gateway->serviceCommissionRateTotal / 100);
+        $merchantProfit = $profit->sub($serviceProfit);
+
+        $traderMarkup = $finalAmount
+            ->convert($detail->exchangePriceInitial, Currency::USDT())
+            ->sub($profit);
+
+        $detail->profitTotal = $profit;
+        $detail->profitServicePart = $serviceProfit;
+        $detail->profitMerchantPart = $merchantProfit;
+        $detail->traderMarkup = $traderMarkup;
+        $detail->finalAmount = $finalAmount;
     }
 }
