@@ -252,6 +252,30 @@ class OrderDetailProvider
             ])
             ->get();
 
+        //TODO refactoring
+        $gatewaysWithAmountUnique = $gateways->filter(fn($gateway) => $gateway->makeAmountUnique);
+        $paymentDetailsWithOrders = PaymentDetail::query()
+            ->whereHas('orders', function (Builder $query) use ($gateways, $traders) {
+                $query->where('status', OrderStatus::PENDING);
+            })
+            ->whereIn('user_id', $traders->pluck('id'))
+            ->when(! $this->merchant->make_order_amount_unique, function (Builder $query) use ($gatewaysWithAmountUnique) {
+                $query->whereIn('payment_gateway_id', $gatewaysWithAmountUnique->pluck('id'));
+            })
+            ->when($this->merchant->make_order_amount_unique, function (Builder $query) use ($gatewaysWithAmountUnique) {
+                $query->whereRelation('paymentGateway', 'payment_confirmation_by_card_last_digits', false);
+            })
+            ->when($this->detailType, function (Builder $query) {
+                $query->where('detail_type', $this->detailType);
+            })
+            ->active()
+            ->select([
+                'id', 'user_id', 'payment_gateway_id', 'sub_payment_gateway_id', 'daily_limit', 'current_daily_limit', 'currency'
+            ])
+            ->get();
+        
+        $paymentDetails = $paymentDetails->merge($paymentDetailsWithOrders)->unique('id');
+
         $details = collect();
 
         $paymentDetails->each(function (PaymentDetail $detail) use ($gateways, $traders, &$details) {
