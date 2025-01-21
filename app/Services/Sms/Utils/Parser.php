@@ -14,6 +14,8 @@ class Parser
     public function parse(string $sender, string $message): ?ParserResultValue
     {
         $message = str_replace("\u{A0}", ' ', $message);
+        $message = str_replace("\n", ' ', $message);
+        $message = trim($message);
 
         $smsParsers = $this->getParsers();
 
