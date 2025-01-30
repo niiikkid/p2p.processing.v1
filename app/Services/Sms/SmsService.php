@@ -4,12 +4,10 @@ namespace App\Services\Sms;
 
 use App\Contracts\SmsServiceContract;
 use App\DTO\SMS\SmsDTO;
-use App\Enums\DetailType;
 use App\Enums\OrderStatus;
 use App\Exceptions\SmsServiceException;
-use App\Models\Order;
 use App\Models\SmsLog;
-use App\Services\Sms\Utils\Parser;
+use App\Services\Sms\Utils\NormalizeMessage;
 
 class SmsService implements SmsServiceContract
 {
@@ -64,11 +62,16 @@ class SmsService implements SmsServiceContract
     protected function logSms(SmsDTO $sms): SmsLog
     {
         return SmsLog::create([
-            'sender' => $sms->sender,
-            'message' => $sms->message,
+            'sender' => $this->normalizeMessage($sms->sender),
+            'message' => $this->normalizeMessage($sms->message),
             'timestamp' => $sms->timestamp / 1000,
             'type' => $sms->type,
             'user_id' => $sms->user->id,
         ]);
+    }
+
+    protected function normalizeMessage(string $message): string
+    {
+        return NormalizeMessage::normalize($message);
     }
 }

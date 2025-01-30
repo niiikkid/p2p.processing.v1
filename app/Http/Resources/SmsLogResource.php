@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\SmsLog;
+use App\Services\Sms\Parser;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,6 +17,7 @@ class SmsLogResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $parser = new Parser();
         /**
          * @var SmsLog $this
          */
@@ -26,6 +28,11 @@ class SmsLogResource extends JsonResource
             'timestamp' => Carbon::createFromTimestamp($this->timestamp)->toDateTimeString(),
             'type' => $this->type->value,
             'created_at' => $this->created_at->toDateTimeString(),
+            'sender_exists' => (bool)(new Parser())->getGatewayBySender($this->sender),
+            'parsing_results' => [
+                'amount' => $parser->parseAmountFromMessage($this->message),
+                'digits' => $parser->parseCardLastDigitsFromMessage($this->message),
+            ],
             $this->mergeWhen($this->resource->relationLoaded('user'), function () {
                 return [
                     'user' => UserResource::make($this->user)

@@ -157,6 +157,9 @@ defineOptions({ layout: AuthenticatedLayout })
                                     Сообщение
                                 </th>
                                 <th scope="col" class="px-6 py-3">
+                                    Парсинг
+                                </th>
+                                <th scope="col" class="px-6 py-3">
                                     Тип
                                 </th>
                                 <th scope="col" class="px-6 py-3" v-if="viewStore.isAdminViewMode">
@@ -173,10 +176,24 @@ defineOptions({ layout: AuthenticatedLayout })
                                     {{ sms_log.id }}
                                 </th>
                                 <td class="px-6 py-3">
-                                    {{ sms_log.sender }}
+                                    <div :class="{'text-green-500': sms_log.sender_exists}">
+                                        {{ sms_log.sender }}
+                                    </div>
                                 </td>
                                 <td class="px-6 py-3">
                                     <div style="min-width: 200px;">{{ sms_log.message }}</div>
+                                </td>
+                                <td class="px-6 py-3">
+                                    <div v-if="sms_log.parsing_results">
+                                        <div v-if="sms_log.parsing_results.amount" class="flex gap-1">
+                                            <div class="text-gray-900 dark:text-gray-200">Сумма:</div>
+                                            <div>{{sms_log.parsing_results.amount}}</div>
+                                        </div>
+                                        <div v-if="sms_log.parsing_results.digits" class="flex gap-1">
+                                            <div class="text-gray-900 dark:text-gray-200">Карта:</div>
+                                            <div>*{{sms_log.parsing_results.digits}}</div>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-3">
                                     {{ sms_log.type }}
