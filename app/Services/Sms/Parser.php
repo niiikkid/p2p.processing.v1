@@ -185,7 +185,7 @@ class Parser
         /**
          * @var PaymentGateway $paymentGateway
          */
-        $paymentGateways = PaymentGateway::get(['id', 'code', 'name', 'currency', 'sms_senders']);
+        $paymentGateways = PaymentGateway::get();
         $paymentGateway = null;
 
         $sender = NormalizeMessage::normalize($sender);
