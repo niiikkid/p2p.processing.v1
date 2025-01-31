@@ -6,6 +6,7 @@ use App\Contracts\SmsServiceContract;
 use App\DTO\SMS\SmsDTO;
 use App\Enums\OrderStatus;
 use App\Exceptions\SmsServiceException;
+use App\Models\SenderStopList;
 use App\Models\SmsLog;
 use App\Services\Sms\Utils\NormalizeMessage;
 
@@ -16,6 +17,13 @@ class SmsService implements SmsServiceContract
      */
     public function handleSms(SmsDTO $sms): void
     {
+        $sender = $this->normalizeMessage($sms->sender);
+        $senderInStopList = SenderStopList::query()->where('sender', $sender)->exists();
+
+        if ($senderInStopList) {
+            return;
+        }
+
         $smsLog = $this->logSms($sms);
 
         $result = (new Parser())->parse($sms->sender, $sms->message);

@@ -99,7 +99,7 @@ defineOptions({ layout: AuthenticatedLayout })
                 <section class="flex items-center mb-5">
                     <div class="mx-auto w-full">
                         <div class="relative bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-                            <div class="flex flex-col xl:items-center justify-between p-4 space-y-3 lg:flex-row lg:space-y-0 lg:space-x-4">
+                            <div class="flex flex-col xl:items-center justify-between p-2 space-y-3 lg:flex-row lg:space-y-0 lg:space-x-4">
                                 <div class="xl:flex items-center gap-4 xl:space-y-0 space-y-3">
                                     <div class="flex items-center w-full space-x-3 lg:w-auto">
                                         <button id="filterDropdownButton" data-dropdown-toggle="filterDropdown" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg lg:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">

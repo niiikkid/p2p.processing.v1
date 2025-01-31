@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SmsLogResource;
+use App\Models\SenderStopList;
 use App\Models\SmsLog;
 use App\Models\User;
 use Carbon\Carbon;
@@ -45,7 +46,7 @@ class SmsLogController extends Controller
                 ];
             });
 
-        $sms_logs = SmsLog::query()
+        $query = SmsLog::query()
             ->with('user')
             ->when($user, function ($query) use ($user) {
                 $query->where('user_id', $user);
@@ -56,11 +57,23 @@ class SmsLogController extends Controller
             ->when($endDate, function ($query) use ($endDate) {
                 $query->whereDate('created_at', '<=', $endDate);
             })
-            ->orderByDesc('id')
+            ->orderByDesc('id');
+
+        $sms_logs = $query->clone()
             ->paginate(10);
+
+        $smsLogsTotalCount = $query->clone()->count();
+
+        $senderStopList = SenderStopList::all()
+            ->transform(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'sender' => $item->sender,
+                ];
+            });
 
         $sms_logs = SmsLogResource::collection($sms_logs);
 
-        return Inertia::render('SmsLog/Index', compact('sms_logs', 'currentFilters', 'users'));
+        return Inertia::render('SmsLog/Index', compact('sms_logs', 'currentFilters', 'users', 'smsLogsTotalCount', 'senderStopList'));
     }
 }

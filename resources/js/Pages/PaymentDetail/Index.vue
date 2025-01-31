@@ -101,7 +101,7 @@ defineOptions({ layout: AuthenticatedLayout })
                 <section class="flex items-center mb-5">
                     <div class="mx-auto w-full">
                         <div class="relative bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-                            <div class="flex flex-col xl:items-center justify-between p-4 space-y-3 lg:flex-row lg:space-y-0 lg:space-x-4">
+                            <div class="flex flex-col xl:items-center justify-between p-2 space-y-3 lg:flex-row lg:space-y-0 lg:space-x-4">
                                 <div class="xl:flex items-center gap-4 xl:space-y-0 space-y-3">
                                     <div class="md:flex md:space-y-0 space-y-2 items-center gap-2">
                                         <span class="md:mx-4 mx-0 text-gray-500 text-nowrap">Оборот за</span>
