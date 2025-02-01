@@ -155,7 +155,7 @@ return [
         'address'                  => 'адрес',
         'affiliate_url'            => 'Партнёрская ссылка',
         'age'                      => 'возраст',
-        'amount'                   => 'количество',
+        'amount'                   => 'сумма',
         'announcement'             => 'анонс',
         'area'                     => 'область',
         'audience_prize'           => 'приз зрительских симпатий',

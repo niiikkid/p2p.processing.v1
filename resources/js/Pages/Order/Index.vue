@@ -13,11 +13,13 @@ import {useViewStore} from "@/store/view.js";
 import ShowAction from "@/Components/Table/ShowAction.vue";
 import {computed, onMounted, ref} from "vue";
 import {Datepicker} from 'flowbite-datepicker';
+import EditOrderModal from "@/Modals/EditOrderModal.vue";
+import EditAction from "@/Components/Table/EditAction.vue";
 
 const viewStore = useViewStore();
 const modalStore = useModalStore();
 
-const orders = usePage().props.orders;
+const orders = ref(usePage().props.orders);
 const orderStatuses = ref(usePage().props.orderStatuses);
 const currentFilters = ref(usePage().props.currentFilters);
 
@@ -82,6 +84,10 @@ const applyFilters = () => {
         preserveScroll: true
     })
 }
+
+router.on('success', (event) => {
+    orders.value = usePage().props.orders;
+})
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
@@ -269,7 +275,10 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <DateTime class="justify-center" :data="order.created_at"/>
                             </td>
                             <td class="px-6 py-3 text-right">
-                                <ShowAction link="#" @click.prevent="modalStore.openOrderModal({order})"></ShowAction>
+                                <div class="flex justify-between gap-2">
+                                    <ShowAction link="#" @click.prevent="modalStore.openOrderModal({order})"></ShowAction>
+                                    <EditAction v-if="order.status === 'fail' && viewStore.isAdminViewMode" link="#" @click.prevent="modalStore.openEditOrderModal({order})"></EditAction>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
@@ -281,5 +290,6 @@ defineOptions({ layout: AuthenticatedLayout })
         <OrderModal/>
         <SmsLogsModal/>
         <ConfirmModal/>
+        <EditOrderModal/>
     </div>
 </template>

@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
+use App\Models\Order;
+use App\Services\Money\Money;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class OrderController extends Controller
@@ -59,5 +62,17 @@ class OrderController extends Controller
         ];
 
         return Inertia::render('Order/Index', compact('orders', 'orderStatuses', 'currentFilters'));
+    }
+
+    public function update(Request $request, Order $order)
+    {
+        $request->validate([
+            'amount' => ['required', 'integer', 'min:1'],
+        ]);
+
+        services()->order()->updateAmount(
+            order: $order,
+            finalAmount: Money::fromPrecision($request->input('amount'), $order->currency),
+        );
     }
 }
