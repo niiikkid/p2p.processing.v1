@@ -63,7 +63,7 @@ const submit = () => {
                             />
 
                             <InputError class="mt-2" :message="form.errors.amount" />
-                            <InputHelper v-if="! form.errors.amount" model-value="Прибыль мерчанта, и комиссия сервиса будут пересчитаны по курсу на момент открытия сделки."></InputHelper>
+                            <InputHelper v-if="! form.errors.amount" model-value="Прибыль мерчанта и комиссия сервиса будут пересчитаны по курсу и проценту комиссии на момент открытия сделки."></InputHelper>
 
                         </div>
                     </div>
