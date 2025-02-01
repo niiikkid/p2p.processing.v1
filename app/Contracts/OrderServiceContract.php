@@ -6,6 +6,7 @@ use App\DTO\Order\OrderCreateDTO;
 use App\Enums\TransactionType;
 use App\Exceptions\OrderException;
 use App\Models\Order;
+use App\Services\Money\Money;
 
 interface OrderServiceContract
 {
@@ -28,4 +29,9 @@ interface OrderServiceContract
      * @throws OrderException
      */
     public function rollback(Order $order, TransactionType $transactionType): bool;
+
+    /**
+     * @throws OrderException
+     */
+    public function updateAmount(Order $order, Money $finalAmount): bool;
 }
