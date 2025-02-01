@@ -64,6 +64,7 @@ class OrderController extends Controller
                         ->when($request->payment_gateway, function (Builder $query) use ($request) {
                             $query->whereRelation('paymentGateway', 'code', $request->payment_gateway);
                         })
+                        ->whereDoesntHave('dispute')
                         ->where('external_id', 'like', "%-{$external_id_trimmed}")
                         ->where('amount', $amount->toUnits())
                         ->where('status', OrderStatus::PENDING)
@@ -78,6 +79,7 @@ class OrderController extends Controller
                             ->whereRelation('merchant', 'uuid', $request->merchant_id)
                             ->where('external_id', 'like', "%-{$external_id_trimmed}")
                             ->where('status', OrderStatus::PENDING)
+                            ->whereDoesntHave('dispute')
                             ->get();
 
                         if ($orders->count() === 1) {
