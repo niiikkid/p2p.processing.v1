@@ -18,6 +18,8 @@ class SmsLogResource extends JsonResource
     public function toArray(Request $request): array
     {
         $parser = new Parser();
+        $amount = $parser->parseAmountFromMessage($this->message);
+
         /**
          * @var SmsLog $this
          */
@@ -29,10 +31,10 @@ class SmsLogResource extends JsonResource
             'type' => $this->type->value,
             'created_at' => $this->created_at->toDateTimeString(),
             'sender_exists' => (bool)(new Parser())->getGatewayBySender($this->sender),
-            'parsing_results' => [
+            'parsing_results' => $amount ? [
                 'amount' => $parser->parseAmountFromMessage($this->message),
                 'digits' => $parser->parseCardLastDigitsFromMessage($this->message),
-            ],
+            ] : null,
             $this->mergeWhen($this->resource->relationLoaded('user'), function () {
                 return [
                     'user' => UserResource::make($this->user)

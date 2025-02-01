@@ -29,6 +29,11 @@ class HandleSmsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        make(SmsServiceContract::class)->handleSms($this->sms);
+        try {
+            make(SmsServiceContract::class)->handleSms($this->sms);
+        } catch (\Throwable $e) {
+            logger()->error(json_encode(get_object_vars($this->sms)));
+            report($e);
+        }
     }
 }
