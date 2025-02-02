@@ -38,6 +38,9 @@ class SmsService implements SmsServiceContract
 
         if (! $order) {
             if ($result->paymentGateway->payment_confirmation_by_card_last_digits) {
+                if (! $result->card_last_digits) {
+                    return;
+                }
                 $orders = queries()
                     ->order()
                     ->findPendingMultipleCardConfirmation($result->amount, $sms->user, $result->paymentGateway, $result->card_last_digits);
