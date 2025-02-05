@@ -75,6 +75,7 @@ class Parser
             'поступление',
             'пополнение',
             'зачисление',
+            'зачислено',
             '[а-я]+\sпополнена',
             'popolnenie scheta',
             'postuplenie sredstv na schet',
