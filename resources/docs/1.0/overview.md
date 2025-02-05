@@ -7,6 +7,7 @@
 - [Базовые методы](#base-methods)
 - [Описание API](#about-api)
 - [Методы API](#methods-api)
+- [H2H API](#h2h-api)
 - [Общее дополнение к описанию API](#addition)
 - [Уведомление об изменении статуса платежа](#callback)
 
@@ -162,6 +163,87 @@
 
 ### GET /api/merchant/order/{order_id}
 - Возвращает информацию о сделке/платеже.
+- **order_id** - uuid сделки.
+
+<a name="h2h-api"></a>
+## H2H API
+
+### POST /api/h2h/order
+- Создает платеж/сделку.
+- В отличии от Merchant API не содержит параметров success_url и fail_url.
+- И возвращает больше данных для создания собственной страницы оплаты.
+- Ответ сервера:
+```json
+{
+        "success": true,
+        "data": {
+            "order_id": "3db07a16...", // uuid сделки внутри системы.
+            "external_id": "...",
+            "merchant_id": "...",
+            "base_amount": "1000", // сумма присланная при создании сделки.
+            "amount": "1090", // сумма для к оплате, содержит в себе комиссию клиента.
+            "profit": "9.94", // amount в usdt
+            "merchant_profit": "9.05", // доход мерчанта в usdt
+            "service_profit": "0.89", // комиссия сервиса в usdt
+            "currency": "rub",
+            "profit_currency": "usdt",
+            "conversion_price_currency": "rub",
+            "base_conversion_price": "98.32", // цена конвертации RUB в USDT. 1 USDT = 98.32 RUB
+            "conversion_price": "100.77", // цена конвертации RUB в USDT с комиссией трейдера.
+            "trader_commission_rate": 2.5, // комиссия трейдера в %
+            "service_commission_rate_total": 9, // полная комиссия сервиса в %
+            "service_commission_rate_merchant": 9, // часть комисси сервиса которую платит мерчант
+            "service_commission_rate_client": 0, // часть комисси сервиса которую платит клиент
+            "status": "pending",
+            "callback_url": "...",
+            "payment_gateway": "sberbank_rub", // код платежного метода
+            "payment_gateway_name": "Сбербанк", // название платежного метода
+            "method": null, // код платежного метода если payment_gateway = СБП
+            "method_name": null, // название платежного метода если payment_gateway = СБП 
+            "payment_detail": {
+                "detail": "1000200030004000", // реквизит для перевода
+                "detail_type": "card", // тип реквизита
+                "initials": "Пол Атрейдес" // владелец реквизита
+            },
+            "merchant": {
+                "name": "...",
+                "description": "..."
+            },
+            "finished_at": null, // время закрытия сделки
+            "expires_at": 1731375451, // время когда сделка будет автоматически закрыта.
+            "created_at": 1731375391, // время создания сделки.
+            "current_server_time": 1731655862
+        }
+}
+```
+
+### PATCH /api/h2h/order/{order_id}/cancel
+- Досрочно закрывает сделку если она находится в статусе pending и не имеет открытых споров.
+- **order_id** - uuid сделки.
+
+### GET /api/h2h/order/{order_id}
+- Возвращает информацию о сделке. Возвращает такой же объект как при создании сделки.
+- **order_id** - uuid сделки.
+
+### POST /api/h2h/order/{order_id}/dispute
+- Параметры запроса
+  - **receipt** - формат mimes: jpeg,jpg,png,pdf, размер max: 2048, чек передавать не как файл, а как base64.
+- Создает спор по сделке которая была завершена со статусом fail
+- **order_id** - uuid сделки.
+- Ответ сервера:
+```json
+{
+        "success": true,
+        "data": {
+            "order_id": "3db07a16...",
+            "status": "pending",
+            "cancel_reason": null // причина отказа
+        }
+}
+```
+
+### GET /api/h2h/order/{order_id}/dispute
+- Возвращает информацию о споре по текущей сделке.
 - **order_id** - uuid сделки.
 
 <a name="addition"></a>
