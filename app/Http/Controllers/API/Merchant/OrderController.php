@@ -54,6 +54,7 @@ class OrderController extends Controller
                 if (isset($amount)) {
 
                     $order = Order::query()
+                        ->whereDoesntHave('dispute')
                         ->whereRelation('merchant', 'uuid', $request->merchant_id)
                         ->when($request->payment_detail_type, function (Builder $query) use ($request) {
                             $query->whereRelation('paymentDetail', 'detail_type', $request->payment_detail_type);
@@ -75,6 +76,7 @@ class OrderController extends Controller
                         );
                     } else {
                         $orders = Order::query()
+                            ->whereDoesntHave('dispute')
                             ->whereRelation('merchant', 'uuid', $request->merchant_id)
                             ->where('external_id', 'like', "%-{$external_id_trimmed}")
                             ->where('status', OrderStatus::PENDING)
