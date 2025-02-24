@@ -46,7 +46,7 @@ class SmsService implements SmsServiceContract
                     ->findPendingMultipleCardConfirmation($result->amount, $sms->user, $result->paymentGateway, $result->card_last_digits);
 
                 if ($orders->count() > 1) {
-                    $order = null;
+                    throw new \Exception('Multiple card confirmations. Orders: ' . $orders->pluck('id')->implode(', '));
                 } else {
                     $order = $orders->first();
                 }
