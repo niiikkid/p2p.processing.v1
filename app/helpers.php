@@ -64,3 +64,11 @@ if (! function_exists('sign_request')) {
         return hash('sha256', $query);
     }
 }
+
+if (! function_exists('isRouteFor')) {
+    function isRouteFor($role) {
+        return collect(Route::current()->gatherMiddleware())->contains(function ($middleware) use ($role) {
+            return \Illuminate\Support\Str::startsWith($middleware, 'role:') && \Illuminate\Support\Str::contains($middleware, $role);
+        });
+    }
+}

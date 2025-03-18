@@ -2,7 +2,14 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\DisputeStatus;
+use App\Enums\InvoiceStatus;
+use App\Enums\InvoiceType;
+use App\Enums\OrderStatus;
 use App\Http\Resources\WalletResource;
+use App\Models\Dispute;
+use App\Models\Invoice;
+use App\Models\Order;
 use App\Services\Money\Currency;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -32,6 +39,55 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $orderQuery = Order::query()
+            ->where('status', OrderStatus::PENDING);
+        $disputeQuery = Dispute::query()
+            ->where('status', DisputeStatus::PENDING);
+
+        $userId = auth()->id();
+        $userRole = isRouteFor('Merchant') ? 'merchant' : (isRouteFor('Trader') ? 'trader' : (isRouteFor('Super Admin') ? 'admin' : 'guest'));
+
+        $pendingOrdersCount = cache()->remember("pending_orders_{$userRole}_{$userId}", 15, function () use ($orderQuery, $userRole, $userId) {
+            if ($userRole === 'merchant') {
+                return 0;
+            } elseif ($userRole === 'trader') {
+                return $orderQuery->clone()->whereRelation('paymentDetail', 'user_id', $userId)->count();
+            } elseif ($userRole === 'admin') {
+                return $orderQuery->clone()->count();
+            } else {
+                return 0;
+            }
+        });
+
+        $pendingDisputesCount = cache()->remember("pending_disputes_{$userRole}_{$userId}", 15, function () use ($disputeQuery, $userRole, $userId) {
+            if ($userRole === 'merchant') {
+                return 0;
+            } elseif ($userRole === 'trader') {
+                return $disputeQuery->clone()->whereRelation('order.paymentDetail', 'user_id', $userId)->count();
+            } elseif ($userRole === 'admin') {
+                return $disputeQuery->clone()->count();
+            } else {
+                return 0;
+            }
+        });
+
+        $pendingWithdrawalsCount = cache()->remember("pending_withdrawals_{$userRole}_{$userId}", 15, function () use ($disputeQuery, $userRole, $userId) {
+            if ($userRole === 'admin') {
+                return Invoice::query()
+                    ->where('status', InvoiceStatus::PENDING)
+                    ->where('type', InvoiceType::WITHDRAWAL)
+                    ->count();
+            } else {
+                return 0;
+            }
+        });
+
+        $menu = [
+            'pendingOrdersCount' => (int)$pendingOrdersCount,
+            'pendingDisputesCount' => (int)$pendingDisputesCount,
+            'pendingWithdrawalsCount' => (int)$pendingWithdrawalsCount,
+        ];
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -56,7 +112,8 @@ class HandleInertiaRequests extends Middleware
                         ];
                     })->toArray(),
                 'wallet' => fn () => $request->user() ? WalletResource::make($request->user()->wallet)->resolve() : null
-            ]
+            ],
+            'menu' => $menu
         ];
     }
 }
