@@ -102,6 +102,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'message' => fn () => $request->session()->get('message'),
             ],
+            'logo' => fn () => $request->user() ? services()->settings()->hasLogo() : false,
             'data' => [
                 'rates' => fn () => Currency::getAll()
                     ->transform(function ($currency) {

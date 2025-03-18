@@ -5,6 +5,7 @@ import {ref} from "vue";
 import {useViewStore} from "@/store/view.js";
 
 const viewStore = useViewStore();
+const hasLogo = usePage().props.logo;
 
 let dropdown = null;
 
@@ -62,7 +63,8 @@ router.on('success', (event) => {
                         </svg>
                     </button>
                     <Link :href="route('dashboard')" class="flex ms-2 md:me-24">
-                        <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">{{ appName }}</span>
+                        <img v-if="hasLogo" src="/images/logo.svg" alt="Logo" class="h-8 mr-2" />
+                        <span v-else class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">{{ appName }}</span>
                     </Link>
                 </div>
                 <div class="flex items-center">

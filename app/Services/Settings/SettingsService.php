@@ -8,6 +8,8 @@ use App\Models\Setting;
 use App\Models\ValueObjects\Settings\CurrencyPriceParserSettings;
 use App\Models\ValueObjects\Settings\PrimeTimeSettings;
 use App\Services\Money\Currency;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 
 class SettingsService implements SettingsServiceContract
 {
@@ -16,6 +18,7 @@ class SettingsService implements SettingsServiceContract
     const PRIME_TIME_BONUS_RATE = 'prime_time_bonus_rate';
     const CURRENCY_PRICE_PARSER_SETTINGS = 'currency_price_parser_settings';
     const SUPPORT_LINK = 'support_link';
+    const LOGO_EXISTS = 'logo_exists';
 
     protected array $cache = [];
 
@@ -61,6 +64,26 @@ class SettingsService implements SettingsServiceContract
         $this->updateParam(self::SUPPORT_LINK, $link);
     }
 
+    public function hasLogo(): bool
+    {
+        return $this->getParam(self::LOGO_EXISTS) === 'true';
+    }
+
+    public function uploadLogo(UploadedFile $file): void
+    {
+        // Создаем директорию, если она не существует
+        $directory = public_path('images');
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
+
+        // Сохраняем файл
+        $file->move($directory, 'logo.svg');
+        
+        // Обновляем настройку
+        $this->updateParam(self::LOGO_EXISTS, 'true');
+    }
+
     public function createAll(): void
     {
         $this->cache = [];
@@ -80,6 +103,10 @@ class SettingsService implements SettingsServiceContract
         Setting::firstOrCreate([
             'key' => self::SUPPORT_LINK,
             'value' => null,
+        ]);
+        Setting::firstOrCreate([
+            'key' => self::LOGO_EXISTS,
+            'value' => 'false',
         ]);
 
         Setting::firstOrCreate([
