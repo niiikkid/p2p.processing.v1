@@ -55,7 +55,7 @@ class OrderQueriesEloquent implements OrderQueries
             ->get();
     }
 
-    public function paginateForAdmin(array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null, ?string $externalID = null, ?string $uuid = null): LengthAwarePaginator
+    public function paginateForAdmin(array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null, ?string $externalID = null, ?string $uuid = null, ?array $merchantID = null): LengthAwarePaginator
     {
         return Order::query()
             ->with(['paymentDetail.subPaymentGateway', 'paymentGateway', 'smsLog', 'merchant', 'dispute'])
@@ -73,6 +73,11 @@ class OrderQueriesEloquent implements OrderQueries
             })
             ->when($uuid, function ($query) use ($uuid) {
                 $query->where('uuid', 'LIKE', '%' . $uuid . '%');
+            })
+            ->when(!empty($merchantID), function ($query) use ($merchantID) {
+                $query->whereRelation('merchant', function ($query) use ($merchantID) {
+                    $query->whereIn('id', $merchantID);
+                });
             })
             ->orderByDesc('id')
             ->paginate(20);

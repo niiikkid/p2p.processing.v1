@@ -173,8 +173,12 @@ class Parser
 
     protected function findAmount($message): ?string
     {
-        //очищаем от лишнего, чтобы не ломать парсер
-        $message = preg_replace('/(^|\s)\d{11,20}(\s|$)/mi', ' ', $message);
+        //исключение для юмани
+        preg_match_all("/^\d\sперевода\sдля\s\d{11,20}\s.+\s₽\s(?<amount>\d+(.\d+){0,3})\s₽$/mi", $message, $matches, PREG_SET_ORDER);
+
+        if (! empty($matches[0]['amount'])) {
+            return $matches[0]['amount'];
+        }
 
         //парсим
         $amountRegex = '(\s|\+)(?<amount>\d+(.\d+){0,3})\s{0,1}(RUB|rub|р|p|₽|RUR|rur|rurcard2card|руб)(\s|\.|\,|\;)';

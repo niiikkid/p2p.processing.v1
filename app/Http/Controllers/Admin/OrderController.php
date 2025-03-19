@@ -24,6 +24,10 @@ class OrderController extends Controller
             }
         }
 
+        $selectedMerchants = request()->input('filters.merchants', '');
+        $selectedMerchants = explode(',', $selectedMerchants);
+        $selectedMerchants = array_filter($selectedMerchants);
+
         $startDate = request()->input('filters.start_date');
         if ($startDate) {
             $startDate = Carbon::createFromFormat('d/m/Y', $startDate);
@@ -41,7 +45,7 @@ class OrderController extends Controller
         $externalID = request()->input('filters.external_id');
         $uuid = request()->input('filters.uuid');
 
-        $orders = queries()->order()->paginateForAdmin($statuses, $startDate, $endDate, $externalID, $uuid);
+        $orders = queries()->order()->paginateForAdmin($statuses, $startDate, $endDate, $externalID, $uuid, $selectedMerchants);
 
         $orders = OrderResource::collection($orders);
 
@@ -53,15 +57,18 @@ class OrderController extends Controller
             ];
         }
 
+        $merchants = queries()->merchant()->getForFilter();
+
         $currentFilters = [
             'statuses' => $statuses,
+            'merchants' => $selectedMerchants,
             'startDate' => $startDate?->format('d/m/Y'),
             'endDate' => $endDate?->format('d/m/Y'),
             'externalID' => $externalID,
             'uuid' => $uuid,
         ];
 
-        return Inertia::render('Order/Index', compact('orders', 'orderStatuses', 'currentFilters'));
+        return Inertia::render('Order/Index', compact('orders', 'orderStatuses', 'currentFilters', 'merchants'));
     }
 
     public function update(Request $request, Order $order)
