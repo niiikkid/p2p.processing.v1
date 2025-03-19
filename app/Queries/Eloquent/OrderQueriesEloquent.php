@@ -75,7 +75,7 @@ class OrderQueriesEloquent implements OrderQueries
                 $query->where('uuid', 'LIKE', '%' . $uuid . '%');
             })
             ->orderByDesc('id')
-            ->paginate(10);
+            ->paginate(20);
     }
 
     public function paginateForUser(User $user, array $statuses = [], ?Carbon $startDate = null, ?Carbon $endDate = null, ?string $uuid = null): LengthAwarePaginator
@@ -96,7 +96,7 @@ class OrderQueriesEloquent implements OrderQueries
                 $query->where('uuid', 'LIKE', '%' . $uuid . '%');
             })
             ->orderByDesc('id')
-            ->paginate(10);
+            ->paginate(20);
     }
 
     public function paginateForMerchant(User $user, ?string $uuid = null): LengthAwarePaginator
@@ -108,7 +108,7 @@ class OrderQueriesEloquent implements OrderQueries
                 $query->where('uuid', 'LIKE', '%' . $uuid . '%');
             })
             ->orderByDesc('id')
-            ->paginate(10);
+            ->paginate(20);
     }
 
 
