@@ -90,6 +90,8 @@ class Parser
             'перевод денежных средств',
             'перевод на карту',
             'zachislenie',
+            'пришли деньги',
+            'перевода для',
         ];
 
         $stopPatterns = [
@@ -171,6 +173,10 @@ class Parser
 
     protected function findAmount($message): ?string
     {
+        //очищаем от лишнего, чтобы не ломать парсер
+        $message = preg_replace('/(^|\s)\d{11,20}(\s|$)/mi', ' ', $message);
+
+        //парсим
         $amountRegex = '(\s|\+)(?<amount>\d+(.\d+){0,3})\s{0,1}(RUB|rub|р|p|₽|RUR|rur|rurcard2card|руб)(\s|\.|\,|\;)';
 
         $regex = '/' . $amountRegex . '/mi';
