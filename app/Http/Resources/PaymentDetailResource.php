@@ -42,6 +42,7 @@ class PaymentDetailResource extends JsonResource
                 return [
                     'payment_gateway_code' => $this->paymentGateway->code,
                     'payment_gateway_name' => $this->paymentGateway->name_with_currency,
+                    'payment_gateway_logo' => $this->paymentGateway->logo ? asset('storage/payment-gateways/'.$this->paymentGateway->logo) : null,
                 ];
             }),
             'primary_turnover_amount' => $this->when($this->primary_turnover_amount, $this->primary_turnover_amount?->toBeauty()),

@@ -53,6 +53,7 @@ class OrderResource extends JsonResource
             'callback_url' => $this->callback_url,
             'is_h2h' => $this->is_h2h,
             'payment_gateway_code' => $this->paymentGateway->code,
+            'payment_gateway_logo' => $this->paymentGateway->logo ? asset('storage/payment-gateways/'.$this->paymentGateway->logo) : null,
             'sub_payment_gateway_code' => optional($this->paymentDetail->subPaymentGateway)->code,
             'payment_gateway_name' => $this->paymentGateway->name_with_currency,
             'sub_payment_gateway_name' => optional($this->paymentDetail->subPaymentGateway)->name,

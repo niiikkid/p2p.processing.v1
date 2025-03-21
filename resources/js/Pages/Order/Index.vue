@@ -299,13 +299,18 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <div class="text-nowrap text-xs">{{ order.profit }} {{ order.base_currency.toUpperCase() }}</div>
                             </td>
                             <td class="px-6 py-3">
-                                <PaymentDetail
-                                    :detail="order.payment_detail"
-                                    :type="order.payment_detail_type"
-                                    :copyable="false"
-                                    class="text-gray-900 dark:text-gray-200"
-                                ></PaymentDetail>
-                                <div class="text-xs">{{ order.payment_detail_name }}</div>
+                                <div class="flex items-center gap-3">
+                                    <img v-if="order.payment_gateway_logo" :src="order.payment_gateway_logo" class="h-8 w-8" :alt="order.payment_gateway_name">
+                                    <div>
+                                        <PaymentDetail
+                                            :detail="order.payment_detail"
+                                            :type="order.payment_detail_type"
+                                            :copyable="false"
+                                            class="text-gray-900 dark:text-gray-200"
+                                        ></PaymentDetail>
+                                        <div class="text-xs">{{ order.payment_detail_name }}</div>
+                                    </div>
+                                </div>
                             </td>
                             <td class="px-6 py-3" v-if="viewStore.isAdminViewMode">
                                 {{ order.user.email }}

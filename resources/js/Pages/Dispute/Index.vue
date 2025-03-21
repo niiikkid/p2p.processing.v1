@@ -112,13 +112,18 @@ defineOptions({ layout: AuthenticatedLayout })
                                     {{ dispute.order.id }}
                                 </td>
                                 <td class="px-6 py-3">
-                                    <PaymentDetail
-                                        :detail="dispute.payment_detail.detail"
-                                        :type="dispute.payment_detail.type"
-                                        :copyable="false"
-                                        class="text-gray-900 dark:text-gray-200"
-                                    ></PaymentDetail>
-                                    <div class="text-nowrap text-xs">{{ dispute.payment_detail.name }}</div>
+                                    <div class="flex items-center gap-2">
+                                        <img v-if="dispute.payment_gateway.logo" :src="dispute.payment_gateway.logo" class="h-8 w-8" :alt="dispute.payment_gateway.name">
+                                        <div>
+                                            <PaymentDetail
+                                                :detail="dispute.payment_detail.detail"
+                                                :type="dispute.payment_detail.type"
+                                                :copyable="false"
+                                                class="text-gray-900 dark:text-gray-200"
+                                            ></PaymentDetail>
+                                            <div class="text-nowrap text-xs">{{ dispute.payment_detail.name }}</div>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-3">
                                     <div class="text-nowrap text-gray-900 dark:text-gray-200">{{ dispute.order.amount }} {{dispute.order.currency.toUpperCase()}}</div>

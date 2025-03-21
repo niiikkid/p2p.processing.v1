@@ -195,7 +195,10 @@ defineOptions({ layout: AuthenticatedLayout })
                                     </div>
                                 </td>
                                 <td class="px-6 py-3">
-                                    <PaymentDetail :detail="payment_detail.detail" :type="payment_detail.detail_type"></PaymentDetail>
+                                    <div class="flex items-center gap-2">
+                                        <img v-if="payment_detail.payment_gateway_logo" :src="payment_detail.payment_gateway_logo" class="h-8 w-8" :alt="payment_detail.payment_gateway_name">
+                                        <PaymentDetail :detail="payment_detail.detail" :type="payment_detail.detail_type"></PaymentDetail>
+                                    </div>
                                 </td>
                                 <td
                                     v-if="viewStore.isAdminViewMode"
