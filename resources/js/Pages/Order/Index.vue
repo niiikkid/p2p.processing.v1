@@ -67,7 +67,7 @@ const orderStatusesSelected = computed(() => {
 })
 
 const merchantsSelected = computed(() => {
-    return merchants.value.map(i => {
+    return merchants.value?.map(i => {
         i.selected = currentFilters.value.merchants.includes(i.value);
 
         return i;
@@ -77,7 +77,7 @@ const merchantsSelected = computed(() => {
 const filters = computed(() => {
     return {
         statuses: orderStatuses.value.filter(o => o.selected).map(o => o.value).join(','),
-        merchants: merchants.value.filter(m => m.selected).map(m => m.value).join(','),
+        merchants: merchants.value?.filter(m => m.selected).map(m => m.value).join(','),
         start_date: currentFilters.value.startDate,
         end_date: currentFilters.value.endDate,
         external_id: currentFilters.value.externalID,
@@ -132,7 +132,7 @@ defineOptions({ layout: AuthenticatedLayout })
                                             <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
                                                 Статус
                                             </h6>
-                                            <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
+                                            <ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
                                                 <li
                                                     v-for="orderStatus in orderStatusesSelected"
                                                     class="flex items-center"
@@ -151,37 +151,42 @@ defineOptions({ layout: AuthenticatedLayout })
                                             </ul>
                                         </div>
 
-                                        <button id="merchantDropdownButton" data-dropdown-toggle="merchantDropdown" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg lg:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
-                                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 h-4 mr-2 text-gray-400" viewbox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
-                                            </svg>
-                                            Мерчант
-                                            <svg class="-mr-1 ml-1.5 w-5 h-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                                <path clip-rule="evenodd" fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                                            </svg>
-                                        </button>
-                                        <!-- Dropdown menu -->
-                                        <div id="merchantDropdown" class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
-                                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                                        <div v-show="viewStore.isAdminViewMode">
+                                            <button id="merchantDropdownButton" data-dropdown-toggle="merchantDropdown" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg lg:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 h-4 mr-2 text-gray-400" viewbox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+                                                </svg>
                                                 Мерчант
-                                            </h6>
-                                            <ul class="space-y-2 text-sm" aria-labelledby="merchantDropdownButton">
-                                                <li
-                                                    v-for="merchant in merchantsSelected"
-                                                    class="flex items-center"
-                                                >
-                                                    <input
-                                                        :id="`merchant-${merchant.value}`"
-                                                        type="checkbox"
-                                                        :value="merchant.value"
-                                                        v-model="merchant.selected"
-                                                        class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                                                    />
-                                                    <label :for="`merchant-${merchant.value}`" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                        {{ merchant.name }}
-                                                    </label>
-                                                </li>
-                                            </ul>
+                                                <svg class="-mr-1 ml-1.5 w-5 h-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                    <path clip-rule="evenodd" fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                                </svg>
+                                            </button>
+                                            <!-- Dropdown menu -->
+                                            <div
+                                                id="merchantDropdown"
+                                                class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
+                                            >
+                                                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                                                    Мерчант
+                                                </h6>
+                                                <ul class="space-y-2 text-sm" aria-labelledby="merchantDropdownButton">
+                                                    <li
+                                                        v-for="merchant in merchantsSelected"
+                                                        class="flex items-center"
+                                                    >
+                                                        <input
+                                                            :id="`merchant-${merchant.value}`"
+                                                            type="checkbox"
+                                                            :value="merchant.value"
+                                                            v-model="merchant.selected"
+                                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                                        />
+                                                        <label :for="`merchant-${merchant.value}`" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                            {{ merchant.name }}
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
