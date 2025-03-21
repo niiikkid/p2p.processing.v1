@@ -29,6 +29,7 @@ class UpdateRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'min:3', 'max:30'],
+            'logo' => ['nullable', 'file', 'mimes:png', 'max:2048'],
             'code' => ['required', 'string', 'min:3', 'max:30', Rule::unique(PaymentGateway::class)->ignore($paymentGateway->id)],
             'currency' => ['required', Rule::in(Currency::getAllCodes())],
             'detail_types' => ['required', 'array'],
@@ -52,11 +53,13 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name' => __('название'),
+            'logo' => __('логотип'),
             'code' => __('код метода'),
             'currency' => __('валюта'),
             'detail_types' => __('тип реквизитов'),
             'sub_payment_gateways' => __('вспомогательный метод'),
-            'max_limit' => __('макс лимит'),
+            'min_limit' => __('минимальный лимит'),
+            'max_limit' => __('максимальный лимит'),
             'commission_rate' => __('комиссия трейдера'),
             'service_commission_rate' => __('комиссия сервиса'),
             'is_active' => __('активность'),

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int $id
  * @property string $name
+ * @property string $logo
  * @property string $code
  * @property string $name_with_currency
  * @property string $min_limit
@@ -40,6 +41,7 @@ class PaymentGateway extends Model
 
     protected $fillable = [
         'name',
+        'logo',
         'code',
         'currency',
         'min_limit',

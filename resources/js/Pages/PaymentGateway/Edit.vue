@@ -21,6 +21,7 @@ const paymentGatewaysForSBP = usePage().props.paymentGatewaysForSBP;
 
 const form = useForm({
     name: payment_gateway.original_name,
+    logo: null,
     code: payment_gateway.code,
     min_limit: payment_gateway.min_limit,
     max_limit: payment_gateway.max_limit,
@@ -34,9 +35,10 @@ const form = useForm({
     detail_types: payment_gateway.detail_types ?? [],
     sub_payment_gateways: payment_gateway.sub_payment_gateways ?? [],
     sms_senders: payment_gateway.sms_senders ?? [],
+    _method: 'PATCH'
 });
 const submit = () => {
-    form.patch(route('admin.payment-gateways.update', payment_gateway.id), {
+    form.post(route('admin.payment-gateways.update', payment_gateway.id), {
         preserveScroll: true,
         onSuccess: () => form.reset(),
     });
@@ -121,6 +123,25 @@ defineOptions({ layout: AuthenticatedLayout })
                                 label="Название"
                                 placeholder="Сбербанк"
                             />
+
+                            <div>
+                                <InputLabel
+                                    for="logo"
+                                    value="Логотип"
+                                    :error="!!form.errors.logo"
+                                />
+
+                                <input
+                                    type="file"
+                                    id="logo"
+                                    accept=".png"
+                                    class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                                    @input="form.logo = $event.target.files[0]"
+                                />
+
+                                <InputError :message="form.errors.logo" class="mt-2" />
+                                <InputHelper v-if="!form.errors.logo" model-value="Загрузите логотип в формате SVG или PNG"></InputHelper>
+                            </div>
 
                             <TextInputBlock
                                 v-if="form.code !== 'sbp'"

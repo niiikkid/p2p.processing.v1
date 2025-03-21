@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\PaymentGateway;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class PaymentGatewayResource extends JsonResource
 {
@@ -22,6 +23,7 @@ class PaymentGatewayResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name_with_currency,
             'original_name' => $this->name,
+            'logo' => $this->logo ? Storage::disk('public')->url($this->logo) : null,
             'code' => $this->code,
             'detail_types' => $this->detail_types,
             'sub_payment_gateways' => $this->sub_payment_gateways?->pluck('id')?->toArray() ?? [],

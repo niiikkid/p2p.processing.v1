@@ -44,6 +44,9 @@ defineOptions({ layout: AuthenticatedLayout })
                                 Название
                             </th>
                             <th scope="col" class="px-6 py-3">
+                                Логотип
+                            </th>
+                            <th scope="col" class="px-6 py-3">
                                 Код
                             </th>
                             <th scope="col" class="px-6 py-3">
@@ -73,6 +76,10 @@ defineOptions({ layout: AuthenticatedLayout })
                             </th>
                             <td class="px-6 py-3 text-nowrap">
                                 {{ payment_gateway.name }}
+                            </td>
+                            <td class="px-6 py-3">
+                                <img v-if="payment_gateway.logo" :src="payment_gateway.logo" class="h-8 w-auto" :alt="payment_gateway.name">
+                                <span v-else class="text-gray-400">Нет логотипа</span>
                             </td>
                             <td class="px-6 py-3">
                                 {{ payment_gateway.code }}
