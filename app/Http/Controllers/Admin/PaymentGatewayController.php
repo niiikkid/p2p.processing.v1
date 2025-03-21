@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\PaymentGateway\UpdateRequest;
 use App\Http\Resources\PaymentGatewayResource;
 use App\Models\PaymentGateway;
 use App\Services\Money\Currency;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 
@@ -82,13 +83,13 @@ class PaymentGatewayController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('logo')) {
-            if ($paymentGateway->logo) {
-                Storage::disk('public')->delete($paymentGateway->logo);
-            }
-            
-            $path = $request->file('logo')->store('payment-gateways', 'public');
-            $data['logo'] = $path;
+        $logo = $request->file('logo');
+        if ($logo) {
+            $logo_name = 'logo_'.strtolower(Str::random(32)).'.'.$logo->extension();
+            $logo->move(storage_path('/app/public/payment-gateways'), $logo_name);
+            $data['logo'] = $logo_name;
+        } else {
+            unset($data['logo']);
         }
 
         $paymentGateway->update($data);
