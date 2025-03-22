@@ -43,6 +43,33 @@ class UpdateRequest extends FormRequest
             'is_active' => ['required', 'boolean'],
             'payment_confirmation_by_card_last_digits' => ['required', 'boolean', 'declined_if:make_order_amount_unique,true'],
             'make_order_amount_unique' => ['required', 'boolean', 'declined_if:payment_confirmation_by_card_last_digits,true'],
+            'has_sms_detail_pattern' => ['required', 'boolean'],
+            'sms_detail_title' => ['required_if:has_sms_detail_pattern,true', 'nullable', 'string', 'max:255'],
+            'sms_detail_pattern' => [
+                'required_if:has_sms_detail_pattern,true',
+                'nullable',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if (!$value) {
+                        return;
+                    }
+
+                    // Проверяем что это валидный regex
+                    try {
+                        preg_match('/' . $value . '/', '');
+                    } catch (\Exception $e) {
+                        $fail('Некорректный regex паттерн');
+                        return;
+                    }
+
+                    // Проверяем что нет модификаторов шаблона
+                    if (str_contains($value, '/')) {
+                        $fail('Паттерн не должен содержать слеши и модификаторы');
+                        return;
+                    }
+                }
+            ],
             'reservation_time' => ['required', 'integer', 'min:1'],
             'sms_senders' => ['nullable', 'array'],
             'sms_senders.*' => ['required', 'string'],
@@ -65,6 +92,9 @@ class UpdateRequest extends FormRequest
             'is_active' => __('активность'),
             'payment_confirmation_by_card_last_digits' => __('подтверждение платежей по 4-м последним цифрам карты'),
             'make_order_amount_unique' => __('делать сумму сделки уникальной'),
+            'has_sms_detail_pattern' => __('извлечение специального значения из SMS'),
+            'sms_detail_title' => __('заголовок значения'),
+            'sms_detail_pattern' => __('шаблон поиска'),
             'reservation_time' => __('время резервирования'),
             'sms_senders' => __('отправители смс/push'),
         ];

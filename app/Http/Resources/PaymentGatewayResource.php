@@ -37,6 +37,9 @@ class PaymentGatewayResource extends JsonResource
             'is_active' => $this->is_active,
             'payment_confirmation_by_card_last_digits' => $this->payment_confirmation_by_card_last_digits,
             'make_order_amount_unique' => $this->make_order_amount_unique,
+            'has_sms_detail_pattern' => $this->has_sms_detail_pattern,
+            'sms_detail_title' => $this->sms_detail_title,
+            'sms_detail_pattern' => $this->sms_detail_pattern,
             'sms_parsers_count' => $this->whenHas('sms_parsers_count', $this->sms_parsers_count),
             'reservation_time' => $this->reservation_time,
         ];

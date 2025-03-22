@@ -26,6 +26,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property boolean $is_active
  * @property boolean $payment_confirmation_by_card_last_digits
  * @property boolean $make_order_amount_unique
+ * @property boolean $has_sms_detail_pattern
+ * @property string|null $sms_detail_title
+ * @property string|null $sms_detail_pattern
  * @property int $reservation_time
  * @property array<int, DetailType> $detail_types
  * @property Collection<int, PaymentGateway> $sub_payment_gateways
@@ -52,6 +55,9 @@ class PaymentGateway extends Model
         'is_active',
         'payment_confirmation_by_card_last_digits',
         'make_order_amount_unique',
+        'has_sms_detail_pattern',
+        'sms_detail_title',
+        'sms_detail_pattern',
         'reservation_time',
         'detail_types',
         'sub_payment_gateways',
