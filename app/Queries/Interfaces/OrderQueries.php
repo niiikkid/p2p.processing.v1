@@ -17,6 +17,8 @@ interface OrderQueries
 
     public function findPending(Money $amount, User $user, PaymentGateway $paymentGateway): ?Order;
 
+    public function findPendingWithPattern(Money $amount, User $user, PaymentGateway $paymentGateway, string $pattern): ?Order;
+
     /**
      * @return Collection<int, Dispute>
      */

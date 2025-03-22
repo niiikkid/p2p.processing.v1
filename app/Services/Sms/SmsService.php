@@ -37,23 +37,31 @@ class SmsService implements SmsServiceContract
             ->findPendingForSBP($result->amount, $sms->user, $result->paymentGateway);
 
         if (! $order) {
-            if ($result->paymentGateway->payment_confirmation_by_card_last_digits) {
-                if (! $result->card_last_digits) {
-                    return;
-                }
-                $orders = queries()
-                    ->order()
-                    ->findPendingMultipleCardConfirmation($result->amount, $sms->user, $result->paymentGateway, $result->card_last_digits);
-
-                if ($orders->count() > 1) {
-                    throw new \Exception('Multiple card confirmations. Orders: ' . $orders->pluck('id')->implode(', '));
-                } else {
-                    $order = $orders->first();
+            if ($result->paymentGateway->has_sms_detail_pattern) {
+                if ($result->sms_detail_value) {
+                    $order = queries()
+                        ->order()
+                        ->findPendingWithPattern($result->amount, $sms->user, $result->paymentGateway, $result->sms_detail_value);
                 }
             } else {
-                $order = queries()
-                    ->order()
-                    ->findPending($result->amount, $sms->user, $result->paymentGateway);
+                if ($result->paymentGateway->payment_confirmation_by_card_last_digits) {
+                    if (! $result->card_last_digits) {
+                        return;
+                    }
+                    $orders = queries()
+                        ->order()
+                        ->findPendingMultipleCardConfirmation($result->amount, $sms->user, $result->paymentGateway, $result->card_last_digits);
+
+                    if ($orders->count() > 1) {
+                        throw new \Exception('Multiple card confirmations. Orders: ' . $orders->pluck('id')->implode(', '));
+                    } else {
+                        $order = $orders->first();
+                    }
+                } else {
+                    $order = queries()
+                        ->order()
+                        ->findPending($result->amount, $sms->user, $result->paymentGateway);
+                }
             }
         }
 
