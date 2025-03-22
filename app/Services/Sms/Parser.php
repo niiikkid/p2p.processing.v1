@@ -25,10 +25,16 @@ class Parser
 
         $digits = $this->parseCardLastDigitsFromMessage($message);
 
+        $smsDetailValue = null;
+        if ($gateway->has_sms_detail_pattern) {
+            $smsDetailValue = $this->parseSmsDetailValue($message, $gateway->sms_detail_pattern);
+        }
+
         return new ParserResultValue(
             amount: Money::fromPrecision($amount, $gateway->currency),
             card_last_digits: $digits,
             paymentGateway: $gateway,
+            sms_detail_value: $smsDetailValue,
         );
     }
 
@@ -225,5 +231,19 @@ class Parser
         }
 
         return $paymentGateway;
+    }
+
+    protected function parseSmsDetailValue(string $message, string $pattern): ?string
+    {
+        $message = NormalizeMessage::normalize($message);
+        
+        if (preg_match('/' . $pattern . '/', $message, $matches)) {
+            // Иначе берем первое совпадение
+            if (!empty($matches[0])) {
+                return trim($matches[0]);
+            }
+        }
+
+        return null;
     }
 }

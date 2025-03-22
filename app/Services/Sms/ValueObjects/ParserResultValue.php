@@ -11,6 +11,7 @@ class ParserResultValue
         public Money $amount,
         public ?string $card_last_digits,
         public PaymentGateway $paymentGateway,
+        public ?string $sms_detail_value = null,
     )
     {}
 }
