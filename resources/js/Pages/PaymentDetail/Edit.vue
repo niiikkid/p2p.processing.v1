@@ -38,6 +38,7 @@ const form = useForm({
     payment_gateway_id: payment_detail.payment_gateway_id,
     sub_payment_gateway_id: payment_detail.sub_payment_gateway_id ?? 0,
     detail_type: payment_detail.detail_type,
+    sms_detail_value: payment_detail.sms_detail_value,
 });
 
 const details = ref({
@@ -205,6 +206,15 @@ defineOptions({ layout: AuthenticatedLayout })
                         placeholder="00000000000000000000"
                         label="Номер счета"
                     />
+
+                    <div v-if="currentPaymentGateway.has_sms_detail_pattern">
+                        <TextInputBlock
+                            v-model="form.sms_detail_value"
+                            :form="form"
+                            field="sms_detail_value"
+                            :label="currentPaymentGateway.sms_detail_title"
+                        />
+                    </div>
 
                     <TextInputBlock
                         v-model="form.initials"

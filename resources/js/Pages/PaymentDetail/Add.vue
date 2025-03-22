@@ -10,6 +10,7 @@ import NumberInput from "@/Components/NumberInput.vue";
 import SaveButton from "@/Components/Form/SaveButton.vue";
 import SecondaryPageSection from "@/Wrappers/SecondaryPageSection.vue";
 import {useViewStore} from "@/store/view.js";
+import TextInputBlock from "@/Components/Form/TextInputBlock.vue";
 
 const viewStore = useViewStore();
 const payment_gateways = usePage().props.paymentGateways;
@@ -36,6 +37,7 @@ const form = useForm({
     payment_gateway_id: 0,
     sub_payment_gateway_id: 0,
     detail_type: 'card',
+    sms_detail_value: '',
 });
 
 const details = ref({
@@ -247,6 +249,14 @@ defineOptions({ layout: AuthenticatedLayout })
                             <InputError :message="form.errors.detail" class="mt-2" />
                         </div>
                     </template>
+                    <div v-if="currentPaymentGateway.has_sms_detail_pattern">
+                        <TextInputBlock
+                            v-model="form.sms_detail_value"
+                            :form="form"
+                            field="sms_detail_value"
+                            :label="currentPaymentGateway.sms_detail_title"
+                        />
+                    </div>
                     <div>
                         <InputLabel
                             for="initials"

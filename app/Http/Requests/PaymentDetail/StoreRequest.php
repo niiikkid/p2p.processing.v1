@@ -64,6 +64,22 @@ class StoreRequest extends FormRequest
                 'integer',
                 'exists:payment_gateways,id'
             ],
+            'sms_detail_value' => [
+                Rule::requiredIf(fn() => $gateway->has_sms_detail_pattern),
+                'nullable',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($gateway) {
+                    if (!$gateway->has_sms_detail_pattern || !$value) {
+                        return;
+                    }
+
+                    // Проверяем что значение соответствует паттерну
+                    if (!preg_match('/' . $gateway->sms_detail_pattern . '/', $value)) {
+                        $fail('Значение не соответствует формату');
+                    }
+                }
+            ],
         ];
     }
 
@@ -76,6 +92,7 @@ class StoreRequest extends FormRequest
             'sub_payment_gateway_id' => __('метод'),
             'is_active' => __('активность'),
             'daily_limit' => __('дневной лимит'),
+            'sms_detail_value' => __('значение для SMS'),
         ];
     }
 

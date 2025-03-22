@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property string $name
  * @property string $detail
+ * @property string|null $sms_detail_value
  * @property DetailType $detail_type
  * @property string $initials
  * @property boolean $is_active
@@ -42,6 +43,7 @@ class PaymentDetail extends Model
     protected $fillable = [
         'name',
         'detail',
+        'sms_detail_value',
         'detail_type',
         'initials',
         'is_active',
