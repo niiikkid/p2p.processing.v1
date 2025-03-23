@@ -98,6 +98,7 @@ class Parser
             'zachislenie',
             'пришли деньги',
             'перевода для',
+            'переводов для',
         ];
 
         $stopPatterns = [
