@@ -181,7 +181,7 @@ class Parser
     protected function findAmount($message): ?string
     {
         //исключение для юмани
-        preg_match_all("/^\d\sперевод(а|ов)\sдля\s\d{11,20}\s.+\s₽\s(?<amount>\d+(.\d+){0,3})\s₽$/mi", $message, $matches, PREG_SET_ORDER);
+        preg_match_all("/^\d{1,3}\sперевод(а|ов|)\sдля\s\d{11,20}\s.+\s₽\s(?<amount>\d+(.\d+){0,3})\s₽$/mi", $message, $matches, PREG_SET_ORDER);
 
         if (! empty($matches[0]['amount'])) {
             return $matches[0]['amount'];
