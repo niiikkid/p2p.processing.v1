@@ -79,7 +79,7 @@ class SettingsService implements SettingsServiceContract
 
         // Сохраняем файл
         $file->move($directory, 'logo.svg');
-        
+
         // Обновляем настройку
         $this->updateParam(self::LOGO_EXISTS, 'true');
     }
@@ -135,7 +135,11 @@ class SettingsService implements SettingsServiceContract
     protected function getParam(string $key): mixed
     {
         if (empty($this->cache[$key])) {
-            $this->cache[$key] = Setting::where('key', $key)->first()->value;
+            $data = Setting::where('key', $key)->first();
+            if (is_null($data)) {
+                return null;
+            }
+            $this->cache[$key] = $data->value;
         }
 
         return $this->cache[$key];
