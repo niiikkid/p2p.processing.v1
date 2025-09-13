@@ -15,13 +15,13 @@ class DeviceController extends Controller
         $device = $request->attributes->get('device');
 
         if (! $device) {
-            return response()->failWithMessage('Device not found');
+            return response()->failWithMessage('Устройство не найдено');
         }
 
         $androidId = $request->string('android_id');
 
         if ($device->connected_at && $device->android_id && $device->android_id !== $androidId) {
-            return response()->failWithMessage('Token already connected to another device');
+            return response()->failWithMessage('Токен уже подключён к другому устройству');
         }
 
         if ($device->connected_at && $device->android_id === $androidId) {
@@ -58,10 +58,11 @@ class DeviceController extends Controller
         $device = $request->attributes->get('device');
 
         if (! $device || ! $device->android_id) {
-            return response()->failWithMessage('Device not connected');
+            return response()->failWithMessage('Устройство не подключено');
         }
 
-        cache()->put("user-apk-latest-ping-at-{$device->user_id}", now());
+        // Сохраняем время последнего пинга для конкретного устройства
+        cache()->put("user-device-latest-ping-at-{$device->id}", now(), 60 * 60 * 24);
 
         return response()->success();
     }

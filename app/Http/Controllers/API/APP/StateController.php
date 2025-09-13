@@ -17,7 +17,7 @@ class StateController extends Controller
         $device = $request->attributes->get('device');
 
         if (! $device || ! $device->android_id) {
-            return response()->failWithMessage('Device not connected');
+            return response()->failWithMessage('Устройство не подключено');
         }
 
         $userId = $device->user_id;
@@ -41,7 +41,8 @@ class StateController extends Controller
             ];
         });
 
-        cache()->put("user-apk-latest-ping-at-{$userId}", now());
+        // Обновляем метку последнего пинга для конкретного устройства
+        cache()->put("user-device-latest-ping-at-{$device->id}", now(), 60 * 60 * 24);
 
         return response()->success($state);
     }

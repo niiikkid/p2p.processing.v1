@@ -21,7 +21,7 @@ class ApiAccessToken
         $user = User::where('api_access_token', $token)->first();
 
         if (! $user) {
-            return response()->failWithMessage('Invalid Access Token.');
+            return response()->failWithMessage('Неверный токен доступа.');
         }
 
         Auth::login($user);

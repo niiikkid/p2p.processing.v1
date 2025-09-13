@@ -29,7 +29,7 @@ class DeviceAccessToken
         $device = $devices->getByToken($token);
 
         if (! $device) {
-            return response()->failWithMessage('Invalid Access Token.');
+            return response()->failWithMessage('Неверный токен доступа.');
         }
 
         // Пробросим устройство и залогиним владельца

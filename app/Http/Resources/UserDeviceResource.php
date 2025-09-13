@@ -21,6 +21,9 @@ class UserDeviceResource extends JsonResource
 				: $token;
 		}
 
+		$lastPing = cache()->get("user-device-latest-ping-at-{$this->id}");
+		$lastPingSecondsAgo = $lastPing ? abs(round(now()->diffInSeconds($lastPing))) : null;
+
 		return [
 			'id' => $this->id,
 			'name' => $this->name,
@@ -33,6 +36,7 @@ class UserDeviceResource extends JsonResource
 			'brand' => $this->brand,
 			'connected_at' => $this->connected_at ? $this->connected_at->format($format) : null,
 			'created_at' => $this->created_at ? $this->created_at->format($format) : null,
+			'last_ping_seconds_ago' => $lastPingSecondsAgo,
 		];
 	}
 }

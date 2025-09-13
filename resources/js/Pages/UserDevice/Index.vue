@@ -73,6 +73,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <th scope="col" class="px-6 py-3">Токен</th>
                             <th scope="col" class="px-6 py-3">Android ID</th>
                             <th scope="col" class="px-6 py-3">Статус</th>
+                            <th scope="col" class="px-6 py-3">Последний пинг</th>
                             <th scope="col" class="px-6 py-3">Создано</th>
                         </tr>
                         </thead>
@@ -101,6 +102,10 @@ defineOptions({ layout: AuthenticatedLayout })
                                     </svg>
                                     <span>Не подключено</span>
                                 </div>
+                            </td>
+                            <td class="px-6 py-3 text-gray-900 dark:text-gray-200">
+                                <span v-if="d.last_ping_seconds_ago !== null">{{ d.last_ping_seconds_ago }} с назад</span>
+                                <span v-else class="text-gray-400">нет данных</span>
                             </td>
                             <td class="px-6 py-3">{{ d.created_at }}</td>
                         </tr>
