@@ -17,6 +17,11 @@ class SmsController extends Controller
         $device = $request->attributes->get('device');
         $user = $device?->user;
 
+        // Обновим только метку последнего пинга; историю ведём через /device/ping
+        if ($device) {
+            cache()->put("user-device-latest-ping-at-{$device->id}", now(), 60 * 60 * 24);
+        }
+
         HandleSmsJob::dispatch(
             SmsDTO::fromArray($request->validated() + [
                     'user' => $user,

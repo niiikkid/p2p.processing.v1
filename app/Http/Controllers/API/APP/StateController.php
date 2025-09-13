@@ -41,7 +41,7 @@ class StateController extends Controller
             ];
         });
 
-        // Обновляем метку последнего пинга для конкретного устройства
+        // Обновляем только метку последнего пинга (история ведётся через /device/ping)
         cache()->put("user-device-latest-ping-at-{$device->id}", now(), 60 * 60 * 24);
 
         return response()->success($state);

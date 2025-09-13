@@ -6,6 +6,8 @@ use App\Contracts\DeviceServiceContract;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\APP\DeviceConnectRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
+use App\Models\DevicePing;
 
 class DeviceController extends Controller
 {
@@ -62,7 +64,18 @@ class DeviceController extends Controller
         }
 
         // Сохраняем время последнего пинга для конкретного устройства
-        cache()->put("user-device-latest-ping-at-{$device->id}", now(), 60 * 60 * 24);
+        $now = now();
+        cache()->put("user-device-latest-ping-at-{$device->id}", $now, 60 * 60 * 24);
+
+        // Запишем пинг в базу; чистку старых записей делает отдельная команда
+        try {
+            DevicePing::create([
+                'user_device_id' => $device->id,
+                'pinged_at' => $now,
+            ]);
+        } catch (\Throwable $e) {
+            // Игнорируем сбой записи пинга, чтобы не ломать основной флоу
+        }
 
         return response()->success();
     }
