@@ -38,6 +38,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             </p>
                             <p class="text-base font-normal text-gray-500 dark:text-gray-400">
                                 <a :href="route('app.download')" class="text-blue-500">Скачать</a>
+                                <span class="ml-4 text-sm">Управление устройствами: <a :href="route('trader.devices.index')" class="text-blue-500">перейти</a></span>
                             </p>
                         </li>
                         <li class="mb-10 ms-6">

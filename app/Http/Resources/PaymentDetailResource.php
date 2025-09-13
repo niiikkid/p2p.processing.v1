@@ -25,6 +25,7 @@ class PaymentDetailResource extends JsonResource
             'detail' => $this->detail,
             'detail_type' => $this->detail_type->value,
             'sms_detail_value' => $this->sms_detail_value,
+            'user_device_id' => $this->user_device_id,
             'initials' => $this->initials,
             'is_active' => $this->is_active,
             'daily_limit' => $this->daily_limit->toBeauty(),

@@ -12,6 +12,7 @@ use App\Contracts\ServiceBuilderContract;
 use App\Contracts\SettingsServiceContract;
 use App\Contracts\SmsServiceContract;
 use App\Contracts\TelegramBotServiceContract;
+use App\Contracts\DeviceServiceContract;
 use App\Contracts\WalletServiceContract;
 use App\Mixins\ResponseMixins;
 use App\Models\Dispute;
@@ -39,6 +40,7 @@ use App\Services\ServiceBuilder;
 use App\Services\Settings\SettingsService;
 use App\Services\Sms\SmsService;
 use App\Services\TelegramBot\TelegramBotService;
+use App\Services\Device\DeviceService;
 use App\Services\Wallet\WalletService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -84,6 +86,10 @@ class AppServiceProvider extends ServiceProvider
             return new TelegramBotService(
                 config('telegram.bots.mybot.webhook_token')
             );
+        });
+
+        $this->app->singleton(DeviceServiceContract::class, function () {
+            return new DeviceService();
         });
 
         //queries

@@ -28,4 +28,9 @@ Route::group(['middleware' => ['api-access-token']], function () {
     });
 });
 
-Route::post('app/sms', [\App\Http\Controllers\API\APP\SmsController::class, 'store'])->middleware(['idempotency']);
+Route::group(['prefix' => 'app', 'middleware' => ['device-access-token']], function () {
+    Route::post('device/connect', [\App\Http\Controllers\API\APP\DeviceController::class, 'connect']);
+    Route::get('device/ping', [\App\Http\Controllers\API\APP\DeviceController::class, 'ping']);
+    Route::get('state', [\App\Http\Controllers\API\APP\StateController::class, 'index']);
+    Route::post('sms', [\App\Http\Controllers\API\APP\SmsController::class, 'store'])->middleware(['idempotency']);
+});

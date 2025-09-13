@@ -28,6 +28,8 @@ Route::group(['middleware' => ['auth', 'banned']], function () {
 
 Route::group(['middleware' => ['auth', 'banned', 'role:Trader|Super Admin']], function () {
     Route::resource('/payment-details', \App\Http\Controllers\PaymentDetailController::class)->only(['index', 'create', 'store', 'edit', 'update']);
+    Route::get('/trader/devices', [\App\Http\Controllers\UserDeviceController::class, 'index'])->name('trader.devices.index');
+    Route::post('/trader/devices', [\App\Http\Controllers\UserDeviceController::class, 'store'])->name('trader.devices.store');
 
     //orders
     Route::resource('/orders', \App\Http\Controllers\OrderController::class)->only(['index']);

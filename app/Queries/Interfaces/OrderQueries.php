@@ -17,6 +17,8 @@ interface OrderQueries
 
     public function findPending(Money $amount, User $user, PaymentGateway $paymentGateway): ?Order;
 
+    public function findPendingByDevice(Money $amount, User $user, PaymentGateway $paymentGateway, ?int $userDeviceId): ?Order;
+
     public function findPendingWithPattern(Money $amount, User $user, PaymentGateway $paymentGateway, string $pattern): ?Order;
 
     /**

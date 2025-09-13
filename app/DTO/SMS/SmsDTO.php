@@ -13,7 +13,8 @@ class SmsDTO extends BaseDTO
         public string $message,
         public int $timestamp,
         public SmsType $type,
-        public User $user
+        public User $user,
+        public ?int $user_device_id = null,
     )
     {}
 

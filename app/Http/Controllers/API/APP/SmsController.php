@@ -13,15 +13,14 @@ class SmsController extends Controller
 {
     public function store(StoreRequest $request)
     {
-        $user = User::where('apk_access_token', $request->header('Access-Token'))->first();
-
-        if (! $user) {
-            return response()->failWithMessage('Invalid access token');
-        }
+        /** @var \App\Models\UserDevice $device */
+        $device = $request->attributes->get('device');
+        $user = $device?->user;
 
         HandleSmsJob::dispatch(
             SmsDTO::fromArray($request->validated() + [
-                    'user' => $user
+                    'user' => $user,
+                    'user_device_id' => $device?->id,
                 ])
         );
 

@@ -64,6 +64,7 @@ class StoreRequest extends FormRequest
                 'integer',
                 'exists:payment_gateways,id'
             ],
+            'user_device_id' => ['nullable', 'integer', 'exists:user_devices,id'],
             'sms_detail_value' => [
                 Rule::requiredIf(fn() => $gateway->has_sms_detail_pattern),
                 'nullable',

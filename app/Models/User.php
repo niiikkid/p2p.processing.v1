@@ -84,6 +84,11 @@ class User extends Authenticatable
         return $this->hasMany(SmsLog::class);
     }
 
+    public function devices(): HasMany
+    {
+        return $this->hasMany(UserDevice::class);
+    }
+
     public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class);

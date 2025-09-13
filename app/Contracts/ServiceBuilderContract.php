@@ -19,4 +19,6 @@ interface ServiceBuilderContract
     public function settings(): SettingsServiceContract;
 
     public function telegramBot(): TelegramBotServiceContract;
+
+    public function device(): DeviceServiceContract;
 }

@@ -12,6 +12,7 @@ use App\Contracts\SettingsServiceContract;
 use App\Contracts\SmsServiceContract;
 use App\Contracts\TelegramBotServiceContract;
 use App\Contracts\WalletServiceContract;
+use App\Contracts\DeviceServiceContract;
 
 class ServiceBuilder implements ServiceBuilderContract
 {
@@ -58,5 +59,10 @@ class ServiceBuilder implements ServiceBuilderContract
     public function telegramBot(): TelegramBotServiceContract
     {
         return make(TelegramBotServiceContract::class);
+    }
+
+    public function device(): DeviceServiceContract
+    {
+        return make(DeviceServiceContract::class);
     }
 }

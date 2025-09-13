@@ -30,6 +30,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $sub_payment_gateway_id
  * @property int $user_id
  * @property User $user
+ * @property int|null $user_device_id
+ * @property UserDevice|null $userDevice
  * @property PaymentGateway $paymentGateway
  * @property PaymentGateway $subPaymentGateway
  * @property Collection<int, Order> $orders
@@ -80,6 +82,11 @@ class PaymentDetail extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function userDevice(): BelongsTo
+    {
+        return $this->belongsTo(UserDevice::class);
     }
 
     public function scopeActive(Builder $query): void

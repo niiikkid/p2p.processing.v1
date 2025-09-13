@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property SmsType $type
  * @property int $user_id
  * @property User $user
+ * @property int|null $user_device_id
+ * @property UserDevice|null $userDevice
  * @property Order $order
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -45,5 +47,10 @@ class SmsLog extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function userDevice(): BelongsTo
+    {
+        return $this->belongsTo(UserDevice::class);
     }
 }

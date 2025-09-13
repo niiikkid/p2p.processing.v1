@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'banned' => \App\Http\Middleware\Banned::class,
             'api-access-token' => \App\Http\Middleware\ApiAccessToken::class,
+            'device-access-token' => \App\Http\Middleware\DeviceAccessToken::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

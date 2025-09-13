@@ -39,6 +39,7 @@ const form = useForm({
     sub_payment_gateway_id: payment_detail.sub_payment_gateway_id ?? 0,
     detail_type: payment_detail.detail_type,
     sms_detail_value: payment_detail.sms_detail_value,
+    user_device_id: payment_detail.user_device_id ?? null,
 });
 
 const details = ref({

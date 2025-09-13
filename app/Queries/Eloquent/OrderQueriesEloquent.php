@@ -39,6 +39,20 @@ class OrderQueriesEloquent implements OrderQueries
             ->first();
     }
 
+    public function findPendingByDevice(Money $amount, User $user, PaymentGateway $paymentGateway, ?int $userDeviceId): ?Order
+    {
+        return Order::where('amount', $amount->toUnits())
+            ->whereDoesntHave('dispute')
+            ->where('status', OrderStatus::PENDING)
+            ->where('currency', $amount->getCurrency()->getCode())
+            ->whereRelation('paymentDetail', function($q) use ($user, $userDeviceId) {
+                $q->where('user_id', $user->id)
+                  ->when($userDeviceId, fn($qq) => $qq->where('user_device_id', $userDeviceId));
+            })
+            ->where('payment_gateway_id', $paymentGateway->id)
+            ->first();
+    }
+
     public function findPendingWithPattern(Money $amount, User $user, PaymentGateway $paymentGateway, string $pattern): ?Order
     {
         return Order::where('amount', $amount->toUnits())

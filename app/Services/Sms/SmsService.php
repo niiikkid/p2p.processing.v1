@@ -60,7 +60,7 @@ class SmsService implements SmsServiceContract
                 } else {
                     $order = queries()
                         ->order()
-                        ->findPending($result->amount, $sms->user, $result->paymentGateway);
+                        ->findPendingByDevice($result->amount, $sms->user, $result->paymentGateway, $sms->user_device_id);
                 }
             }
         }
@@ -86,6 +86,7 @@ class SmsService implements SmsServiceContract
             'timestamp' => $sms->timestamp / 1000,
             'type' => $sms->type,
             'user_id' => $sms->user->id,
+            'user_device_id' => $sms->user_device_id,
         ]);
     }
 
