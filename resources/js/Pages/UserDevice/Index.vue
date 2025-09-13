@@ -134,7 +134,7 @@ const toggleExpanded = (id) => {
                                             :title="v === 1 ? 'был пинг' : 'нет пинга'"
                                         />
                                     </div>
-                                </td>
+                                </td>ms
                             </tr>
                         </template>
                         </tbody>
