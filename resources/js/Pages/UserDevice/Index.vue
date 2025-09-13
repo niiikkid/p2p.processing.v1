@@ -1,5 +1,5 @@
 <script setup>
-import {Head, router} from '@inertiajs/vue3';
+import {Head, router, usePage} from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import MainTableSection from '@/Wrappers/MainTableSection.vue';
 import {ref} from 'vue';
@@ -22,6 +22,8 @@ const createToken = () => {
         }
     })
 }
+
+const wallet = usePage().props.data.wallet
 
 defineOptions({ layout: AuthenticatedLayout })
 </script>
@@ -70,7 +72,7 @@ defineOptions({ layout: AuthenticatedLayout })
                             <th scope="col" class="px-6 py-3">Имя</th>
                             <th scope="col" class="px-6 py-3">Токен</th>
                             <th scope="col" class="px-6 py-3">Android ID</th>
-                            <th scope="col" class="px-6 py-3">Подключено</th>
+                            <th scope="col" class="px-6 py-3">Статус</th>
                             <th scope="col" class="px-6 py-3">Создано</th>
                         </tr>
                         </thead>
@@ -86,7 +88,20 @@ defineOptions({ layout: AuthenticatedLayout })
                                 <span v-if="d.android_id" class="text-green-600">{{ d.android_id }}</span>
                                 <span v-else class="text-gray-400">не подключено</span>
                             </td>
-                            <td class="px-6 py-3">{{ d.connected_at ?? '-' }}</td>
+                            <td class="px-6 py-3 text-xs">
+                                <div v-if="d.android_id" class="text-nowrap inline-flex items-center px-3 py-1.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">
+                                    <svg class="w-4 h-4 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 12 4.7 4.5L19 7"/>
+                                    </svg>
+                                    <span class="mr-2">Подключено</span>
+                                </div>
+                                <div v-else class="text-nowrap inline-flex items-center px-3 py-1.5 rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300">
+                                    <svg class="w-4 h-4 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6m0 12L6 6"/>
+                                    </svg>
+                                    <span>Не подключено</span>
+                                </div>
+                            </td>
                             <td class="px-6 py-3">{{ d.created_at }}</td>
                         </tr>
                         </tbody>
