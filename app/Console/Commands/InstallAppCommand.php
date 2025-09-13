@@ -52,7 +52,8 @@ class InstallAppCommand extends Command
             return;
         }*/
 
-        services()->telegramBot()->setWebhook();
+        //В проекте нет функционала требующего вебхук (вроде)
+        //services()->telegramBot()->setWebhook();
 
         Artisan::call('migrate:fresh');
 
