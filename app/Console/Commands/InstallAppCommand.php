@@ -40,21 +40,6 @@ class InstallAppCommand extends Command
      */
     public function handle()
     {
-     /*   if (! $this->confirm('Вы уверены что хотите запустить установку приложения?')) {
-            return;
-        }
-
-        if (! $this->confirm('Вы точно уверены? Установка перезапишет все имеющиеся данные.')) {
-            return;
-        }
-
-        if (! $this->confirm('Я предупреждал!')) {
-            return;
-        }*/
-
-        //В проекте нет функционала требующего вебхук (вроде)
-        //services()->telegramBot()->setWebhook();
-
         Artisan::call('migrate:fresh');
 
         $user = User::factory()->create([
